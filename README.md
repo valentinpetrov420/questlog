@@ -1,16 +1,32 @@
-# React + Vite
+# Questlog
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Demo: https://questlog-tan-seven.vercel.app/
 
-Currently, two official plugins are available:
+Questlog is a lightweight list management app written with React and Vite.
+It focuses on simplicity and minimalism. Fast task entry and tracking without overcomplicating design.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- Create and manage tasks.
+- Multiple lists (in progress).
+- Mark tasks as completed.
+- localStorage persistence.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## How to run it locally
 
-## Expanding the ESLint configuration
+git clone https://github.com/your-username/questlog.git
+cd questlog
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+npm install
+npm run dev
+
+## Project goals
+
+This project is very early stage prototype focused on relearning React and also building a stable and quick productivity tool. Core functionality is prioritized but UI/UX is evolving over time.
+
+## Future ideas
+
+- Highlighting the next uncompleted task in a "main" list that takes center stage.
+- Improving list organization and structure for scalability.
+- Styling/themes.
+- Optionahl authentication (Google login)
