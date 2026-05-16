@@ -8,7 +8,8 @@ It focuses on simplicity and minimalism. Fast task entry and tracking without ov
 ## Features
 
 - Create and manage tasks.
-- Multiple lists (in progress).
+- Multiple lists.
+- Dark mode theme toggle.
 - Mark tasks as completed.
 - localStorage persistence.
 
@@ -31,3 +32,4 @@ This project is very early stage prototype focused on relearning React and also 
 - Improving list organization and structure for scalability.
 - Styling/themes.
 - Optional authentication (Google login).
+- Click and drag to re-arrange.
