@@ -32,12 +32,12 @@ export default function CreateListForm(props) {
         }
     }
 
-    return <form onSubmit={handleSubmit}>
-
+    return <form id="create-list-form" onSubmit={handleSubmit}>
+        <h2>Add Quest</h2>
         <StatusMessage type={status.type} text={status.text}></StatusMessage>
         <input value={title}
             onChange={(event) => { setTitle(event.target.value) }}
-            placeholder="Enter List Name"></input>
-        <button type="submit">Create New List</button>
+            placeholder="Enter Quest Name"></input>
+        <button type="submit">Add New Quest</button>
     </form>
 }

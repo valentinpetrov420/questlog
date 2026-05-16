@@ -1,19 +1,163 @@
-.list-title{
-	font-style: italic;
+html,
+body {
+	min-height: 100vh;
+	font-size: 16px;
+}
+
+#app {
+	min-height: 100vh;
+}
+
+#app[data-theme="darkMode"] {
+	background: #191E2C;
+	color: #eee;
+
+	.list-component {
+		background-color: #2B2F3E;
+	}
+}
+
+#app[data-theme="lightMode"] {
+	background: #eee;
+	color: #111;
+
+	.list-component {
+		background-color: #f0dcfd;
+	}
+}
+
+#top-header {
+	height: 3rem;
+	z-index: 1000;
+
+	nav {
+		height: 100%;
+		display: flex;
+		padding-inline: 1rem;
+		flex-direction: row;
+		justify-content: space-between;
+
+		h1 {
+			align-self: center;
+		}
+	}
+}
+
+#dark-mode-toggle {
+	align-self: center;
+	cursor: pointer;
+}
+
+#create-list-form {
+	margin: 1rem;
+	max-width: 25%;
+
+	h2 {
+		padding: 1rem;
+		font-size: 3rem;
+	}
+
+	button {
+		cursor: pointer;
+		background-color: green;
+		color: white;
+		border-radius: 0.5rem;
+		border: none;
+		padding: 0.5rem;
+		margin-bottom: 0.5rem;
+	}
+
+	input {
+		margin: 0.5rem;
+		padding: 0.5rem;
+		border-radius: 0.4rem;
+	}
+}
+
+#lists-container {
+	margin: 2rem;
+}
+
+#all-lists {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+
+	#lists-heading {
+		font-size: 1.25rem;
+		margin: 1rem;
+	}
+}
+
+.list-component {
+	margin: 1rem;
+	border-radius: 0.5rem;
+	-webkit-box-shadow: 0px 0px 7px 0px #000000;
+	box-shadow: 0px 0px 7px 0px #000000;
+}
+
+.list-title {
+	padding: 1rem;
+
+	span {
+		font-style: italic;
+	}
+}
+
+.list-form input {
+	margin: 0.5rem;
+	padding: 0.5rem;
+	border-radius: 0.4rem;
+}
+
+.list-form-button {
+	cursor: pointer;
+	background-color: green;
+	color: white;
+	border-radius: 0.5rem;
+	border: none;
+	padding: 0.5rem;
+	margin-bottom: 0.5rem;
 }
 
 .todo-item {
 	cursor: pointer;
+	margin: 1rem;
 }
 
 .todo-item.completed {
 	text-decoration: line-through;
 }
 
-.form-error{
+.form-error {
 	color: red;
 }
 
-.form-success{
+.form-success {
 	color: green;
+}
+
+@media (max-width: 1300px) {
+	#create-list-form {
+		max-width: 100%;
+	}
+
+	#all-lists {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+}
+
+@media (max-width: 1000px) {
+	#lists-container {
+		margin: 0;
+	}
+
+	#all-lists {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+@media (max-width: 680px) {
+	#all-lists {
+		grid-template-columns: 1fr;
+	}
 }

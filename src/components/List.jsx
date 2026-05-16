@@ -14,7 +14,7 @@ export default function List(props) {
 
     return (
         <div className="list-component">
-            <h2 className="list-title">{props.title}</h2>
+            <h2 className="list-title">Title: <span>{props.title}</span></h2>
             <ul>
                 {props.listItems.map(todo => (
                     <TodoItem
@@ -27,18 +27,19 @@ export default function List(props) {
                 ))}
             </ul>
 
-            <form onSubmit={(e) => {
+            <form className="list-form" onSubmit={(e) => {
                 e.preventDefault();
                 props.onListItemAdd(value, props.id);
                 setValue("");
             }}>
                 <input
+                    placeholder="New quest task..."
                     value={value}
                     onChange={(event) => setValue(event.target.value)}
                 />
 
-                <button type="submit">
-                    Add List Item
+                <button className="list-form-button" type="submit">
+                    Add Quest Task
                 </button>
             </form>
         </div>

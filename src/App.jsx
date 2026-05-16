@@ -11,10 +11,12 @@ export default function App() {
 		return loadLists;
 	})
 	const [inputValue, setInputValue] = useState("");
+
+	const [theme, setTheme] = useState("darkMode");
+
 	const [error, setError] = useState("");
 	const maxLength = 50;
-
-	const tempTitle = "test title";
+	const siteName = "QuestLog";
 
 	useEffect(() => {
 		console.log("state changed");
@@ -26,6 +28,14 @@ export default function App() {
 		console.log(error);
 		localStorage.setItem("error", error);
 	}, [error]);
+
+	function toggleDarkMode() {
+		if (theme === "darkMode") {
+			setTheme("lightMode");
+		} else if (theme === "lightMode") {
+			setTheme("darkMode")
+		}
+	}
 
 	function handleCreateList(title) {
 		console.log("created list: ", title);
@@ -82,29 +92,44 @@ export default function App() {
 			)
 		);
 	}
-	function __clearStorage(){
+	function __clearStorage() {
 		setLists([]);
 		localStorage.setItem("lists", []);
 	}
 
 	return (
-		<div>
-			<CreateListForm onCreateList={handleCreateList} maxLength={maxLength}/>
-
-			{lists.map(list => {
-				return (
-					<List key={list.id}
-						id={list.id}
-						title={list.title}
-						listItems={list.todos}
-						onListItemChange={(event) => handleChange(event, list.id)}
-						onListItemAdd={handleAdd}
-						onListItemToggle={(todoId) => handleToggle(list.id, todoId)}
-						maxLength={maxLength}
-					/>)
-			})}
-
-			<button onClick={__clearStorage}>__clearStorage()</button>
+		<div id="app" data-theme={theme}>
+			<div id="page-container">
+				<header id="top-header">
+					<nav>
+						<h1>{siteName}</h1>
+						<a id="dark-mode-toggle" onClick={toggleDarkMode}>🌘 Dark Mode</a>
+					</nav>
+				</header>
+				<main>
+					<header id="highlighted-list">
+					</header>
+					<section id="lists-container">
+						<CreateListForm onCreateList={handleCreateList} maxLength={maxLength} />
+						<h2 id="lists-heading">Current Quests: </h2>
+						<div id="all-lists">
+							{lists.map(list => {
+								return (
+									<List key={list.id}
+										id={list.id}
+										title={list.title}
+										listItems={list.todos}
+										onListItemChange={(event) => handleChange(event, list.id)}
+										onListItemAdd={handleAdd}
+										onListItemToggle={(todoId) => handleToggle(list.id, todoId)}
+										maxLength={maxLength}
+									/>)
+							})}
+						</div>
+					</section>
+					<button onClick={__clearStorage}>__clearStorage()</button>
+				</main>
+			</div>
 		</div>
 	);
 }
