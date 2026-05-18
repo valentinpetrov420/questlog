@@ -96,6 +96,10 @@ body {
 
 	.list-tools {
 		margin: 1rem;
+
+		a {
+			cursor: pointer;
+		}
 	}
 }
 
@@ -104,11 +108,23 @@ body {
 
 	span {
 		font-style: italic;
+		cursor: pointer;
 	}
 
 	a {
-		cursor: pointer;
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity 0.15s ease;
 	}
+
+	&:hover a {
+		opacity: 1;
+		visibility: visible;
+	}
+}
+
+.edit-list-title {
+	display: flex;
 }
 
 .list-title-edit {

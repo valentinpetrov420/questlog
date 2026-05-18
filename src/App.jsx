@@ -49,8 +49,6 @@ export default function App() {
 			}
 		]);
 	}
-
-	//todo: listTitle is for debugging only
 	function handleEditListTitle(listId, newTitle) {
 		console.log("received: " + newTitle);
 
@@ -62,11 +60,7 @@ export default function App() {
 			)
 		);
 	}
-
-	//todo: listTitle is for debugging only
-	function handleDeleteList(listId, listTitle) {
-		console.log("deleted list: ", listTitle);
-
+	function handleDeleteList(listId) {
 		//todo: add for user confirmation before deleting
 		const updatedState = lists.filter(list => list.id !== listId);
 
@@ -131,7 +125,7 @@ export default function App() {
 					</nav>
 				</header>
 				<main>
-					<header id="highlighted-list">
+					<header id="pinned-lists">
 					</header>
 					<section id="lists-container">
 						<CreateListForm onCreateList={handleCreateList} maxLength={maxLength} />

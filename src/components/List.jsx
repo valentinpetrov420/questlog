@@ -34,8 +34,8 @@ export default function List(props) {
             <div className="list-tools">
                 <a onClick={props.onListDelete}>🗑️</a>
             </div>
-            {isEditing ? <form onSubmit={handleSubmitEdit}> <h2 className="list-title-edit">Title:</h2> <input value={draftTitle} onChange={(event) => setDraftTitle(event.target.value)}></input></form> :
-                        <h2 className="list-title">Title: <span>{props.title}</span><a onClick={handleEditTitle}>✎</a></h2>}
+            {isEditing ? <form className="edit-list-title" onSubmit={handleSubmitEdit}> <h2 className="list-title-edit">Title:</h2> <input value={draftTitle} onChange={(event) => setDraftTitle(event.target.value)}></input></form> :
+                        <h2 className="list-title">Title: <span onClick={handleEditTitle}>{props.title}<a>✎</a></span></h2>}
             <ul>
                 {props.listItems.map(todo => (
                     <TodoItem
