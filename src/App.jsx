@@ -25,10 +25,10 @@ export default function App() {
 	}, [lists])
 
 	//todo: rework error <p> to show above relevant input field
-	useEffect(() => {
-		console.log(error);
-		localStorage.setItem("error", error);
-	}, [error]);
+	//useEffect(() => {
+	//	console.log(error);
+	//	localStorage.setItem("error", error);
+	//}, [error]);
 
 	function toggleDarkMode() {
 		if (theme === "darkMode") {
@@ -49,7 +49,22 @@ export default function App() {
 			}
 		]);
 	}
-	function handleDeleteList(listId, listTitle){
+
+	//todo: listTitle is for debugging only
+	function handleEditListTitle(listId, newTitle) {
+		console.log("received: " + newTitle);
+
+		setLists(prev =>
+			prev.map(list =>
+				list.id === listId
+					? { ...list, title: newTitle }
+					: list
+			)
+		);
+	}
+
+	//todo: listTitle is for debugging only
+	function handleDeleteList(listId, listTitle) {
 		console.log("deleted list: ", listTitle);
 
 		//todo: add for user confirmation before deleting
@@ -102,10 +117,10 @@ export default function App() {
 		setLists([]);
 		localStorage.setItem("lists", []);
 	}
-	function __loadMockStorage(){
+	function __loadMockStorage() {
 		setLists(mockData);
 	}
-	
+
 	return (
 		<div id="app" data-theme={theme}>
 			<div id="page-container">
@@ -131,6 +146,7 @@ export default function App() {
 										onListItemChange={(event) => handleChange(event, list.id)}
 										onListItemAdd={handleAdd}
 										onListItemToggle={(todoId) => handleToggle(list.id, todoId)}
+										onListTitleChange={handleEditListTitle}
 										onListDelete={(event) => handleDeleteList(list.id, list.title)}
 										maxLength={maxLength}
 									/>)

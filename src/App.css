@@ -93,7 +93,8 @@ body {
 	border-radius: 0.5rem;
 	-webkit-box-shadow: 0px 0px 7px 0px #000000;
 	box-shadow: 0px 0px 7px 0px #000000;
-	.list-tools{
+
+	.list-tools {
 		margin: 1rem;
 	}
 }
@@ -104,6 +105,15 @@ body {
 	span {
 		font-style: italic;
 	}
+
+	a {
+		cursor: pointer;
+	}
+}
+
+.list-title-edit {
+	padding-left: 1rem;
+	padding-right: 1rem;
 }
 
 .list-form input {
