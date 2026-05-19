@@ -148,12 +148,33 @@ body {
 	margin-bottom: 0.5rem;
 }
 
-.todo-item {
-	cursor: pointer;
+.todo-wrapper {
 	margin: 1rem;
+	display: flex;
+	align-items: center;
+
+	.todo-item-text {
+		margin: 1rem;
+		flex: 1;
+		min-width: auto;
+		overflow-wrap: break-word;
+		word-break: break-word;
+	}
+
+	.todo-actions {
+		visibility: hidden;
+		cursor: pointer;
+		transition: opacity 0.15s ease;
+	}
+
+	&:hover .todo-actions {
+		opacity: 1;
+		visibility: visible;
+		transform: translateX(0);
+	}
 }
 
-.todo-item.completed {
+.todo-item-text.completed {
 	text-decoration: line-through;
 }
 
@@ -182,6 +203,10 @@ body {
 
 	#all-lists {
 		grid-template-columns: 1fr 1fr;
+	}
+
+	#lists-heading {
+		margin: 1rem;
 	}
 }
 

@@ -23,7 +23,7 @@ export default function List(props) {
         event.preventDefault();
 
         //todo: add confirm + validation
-        console.log("sending upward: " + draftTitle)
+        console.log("sending upward: " + draftTitle);
         props.onListTitleChange(props.id, draftTitle);
 
         setEditing(false);
@@ -40,10 +40,12 @@ export default function List(props) {
                 {props.listItems.map(todo => (
                     <TodoItem
                         key={todo.id}
+                        listId={props.id}
                         id={todo.id}
                         text={todo.text}
                         completed={todo.completed}
                         onToggle={props.onListItemToggle}
+                        onTodoEdit={props.onListItemEdit}
                     />
                 ))}
             </ul>

@@ -35,6 +35,8 @@ export default function App() {
 
 	useEffect(() => {
 		console.log("state changed");
+
+		console.log("updated lists:", lists);
 		localStorage.setItem("lists", JSON.stringify(lists));
 	}, [lists])
 
@@ -44,9 +46,9 @@ export default function App() {
 	//	localStorage.setItem("error", error);
 	//}, [error]);
 
-	function loadCommitHistory() {
+	//function loadCommitHistory() {
+	//}
 
-	}
 	function toggleDarkMode() {
 		if (theme === "darkMode") {
 			setTheme("lightMode");
@@ -90,6 +92,27 @@ export default function App() {
 		)
 		);
 	}
+	function handleTodoEdit(listId, todoId, newTodo) {
+		console.log("received: " + newTodo);
+
+		setLists(prev =>
+			prev.map(list =>
+				list.id === listId
+					? {
+						...list, todos: list.todos.map(todo =>
+							todo.id === todoId
+								? { ...todo, text: newTodo }
+								: todo
+						)
+					}
+					: list
+			)
+		)
+	}
+
+	function handleTodoDelete() {
+
+	};
 	function handleAdd(text, listId) {
 		if (!text.trim()) {
 			return;
@@ -156,6 +179,7 @@ export default function App() {
 										listItems={list.todos}
 										onListItemChange={(event) => handleChange(event, list.id)}
 										onListItemAdd={handleAdd}
+										onListItemEdit={handleTodoEdit}
 										onListItemToggle={(todoId) => handleToggle(list.id, todoId)}
 										onListTitleChange={handleEditListTitle}
 										onListDelete={(event) => handleDeleteList(list.id, list.title)}
