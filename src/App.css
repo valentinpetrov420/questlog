@@ -103,6 +103,13 @@ body {
 	}
 }
 
+.list-tools {
+	button {
+		background: none;
+		border: none;
+	}
+}
+
 .list-title {
 	padding: 1rem;
 
@@ -132,6 +139,10 @@ body {
 	padding-right: 1rem;
 }
 
+.list-form {
+	display: flex;
+}
+
 .list-form input {
 	margin: 0.5rem;
 	padding: 0.5rem;
@@ -151,7 +162,7 @@ body {
 .todo-wrapper {
 	margin: 1rem;
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 
 	.todo-item-text {
 		margin: 1rem;
@@ -174,16 +185,16 @@ body {
 	}
 }
 
+.input-form-wrapper {
+	margin-left: 1rem;
+}
+
 .todo-item-text.completed {
 	text-decoration: line-through;
 }
 
 .form-error {
 	color: red;
-}
-
-.form-success {
-	color: green;
 }
 
 @media (max-width: 1300px) {

@@ -1,15 +1,29 @@
 import { useState } from "react";
+import { useEffect } from "react";
+import StatusMessage from "./StatusMessage";
+import { validateText } from "../util/validation";
 
 export default function TodoItem(props) {
     const [isEditingTodo, setEditingTodo] = useState(false);
     const [draftTitleTodo, setDraftTitleTodo] = useState("");
 
-    function handleSubmitEditTodo() {
-        setEditingTodo(false);
+    const [error, setError] = useState("");
+    const [status, setStatus] = useState(null);
 
-        //todo: add validation checks
-        console.log("sending upward: " + draftTitleTodo);
-        props.onTodoEdit(props.listId, props.id, draftTitleTodo);
+    function handleSubmitEditTodo(event) {
+        event.preventDefault();
+        const result = validateText(draftTitleTodo, props.maxLength);
+
+        if (!result.valid) {
+            setError(result.error);
+            setStatus(true);
+            setDraftTitleTodo(props.text);
+        } else {
+            setEditingTodo(false);
+            setError("");
+            props.onTodoEdit(props.listId, props.id, draftTitleTodo);
+        }
+
     }
     function handleEditTodo() {
         setEditingTodo(true);
@@ -22,7 +36,8 @@ export default function TodoItem(props) {
         props.onTodoDelete(props.listId, props.id);
     }
 
-    return <li className="todo-wrapper">
+    return <li className={isEditingTodo ? "input-form-wrapper" : "todo-wrapper"}>
+        {status && <StatusMessage type="error" text={error} />}
         {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}><input value={draftTitleTodo} onChange={(event) => setDraftTitleTodo(event.target.value)}></input></form> :
             <span className="todo-list-item"
                 className={`todo-item-text ${props.completed ? "completed" : ""}`}
@@ -31,13 +46,16 @@ export default function TodoItem(props) {
             </span>
         }
 
-        <div className="todo-actions">
+        {!isEditingTodo ? <div className="todo-actions">
             <button onClick={handleEditTodo}>
                 ✎
             </button>
             <button onClick={handleDeleteTodo}>
                 🗑️
             </button>
-        </div>
+        </div> :
+            <div></div>
+        }
+
     </li>
 }

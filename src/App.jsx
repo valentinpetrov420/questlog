@@ -40,12 +40,6 @@ export default function App() {
 		localStorage.setItem("lists", JSON.stringify(lists));
 	}, [lists])
 
-	//todo: rework error <p> to show above relevant input field
-	//useEffect(() => {
-	//	console.log(error);
-	//	localStorage.setItem("error", error);
-	//}, [error]);
-
 	//function loadCommitHistory() {
 	//}
 

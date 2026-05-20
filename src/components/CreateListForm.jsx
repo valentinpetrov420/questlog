@@ -1,40 +1,45 @@
 import { useState } from "react"
+import { validateText } from "../util/validation";
 import StatusMessage from "./StatusMessage";
+import { useEffect } from "react";
 
 export default function CreateListForm(props) {
     const [title, setTitle] = useState("");
-    const [status, setStatus] = useState({});
+
+    const [error, setError] = useState("");
+    const [status, setStatus] = useState(null);
+
+    useEffect(() => {
+        if (!status){ 
+            return;
+        };
+
+        const timeout = setTimeout(() => {
+            setStatus(null);
+        }, 3000);
+
+        return () => clearTimeout(timeout);
+    }, [status]);
 
     function handleSubmit(event) {
         event.preventDefault();
 
-        const inputValue = title;
+        const result = validateText(title, props.maxLength);
 
-        if (!inputValue.trim()) {
-            setStatus({
-                type: "error",
-                text: "Text field cannot be empty."
-            })
+        if (!result.valid) {
+            setError(result.error);
+            setStatus(true);
             return;
-        } else if (inputValue.trim().length > props.maxLength) {
-            setStatus({
-                type: "error",
-                text: `Cannot be more than ${props.maxLength} symbols long.`
-            })
-            return;
-        } else {
-            props.onCreateList(title);
-            setStatus({
-                type: "success",
-                text: "Success."
-            })
-            setTitle("");
         }
+
+        setError("");
+        props.onCreateList(title);
+        setTitle("");
     }
 
     return <form id="create-list-form" onSubmit={handleSubmit}>
         <h2>Add Quest</h2>
-        <StatusMessage type={status.type} text={status.text}></StatusMessage>
+        {status && <StatusMessage type="error" text={error} />}
         <input value={title}
             onChange={(event) => { setTitle(event.target.value) }}
             placeholder="Enter Quest Name"></input>
