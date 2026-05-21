@@ -74,9 +74,13 @@ export default function App() {
 		);
 	}
 	function handleDeleteList(listId) {
-		//todo: add for user confirmation before deleting
-		const updatedState = lists.filter(list => list.id !== listId);
+		const confirmed = window.confirm("Delete this list?");
 
+		if (!confirmed) {
+			return;
+		}
+
+		const updatedState = lists.filter(list => list.id !== listId);
 		setLists(updatedState);
 	}
 	function handleChange(value, listId) {
@@ -105,6 +109,12 @@ export default function App() {
 	}
 	function handleTodoDelete(listId, todoId) {
 		console.log("received: " + todoId);
+
+		const confirmed = window.confirm("Delete this task?");
+
+		if (!confirmed) {
+			return;
+		}
 
 		setLists(prev =>
 			prev.map(list => {

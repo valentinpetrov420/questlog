@@ -7,7 +7,7 @@ It focuses on simplicity and minimalism. Fast task entry and tracking without ov
 
 ## Features
 
-- Create and manage tasks.
+- Create, read, update and delete list and list items.
 - Multiple lists.
 - Dark mode theme toggle.
 - Mark tasks as completed.

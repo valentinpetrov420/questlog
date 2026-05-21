@@ -25,6 +25,11 @@ export default function List(props) {
         return () => clearTimeout(timeout);
     }, [addTodoStatus]);
 
+
+    function cancelEdit() {
+        setEditing(false);
+        setDraftTitle(props.text);
+    }
     function handleSubmit(e) {
         e.preventDefault();
 
@@ -40,7 +45,6 @@ export default function List(props) {
         props.onListItemAdd(value, props.id);
         setValue("");
     }
-
     function handleEditTitle() {
         setDraftTitle(props.title);
         setEditing(true);
@@ -70,7 +74,19 @@ export default function List(props) {
                 <h2 className="list-title-edit">Title:</h2>
                 <div className="input-form-wrapper">
                     {titleStatus && <StatusMessage type="error" text={error} />}
-                    <input value={draftTitle} onChange={(event) => setDraftTitle(event.target.value)}></input>
+                    <input autoFocus
+                        value={draftTitle}
+                        onBlur={() => {
+                            cancelEdit();
+                        }}
+                        onChange={(event) => setDraftTitle(event.target.value)}
+                        onKeyDown={(event) => {
+                            if (event.key === "Escape") {
+                                cancelEdit();
+                            }
+                        }}>
+
+                    </input>
                 </div>
             </form>
                 : <h2 className="list-title">Title: <span onClick={handleEditTitle}>{props.title}<a>✎</a></span></h2>}

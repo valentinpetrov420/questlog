@@ -10,6 +10,11 @@ export default function TodoItem(props) {
     const [error, setError] = useState("");
     const [status, setStatus] = useState(null);
 
+    function cancelEdit() {
+        setEditingTodo(false);
+        setDraftTitleTodo(props.text);
+    }
+
     function handleSubmitEditTodo(event) {
         event.preventDefault();
         const result = validateText(draftTitleTodo, props.maxLength);
@@ -32,13 +37,25 @@ export default function TodoItem(props) {
     function handleDeleteTodo() {
         console.log("sending upward: " + props.text);
 
-        //todo: add confirmation
         props.onTodoDelete(props.listId, props.id);
     }
 
     return <li className={isEditingTodo ? "input-form-wrapper" : "todo-wrapper"}>
         {status && <StatusMessage type="error" text={error} />}
-        {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}><input value={draftTitleTodo} onChange={(event) => setDraftTitleTodo(event.target.value)}></input></form> :
+        {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
+            <input autoFocus
+                value={draftTitleTodo}
+                onChange={(event) => setDraftTitleTodo(event.target.value)}
+                onBlur={() => {
+                    cancelEdit();
+                }}
+                onKeyDown={(event) => {
+                    if (event.key === "Escape") {
+                        cancelEdit();
+                    }
+                }}></input>
+        </form>
+            :
             <span className="todo-list-item"
                 className={`todo-item-text ${props.completed ? "completed" : ""}`}
                 onClick={() => props.onToggle(props.id)}>
