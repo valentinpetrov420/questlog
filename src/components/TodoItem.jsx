@@ -8,12 +8,10 @@ export default function TodoItem(props) {
     const [draftTitleTodo, setDraftTitleTodo] = useState("");
 
     const [error, setError] = useState("");
-    const [status, setStatus] = useState(null);
 
     function cancelEdit() {
         setEditingTodo(false);
         setDraftTitleTodo(props.text);
-        setStatus("");
         setError("");
     }
 
@@ -23,7 +21,6 @@ export default function TodoItem(props) {
 
         if (!result.valid) {
             setError(result.error);
-            setStatus(true);
             setDraftTitleTodo(props.text);
         } else {
             setEditingTodo(false);
@@ -58,15 +55,17 @@ export default function TodoItem(props) {
                 }}></input>
         </form>
             :
-            <span className="todo-list-item"
-                className={`todo-item-text ${props.completed ? "completed" : ""}`}
+            <span className={`todo-item-text ${props.completed ? "completed" : ""}`}
                 onClick={() => props.onToggle(props.id)}>
                 {props.text}
             </span>
         }
 
         {!isEditingTodo ? <div className="todo-actions">
-            <button onClick={handleEditTodo}>
+            <button onMouseDown={(event) => {
+                event.preventDefault();
+                handleEditTodo();
+                }}>
                 ✎
             </button>
             <button onClick={handleDeleteTodo}>
