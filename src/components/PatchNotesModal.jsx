@@ -1,0 +1,47 @@
+export default function PatchNotesModal({ open, onClose, patchnotes, }) {
+
+    function groupByDate(entries) {
+        return entries.reduce((grouped, entry) => {
+            const date = entry.date.split("T")[0];
+
+            if (entry.message.startsWith("Merge branch")) {
+                return grouped;
+            }
+
+            if (!grouped[date]) {
+                grouped[date] = [];
+            }
+
+            grouped[date].push(entry);
+
+            return grouped;
+        }, {});
+    }
+
+    const grouped = groupByDate(patchnotes);
+    const sortedDates = Object.keys(grouped).sort((a, b) =>
+        b.localeCompare(a)
+    );
+
+    if (!open) {
+        return null;
+    }
+
+    console.log(grouped);
+
+    return (
+        <div className="patchnotes-modal">
+            <button onClick={onClose}>Close</button>
+            {sortedDates.map((date) => (
+                <div>
+                    <h3>{date}</h3>
+                    <ul>
+                        {grouped[date].map((e, i) => {
+                            return <li key={i}>{e.message}</li>;
+                        })}
+                    </ul>
+                </div>
+            ))}
+        </div>
+    );
+}

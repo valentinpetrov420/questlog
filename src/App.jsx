@@ -4,6 +4,7 @@ import TodoItem from './components/TodoItem';
 import List from './components/List';
 import CreateListForm from './components/CreateListForm';
 import mockData from './mockdata.js';
+import PatchNotesModal from './components/PatchNotesModal.jsx';
 
 
 export default function App() {
@@ -13,6 +14,9 @@ export default function App() {
 	})
 	const [inputValue, setInputValue] = useState("");
 
+	const [patchnotes, setPatchnotes] = useState([]);
+	const [patchnotesOpen, setPatchnotesOpen] = useState(false);
+
 	const [theme, setTheme] = useState("darkMode");
 
 	const [error, setError] = useState("");
@@ -20,15 +24,11 @@ export default function App() {
 	const siteName = "QuestLog";
 
 	useEffect(() => {
-		const cached = localStorage.getItem("changelog");
-
-		if (cached) {
-			return;
-		};
-
 		fetch("/changelog.json")
 			.then((res) => res.json())
 			.then((data) => {
+
+				setPatchnotes(data);
 				localStorage.setItem("changelog", JSON.stringify(data));
 			});
 	}, []);
@@ -39,9 +39,6 @@ export default function App() {
 		console.log("updated lists:", lists);
 		localStorage.setItem("lists", JSON.stringify(lists));
 	}, [lists])
-
-	//function loadCommitHistory() {
-	//}
 
 	function toggleDarkMode() {
 		if (theme === "darkMode") {
@@ -177,7 +174,8 @@ export default function App() {
 				<header id="top-header">
 					<nav>
 						<h1>{siteName}</h1>
-						<a id="dark-mode-toggle" onClick={toggleDarkMode}>🌘 Dark Mode</a>
+						<button id="patchnotes-toggle" onClick={() => setPatchnotesOpen(true)}>Patch Notes</button>
+						<button id="dark-mode-toggle" onClick={toggleDarkMode}>🌘 Dark Mode</button>
 					</nav>
 				</header>
 				<main>
@@ -209,6 +207,11 @@ export default function App() {
 					<button onClick={__clearStorage}>__clearStorage()</button>
 				</main>
 			</div>
+			<PatchNotesModal
+				open={patchnotesOpen}
+				onClose={() => setPatchnotesOpen(false)}
+				patchnotes={patchnotes}
+			/>
 		</div>
 	);
 }

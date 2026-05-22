@@ -15,6 +15,10 @@ body {
 	.list-component {
 		background-color: #2B2F3E;
 	}
+
+	#top-header {
+		background-color: #2B2F3E;
+	}
 }
 
 #app[data-theme="lightMode"] {
@@ -24,11 +28,18 @@ body {
 	.list-component {
 		background-color: #f0dcfd;
 	}
+
+	#top-header {
+		background-color: #f0dcfd;
+	}
 }
 
 #top-header {
 	height: 3rem;
 	z-index: 1000;
+	position: sticky;
+	top: 0;
+
 
 	nav {
 		height: 100%;
@@ -36,6 +47,7 @@ body {
 		padding-inline: 1rem;
 		flex-direction: row;
 		justify-content: space-between;
+		border-bottom: black 1px solid;
 
 		h1 {
 			align-self: center;
@@ -43,9 +55,24 @@ body {
 	}
 }
 
+#patchnotes-toggle {
+	align-self: center;
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	color: inherit;
+	font: inherit;
+}
+
 #dark-mode-toggle {
 	align-self: center;
+	background: none;
+	border: none;
+	padding: 0;
 	cursor: pointer;
+	color: inherit;
+	font: inherit;
 }
 
 #create-list-form {
@@ -203,6 +230,25 @@ body {
 	:empty {
 		visibility: hidden;
 		margin: 0;
+	}
+}
+
+.patchnotes-modal {
+	position: fixed;
+	z-index: 1;
+	left: 118px;
+	top: 100px;
+	width: 80%;
+	height: 50%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.9);
+	h3{
+		margin: 1rem;
+		margin-bottom: 0;
+	}
+	ul{
+		margin: 2rem;
+		margin-top: 0.5rem;
 	}
 }
 
