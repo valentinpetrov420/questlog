@@ -29,6 +29,7 @@ export default function List(props) {
     function cancelEdit() {
         setEditing(false);
         setDraftTitle(props.text);
+        setTitleStatus(null);
     }
     function handleSubmit(e) {
         e.preventDefault();
@@ -73,7 +74,7 @@ export default function List(props) {
             {isEditing ? <form className="edit-list-title" onSubmit={handleSubmitEdit}>
                 <h2 className="list-title-edit">Title:</h2>
                 <div className="input-form-wrapper">
-                    {titleStatus && <StatusMessage type="error" text={error} />}
+                    <StatusMessage text={titleStatus ? error : ""} />
                     <input autoFocus
                         value={draftTitle}
                         onBlur={() => {
@@ -108,7 +109,7 @@ export default function List(props) {
 
             <form className="list-form" onSubmit={handleSubmit}>
                 <div className="input-form-wrapper">
-                    {addTodoStatus && <StatusMessage type="error" text={error} />}
+                    <StatusMessage text={addTodoStatus ? error : ""} />
                     <input
                         placeholder="New quest task..."
                         value={value}

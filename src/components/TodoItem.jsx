@@ -13,6 +13,8 @@ export default function TodoItem(props) {
     function cancelEdit() {
         setEditingTodo(false);
         setDraftTitleTodo(props.text);
+        setStatus("");
+        setError("");
     }
 
     function handleSubmitEditTodo(event) {
@@ -41,7 +43,7 @@ export default function TodoItem(props) {
     }
 
     return <li className={isEditingTodo ? "input-form-wrapper" : "todo-wrapper"}>
-        {status && <StatusMessage type="error" text={error} />}
+        <StatusMessage text={error}/>
         {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
             <input autoFocus
                 value={draftTitleTodo}
