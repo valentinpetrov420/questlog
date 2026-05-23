@@ -1,7 +1,8 @@
 import { useState } from "react"
-import { validateText } from "../util/validation";
-import StatusMessage from "./StatusMessage";
+import { validateText } from "../../util/validation.js";
+import StatusMessage from "../StatusMessage/StatusMessage.jsx";
 import { useEffect } from "react";
+import "./CreateListForm.css";
 
 export default function CreateListForm(props) {
     const [title, setTitle] = useState("");

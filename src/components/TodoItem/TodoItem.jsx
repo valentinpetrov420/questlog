@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import StatusMessage from "./StatusMessage";
-import { validateText } from "../util/validation";
+import StatusMessage from "../StatusMessage/StatusMessage.jsx";
+import { validateText } from "../../util/validation.js";
+import './TodoItem.css';
 
 export default function TodoItem(props) {
     const [isEditingTodo, setEditingTodo] = useState(false);

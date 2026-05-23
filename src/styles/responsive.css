@@ -1,0 +1,43 @@
+
+@media (max-width: 1300px) {
+	#create-list-form {
+		max-width: 100%;
+	}
+
+	#all-lists {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+}
+
+@media (max-width: 1000px) {
+	#lists-container {
+		margin: 0;
+	}
+
+	#all-lists {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	#lists-heading {
+		margin: 1rem;
+	}
+}
+
+@media (max-width: 680px) {
+	#all-lists {
+		grid-template-columns: 1fr;
+	}
+
+	.patchnotes-modal {
+		left: 70px;
+	}
+}
+
+@media (max-width: 500px) {
+	.patchnotes-modal {
+		left: 0px;
+		top: 49px;
+		width: 100%;
+		height: 100vh;
+	}
+}

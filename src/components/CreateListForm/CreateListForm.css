@@ -1,0 +1,38 @@
+
+#create-list-form {
+	margin: 1rem;
+	max-width: 25%;
+
+	h2 {
+		padding: 1rem;
+		font-size: 3rem;
+	}
+
+	button {
+		cursor: pointer;
+		background-color: green;
+		color: white;
+		border-radius: 0.5rem;
+		border: none;
+		padding: 0.5rem;
+		margin-bottom: 0.5rem;
+	}
+
+	input {
+		margin: 0.5rem;
+		padding: 0.5rem;
+		border-radius: 0.4rem;
+	}
+}
+
+@media (max-width: 1300px) {
+	#create-list-form {
+		max-width: 100%;
+	}
+}
+
+@media (max-width: 400px){
+    #create-list-form {
+        margin: 0;
+    }
+}

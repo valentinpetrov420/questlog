@@ -1,8 +1,9 @@
 import { useState } from "react";
-import TodoItem from "./TodoItem"
-import { validateText } from "../util/validation";
-import StatusMessage from "./StatusMessage";
+import TodoItem from "../TodoItem/TodoItem.jsx"
+import { validateText } from "../../util/validation";
+import StatusMessage from "../StatusMessage/StatusMessage.jsx";
 import { useEffect } from "react";
+import './List.css';
 
 export default function List(props) {
     const [value, setValue] = useState("");

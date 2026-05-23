@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import TodoItem from './components/TodoItem';
-import List from './components/List';
-import CreateListForm from './components/CreateListForm';
+import TodoItem from './components/TodoItem/TodoItem.jsx';
+import List from './components/List/List.jsx';
+import CreateListForm from './components/CreateListForm/CreateListForm.jsx';
 import mockData from './mockdata.js';
-import PatchNotesModal from './components/PatchNotesModal.jsx';
+import PatchNotesModal from './components/PatchNotesModal/PatchNotesModal.jsx';
 
 
 export default function App() {

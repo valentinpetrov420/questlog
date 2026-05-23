@@ -1,0 +1,33 @@
+#app[data-theme="darkMode"] {
+	background: #191E2C;
+	color: #eee;
+
+	.list-component {
+		background-color: #2B2F3E;
+	}
+
+	#top-header {
+		background-color: #2B2F3E;
+	}
+
+	.patchnotes-modal {
+		background-color: rgba(0, 0, 0, 0.9);
+	}
+}
+
+#app[data-theme="lightMode"] {
+	background: #eee;
+	color: #111;
+
+	.list-component {
+		background-color: #f0dcfd;
+	}
+
+	#top-header {
+		background-color: #f0dcfd;
+	}
+
+	.patchnotes-modal {
+		background-color: rgba(237, 232, 208, 0.95);
+	}
+}

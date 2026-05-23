@@ -1,3 +1,5 @@
+import './PatchNotesModal.css';
+
 export default function PatchNotesModal({ open, onClose, patchnotes, }) {
 
     function groupByDate(entries) {

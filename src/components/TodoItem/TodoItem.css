@@ -1,0 +1,30 @@
+
+.todo-wrapper {
+	margin: 1rem;
+	display: flex;
+	align-items: flex-start;
+
+	.todo-item-text {
+		margin: 1rem;
+		flex: 1;
+		min-width: auto;
+		overflow-wrap: break-word;
+		word-break: break-word;
+	}
+
+	.todo-actions {
+		visibility: hidden;
+		cursor: pointer;
+		transition: opacity 0.15s ease;
+	}
+
+	&:hover .todo-actions {
+		opacity: 1;
+		visibility: visible;
+		transform: translateX(0);
+	}
+}
+
+.todo-item-text.completed {
+	text-decoration: line-through;
+}
