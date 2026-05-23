@@ -40,6 +40,14 @@ export default function App() {
 		localStorage.setItem("lists", JSON.stringify(lists));
 	}, [lists])
 
+
+	function togglePatchnotes(){
+		if (patchnotesOpen){
+			setPatchnotesOpen(false);
+		} else if (!patchnotesOpen){
+			setPatchnotesOpen(true);
+		}
+	}
 	function toggleDarkMode() {
 		if (theme === "darkMode") {
 			setTheme("lightMode");
@@ -174,7 +182,7 @@ export default function App() {
 				<header id="top-header">
 					<nav>
 						<h1>{siteName}</h1>
-						<button id="patchnotes-toggle" onClick={() => setPatchnotesOpen(true)}>Patch Notes</button>
+						<button id="patchnotes-toggle" onClick={togglePatchnotes}>Patch Notes</button>
 						<button id="dark-mode-toggle" onClick={toggleDarkMode}>🌘 Dark Mode</button>
 					</nav>
 				</header>
