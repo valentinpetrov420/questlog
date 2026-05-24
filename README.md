@@ -9,6 +9,7 @@ It focuses on simplicity and minimalism. Fast task entry and tracking without ov
 
 - Create, read, update and delete list and list items.
 - Multiple lists.
+- Pinned lists view.
 - Dark mode theme toggle.
 - Mark tasks as completed.
 - localStorage persistence.
@@ -29,6 +30,8 @@ This project is very early stage prototype focused on relearning React and also 
 ## Future ideas
 
 - Highlighting the next uncompleted task in a "main" list that takes center stage.
+- Streaks of completed tasks every day.
+- Untouched lists for a few days get a notifying suggestion to break down tasks into smaller steps.
 - Improving list organization and structure for scalability.
 - Styling/themes.
 - Optional authentication (Google login).
