@@ -42,7 +42,7 @@
 	margin: 2rem;
 }
 
-#all-lists {
+#all-lists, #pinned-lists {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr 1fr;
 

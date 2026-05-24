@@ -66,11 +66,15 @@ export default function List(props) {
             setEditing(false);
         }
     }
+    function handlePin(event){
+        props.onListPin(props.id);
+    }
 
     return (
         <div className="list-component">
             <div className="list-tools">
                 <button onClick={props.onListDelete}>🗑️</button>
+                <button onClick={handlePin}>📌</button>
             </div>
             {isEditing ? <form className="edit-list-title" onSubmit={handleSubmitEdit}>
                 <h2 className="list-title-edit">Title:</h2>

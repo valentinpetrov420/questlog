@@ -4,7 +4,7 @@
 		max-width: 100%;
 	}
 
-	#all-lists {
+	#all-lists, #pinned-lists {
 		grid-template-columns: 1fr 1fr 1fr;
 	}
 }
@@ -14,7 +14,7 @@
 		margin: 0;
 	}
 
-	#all-lists {
+	#all-lists, #pinned-lists {
 		grid-template-columns: 1fr 1fr;
 	}
 
@@ -24,7 +24,7 @@
 }
 
 @media (max-width: 680px) {
-	#all-lists {
+	#all-lists, #pinned-lists {
 		grid-template-columns: 1fr;
 	}
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import ListView from './components/ListView/ListView.jsx';
 import TodoItem from './components/TodoItem/TodoItem.jsx';
 import List from './components/List/List.jsx';
 import CreateListForm from './components/CreateListForm/CreateListForm.jsx';
@@ -10,8 +11,15 @@ import PatchNotesModal from './components/PatchNotesModal/PatchNotesModal.jsx';
 export default function App() {
 	const [lists, setLists] = useState(() => {
 		const loadLists = JSON.parse(localStorage.getItem("lists") || "[]");
-		return loadLists;
-	})
+
+		return loadLists.map(list => ({
+			...list,
+			createdAt: list.createdAt ?? Date.now(),
+			updatedAt: list.updatedAt ?? Date.now(),
+			pinned: list.pinned ?? false,
+		}));
+	});
+
 	const [inputValue, setInputValue] = useState("");
 
 	const [patchnotes, setPatchnotes] = useState([]);
@@ -38,13 +46,13 @@ export default function App() {
 
 		console.log("updated lists:", lists);
 		localStorage.setItem("lists", JSON.stringify(lists));
-	}, [lists])
+	}, [lists]);
 
 
-	function togglePatchnotes(){
-		if (patchnotesOpen){
+	function togglePatchnotes() {
+		if (patchnotesOpen) {
 			setPatchnotesOpen(false);
-		} else if (!patchnotesOpen){
+		} else if (!patchnotesOpen) {
 			setPatchnotesOpen(true);
 		}
 	}
@@ -63,7 +71,10 @@ export default function App() {
 			{
 				id: crypto.randomUUID(),
 				title,
-				todos: []
+				todos: [],
+				createdAt: Date.now(),
+				updatedAt: Date.now(),
+				pinned: false,
 			}
 		]);
 	}
@@ -77,6 +88,17 @@ export default function App() {
 					: list
 			)
 		);
+	}
+	function handlePin(listId) {
+		console.log("pinned: " + listId);
+
+		setLists(prev =>
+			prev.map(list => list.id === listId
+				? list.pinned ? { ...list, pinned: false }
+					: { ...list, pinned: true }
+				: list
+			)
+		)
 	}
 	function handleDeleteList(listId) {
 		const confirmed = window.confirm("Delete this list?");
@@ -187,7 +209,20 @@ export default function App() {
 					</nav>
 				</header>
 				<main>
-					<header id="pinned-lists">
+					<header>
+						<ListView
+							lists={lists}
+							sortMode="pinned"
+							onListItemChange={handleChange}
+							onListItemAdd={handleAdd}
+							onListItemEdit={handleTodoEdit}
+							onListItemDelete={handleTodoDelete}
+							onListItemToggle={handleToggle}
+							onListTitleChange={handleEditListTitle}
+							onListPin={handlePin}
+							onListDelete={handleDeleteList}
+							maxLength={maxLength}>
+						</ListView>
 					</header>
 					<section id="lists-container">
 						<CreateListForm onCreateList={handleCreateList} maxLength={maxLength} />
@@ -205,6 +240,7 @@ export default function App() {
 										onListItemDelete={handleTodoDelete}
 										onListItemToggle={(todoId) => handleToggle(list.id, todoId)}
 										onListTitleChange={handleEditListTitle}
+										onListPin={handlePin}
 										onListDelete={(event) => handleDeleteList(list.id, list.title)}
 										maxLength={maxLength}
 									/>)

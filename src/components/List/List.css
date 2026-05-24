@@ -14,9 +14,13 @@
 }
 
 .list-tools {
+	display: flex;
+    justify-content: space-between;
+
 	button {
 		background: none;
 		border: none;
+		cursor: pointer;
 	}
 }
 
