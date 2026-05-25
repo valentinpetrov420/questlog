@@ -1,11 +1,6 @@
-
 @media (max-width: 1300px) {
 	#create-list-form {
 		max-width: 100%;
-	}
-
-	#all-lists, #pinned-lists {
-		grid-template-columns: 1fr 1fr 1fr;
 	}
 }
 
@@ -14,20 +9,12 @@
 		margin: 0;
 	}
 
-	#all-lists, #pinned-lists {
-		grid-template-columns: 1fr 1fr;
-	}
-
 	#lists-heading {
 		margin: 1rem;
 	}
 }
 
 @media (max-width: 680px) {
-	#all-lists, #pinned-lists {
-		grid-template-columns: 1fr;
-	}
-
 	.patchnotes-modal {
 		left: 70px;
 	}

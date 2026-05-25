@@ -41,13 +41,3 @@
 #lists-container {
 	margin: 2rem;
 }
-
-#all-lists, #pinned-lists {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr;
-
-	#lists-heading {
-		font-size: 1.25rem;
-		margin: 1rem;
-	}
-}

@@ -20,6 +20,9 @@ export default function App() {
 		}));
 	});
 
+	//todo: persist sortMode so it doesnt default to createdAt on refreshes
+	const [sortMode, setSortMode] = useState("createdAt");
+
 	const [inputValue, setInputValue] = useState("");
 
 	const [patchnotes, setPatchnotes] = useState([]);
@@ -210,9 +213,8 @@ export default function App() {
 				</header>
 				<main>
 					<header>
-						<ListView
+						<ListView role="pinned"
 							lists={lists}
-							sortMode="pinned"
 							onListItemChange={handleChange}
 							onListItemAdd={handleAdd}
 							onListItemEdit={handleTodoEdit}
@@ -227,24 +229,26 @@ export default function App() {
 					<section id="lists-container">
 						<CreateListForm onCreateList={handleCreateList} maxLength={maxLength} />
 						<h2 id="lists-heading">Current Quests: </h2>
+						<select onChange={(event) => {
+							setSortMode(event.target.value);
+						}}>
+							<option value="createdAt">Newest</option>
+							<option value="updatedAt">Last updated (not implemented)</option>
+							<option value="alphabetical">Alphabetical</option>
+						</select>
 						<div id="all-lists">
-							{lists.map(list => {
-								return (
-									<List key={list.id}
-										id={list.id}
-										title={list.title}
-										listItems={list.todos}
-										onListItemChange={(event) => handleChange(event, list.id)}
-										onListItemAdd={handleAdd}
-										onListItemEdit={handleTodoEdit}
-										onListItemDelete={handleTodoDelete}
-										onListItemToggle={(todoId) => handleToggle(list.id, todoId)}
-										onListTitleChange={handleEditListTitle}
-										onListPin={handlePin}
-										onListDelete={(event) => handleDeleteList(list.id, list.title)}
-										maxLength={maxLength}
-									/>)
-							})}
+							<ListView role="sorted" sortMode={sortMode}
+								lists={lists}
+								onListItemChange={handleChange}
+								onListItemAdd={handleAdd}
+								onListItemEdit={handleTodoEdit}
+								onListItemDelete={handleTodoDelete}
+								onListItemToggle={handleToggle}
+								onListTitleChange={handleEditListTitle}
+								onListPin={handlePin}
+								onListDelete={handleDeleteList}
+								maxLength={maxLength}>
+							</ListView>
 						</div>
 					</section>
 					<button onClick={__loadMockStorage}>__loadMockStorage()</button>
