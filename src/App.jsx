@@ -87,7 +87,7 @@ export default function App() {
 		setLists(prev =>
 			prev.map(list =>
 				list.id === listId
-					? { ...list, title: newTitle }
+					? { ...list, title: newTitle, updatedAt: Date.now() }
 					: list
 			)
 		);
@@ -115,7 +115,7 @@ export default function App() {
 	}
 	function handleChange(value, listId) {
 		setLists(prev => prev.map(list => list.id === listId
-			? { ...list, inputValue: value }
+			? { ...list, inputValue: value, updatedAt: Date.now() }
 			: list
 		)
 		);
@@ -131,7 +131,7 @@ export default function App() {
 							todo.id === todoId
 								? { ...todo, text: newTodo }
 								: todo
-						)
+						), updatedAt: Date.now()
 					}
 					: list
 			)
@@ -153,7 +153,8 @@ export default function App() {
 				} else {
 					return {
 						...list,
-						todos: list.todos.filter(todo => todo.id !== todoId)
+						todos: list.todos.filter(todo => todo.id !== todoId),
+						updatedAt: Date.now()
 					};
 				}
 			})
@@ -172,7 +173,7 @@ export default function App() {
 				text,
 				completed: false
 			}
-			]
+			], updatedAt: Date.now()
 		} : list
 		)
 		);
@@ -187,7 +188,7 @@ export default function App() {
 							todo.id === todoId
 								? { ...todo, completed: !todo.completed }
 								: todo
-						)
+						), updatedAt: Date.now()
 					}
 					: list
 			)
@@ -213,27 +214,29 @@ export default function App() {
 				</header>
 				<main>
 					<header>
-						<ListView role="pinned"
-							lists={lists}
-							onListItemChange={handleChange}
-							onListItemAdd={handleAdd}
-							onListItemEdit={handleTodoEdit}
-							onListItemDelete={handleTodoDelete}
-							onListItemToggle={handleToggle}
-							onListTitleChange={handleEditListTitle}
-							onListPin={handlePin}
-							onListDelete={handleDeleteList}
-							maxLength={maxLength}>
-						</ListView>
+						<section className="lists-container">
+							<ListView role="pinned"
+								lists={lists}
+								onListItemChange={handleChange}
+								onListItemAdd={handleAdd}
+								onListItemEdit={handleTodoEdit}
+								onListItemDelete={handleTodoDelete}
+								onListItemToggle={handleToggle}
+								onListTitleChange={handleEditListTitle}
+								onListPin={handlePin}
+								onListDelete={handleDeleteList}
+								maxLength={maxLength}>
+							</ListView>
+						</section>
 					</header>
-					<section id="lists-container">
+					<section class="lists-container">
 						<CreateListForm onCreateList={handleCreateList} maxLength={maxLength} />
 						<h2 id="lists-heading">Current Quests: </h2>
 						<select onChange={(event) => {
 							setSortMode(event.target.value);
 						}}>
 							<option value="createdAt">Newest</option>
-							<option value="updatedAt">Last updated (not implemented)</option>
+							<option value="updatedAt">Last updated</option>
 							<option value="alphabetical">Alphabetical</option>
 						</select>
 						<div id="all-lists">
