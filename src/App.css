@@ -41,3 +41,7 @@
 .lists-container {
 	margin: 2rem;
 }
+
+#lists-heading, #sort-dropdown{
+	margin: 1rem;
+}

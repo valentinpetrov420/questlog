@@ -1,4 +1,3 @@
-
 .todo-wrapper {
 	margin: 1rem;
 	display: flex;
@@ -27,4 +26,11 @@
 
 .todo-item-text.completed {
 	text-decoration: line-through;
+}
+
+.todo-item-text.highlighted {
+	font-weight: bolder;
+	text-shadow: 0 0 6px currentColor;
+	border-left: 3px solid currentColor;
+	padding-left: 8px;
 }

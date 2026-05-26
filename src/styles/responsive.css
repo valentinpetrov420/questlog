@@ -8,10 +8,6 @@
 	#lists-container {
 		margin: 0;
 	}
-
-	#lists-heading {
-		margin: 1rem;
-	}
 }
 
 @media (max-width: 680px) {

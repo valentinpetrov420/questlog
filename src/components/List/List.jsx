@@ -26,7 +26,7 @@ export default function List(props) {
         return () => clearTimeout(timeout);
     }, [addTodoStatus]);
 
-
+    
     function cancelEdit() {
         setEditing(false);
         setDraftTitle(props.text);
@@ -104,6 +104,7 @@ export default function List(props) {
                         id={todo.id}
                         text={todo.text}
                         completed={todo.completed}
+                        highlightedTodoId={props.highlightedTodoId}
                         onToggle={props.onListItemToggle}
                         onTodoEdit={props.onListItemEdit}
                         onTodoDelete={props.onListItemDelete}

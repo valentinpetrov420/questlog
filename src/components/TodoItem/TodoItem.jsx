@@ -10,12 +10,13 @@ export default function TodoItem(props) {
 
     const [error, setError] = useState("");
 
+    const highlightedTodoId = props.highlightedTodoId;
+
     function cancelEdit() {
         setEditingTodo(false);
         setDraftTitleTodo(props.text);
         setError("");
     }
-
     function handleSubmitEditTodo(event) {
         event.preventDefault();
         const result = validateText(draftTitleTodo, props.maxLength);
@@ -56,7 +57,10 @@ export default function TodoItem(props) {
                 }}></input>
         </form>
             :
-            <span className={`todo-item-text ${props.completed ? "completed" : ""}`}
+            <span className={`todo-item-text ${
+                props.highlightedTodoId === props.id ? "highlighted" : ""
+            }
+                ${props.completed ? "completed" : ""}`}
                 onClick={() => props.onToggle(props.id)}>
                 {props.text}
             </span>

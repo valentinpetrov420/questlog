@@ -5,6 +5,14 @@ export default function ListView(props) {
     if (props.role === "pinned") {
         const pinnedLists = props.lists.filter(list => list.pinned);
 
+        const allPinnedTodos = pinnedLists.flatMap(list => list.todos)
+        const firstUncompleted = allPinnedTodos.find(todo => !todo.completed)
+
+        let highlightedTodoId;
+        if (firstUncompleted) {
+            highlightedTodoId = firstUncompleted.id;
+        }
+
         return <div className="list-view">
             {pinnedLists.map(list => {
                 return (
@@ -12,6 +20,7 @@ export default function ListView(props) {
                         id={list.id}
                         title={list.title}
                         listItems={list.todos}
+                        highlightedTodoId={highlightedTodoId}
                         onListItemChange={props.onListItemChange}
                         onListItemAdd={props.onListItemAdd}
                         onListItemEdit={props.onListItemEdit}

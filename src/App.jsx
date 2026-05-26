@@ -229,17 +229,18 @@ export default function App() {
 							</ListView>
 						</section>
 					</header>
-					<section class="lists-container">
+					<section className="lists-container">
 						<CreateListForm onCreateList={handleCreateList} maxLength={maxLength} />
-						<h2 id="lists-heading">Current Quests: </h2>
-						<select onChange={(event) => {
-							setSortMode(event.target.value);
-						}}>
-							<option value="createdAt">Newest</option>
-							<option value="updatedAt">Last updated</option>
-							<option value="alphabetical">Alphabetical</option>
-						</select>
+
 						<div id="all-lists">
+							<h2 id="lists-heading">Current Quests: </h2>
+							<select id="sort-dropdown" onChange={(event) => {
+								setSortMode(event.target.value);
+							}}>
+								<option value="createdAt">Newest</option>
+								<option value="updatedAt">Last updated</option>
+								<option value="alphabetical">Alphabetical</option>
+							</select>
 							<ListView role="sorted" sortMode={sortMode}
 								lists={lists}
 								onListItemChange={handleChange}
