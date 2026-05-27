@@ -26,7 +26,17 @@ export default function List(props) {
         return () => clearTimeout(timeout);
     }, [addTodoStatus]);
 
-    
+    const isArchived = props.isArchived;
+    const actions = isArchived ?
+        (<div className="list-actions">
+            <button onClick={() => props.onListArchive(props.id)}>🔃</button>
+            <button onClick={() => props.onListDelete(props.id)}>🗑️</button>
+        </div>)
+        : (<div className="list-actions">
+            <button onClick={() => props.onListArchive(props.id)}>🗑️</button>
+            <button onClick={() => props.onListPin(props.id)}>📌</button>
+        </div>);
+
     function cancelEdit() {
         setEditing(false);
         setDraftTitle(props.text);
@@ -66,16 +76,13 @@ export default function List(props) {
             setEditing(false);
         }
     }
-    function handlePin(event){
+    function handlePin(event) {
         props.onListPin(props.id);
     }
 
     return (
         <div className="list-component">
-            <div className="list-tools">
-                <button onClick={props.onListDelete}>🗑️</button>
-                <button onClick={handlePin}>📌</button>
-            </div>
+            {actions}
             {isEditing ? <form className="edit-list-title" onSubmit={handleSubmitEdit}>
                 <h2 className="list-title-edit">Title:</h2>
                 <div className="input-form-wrapper">

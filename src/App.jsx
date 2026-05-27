@@ -17,11 +17,14 @@ export default function App() {
 			createdAt: list.createdAt ?? Date.now(),
 			updatedAt: list.updatedAt ?? Date.now(),
 			pinned: list.pinned ?? false,
+			archived: false,
 		}));
 	});
 
 	//todo: persist sortMode so it doesnt default to createdAt on refreshes
-	const [sortMode, setSortMode] = useState("createdAt");
+	const [sortMode, setSortMode] = useState(() => {
+		return localStorage.getItem("sortmode") || "createdAt";
+	});
 
 	const [inputValue, setInputValue] = useState("");
 
@@ -51,6 +54,9 @@ export default function App() {
 		localStorage.setItem("lists", JSON.stringify(lists));
 	}, [lists]);
 
+	useEffect(() => {
+		localStorage.setItem("sortmode", sortMode);
+	}, [sortMode]);
 
 	function togglePatchnotes() {
 		if (patchnotesOpen) {
@@ -78,6 +84,7 @@ export default function App() {
 				createdAt: Date.now(),
 				updatedAt: Date.now(),
 				pinned: false,
+				archived: false,
 			}
 		]);
 	}
@@ -97,11 +104,37 @@ export default function App() {
 
 		setLists(prev =>
 			prev.map(list => list.id === listId
-				? list.pinned ? { ...list, pinned: false }
-					: { ...list, pinned: true }
+				? list.pinned ? { ...list, pinned: false, updatedAt: Date.now() }
+					: { ...list, pinned: true, updatedAt: Date.now() }
 				: list
 			)
 		)
+	}
+
+	//todo: separate archive and restore into seperate functions
+	function handleArchiveToggle(listId) {
+		const currentList = lists.find(l => l.id === listId);
+		if (!currentList) {
+			return;
+		}
+
+		const isArchiving = !currentList.archived;
+
+		const confirmed = window.confirm(
+			isArchiving ? "Archive this list?" : "Restore this list?"
+		);
+
+		if (!confirmed) {
+			return;
+		}
+
+		setLists(prev =>
+			prev.map(list =>
+				list.id === listId
+					? { ...list, archived: isArchiving, updatedAt: Date.now() }
+					: list
+			)
+		);
 	}
 	function handleDeleteList(listId) {
 		const confirmed = window.confirm("Delete this list?");
@@ -224,6 +257,7 @@ export default function App() {
 								onListItemToggle={handleToggle}
 								onListTitleChange={handleEditListTitle}
 								onListPin={handlePin}
+								onListArchive={handleArchiveToggle}
 								onListDelete={handleDeleteList}
 								maxLength={maxLength}>
 							</ListView>
@@ -231,15 +265,17 @@ export default function App() {
 					</header>
 					<section className="lists-container">
 						<CreateListForm onCreateList={handleCreateList} maxLength={maxLength} />
-
 						<div id="all-lists">
 							<h2 id="lists-heading">Current Quests: </h2>
-							<select id="sort-dropdown" onChange={(event) => {
-								setSortMode(event.target.value);
-							}}>
+							<select id="sort-dropdown"
+								value={sortMode}
+								onChange={(event) => {
+									setSortMode(event.target.value);
+								}}>
 								<option value="createdAt">Newest</option>
 								<option value="updatedAt">Last updated</option>
 								<option value="alphabetical">Alphabetical</option>
+								<option value="archived">Archived only</option>
 							</select>
 							<ListView role="sorted" sortMode={sortMode}
 								lists={lists}
@@ -250,6 +286,7 @@ export default function App() {
 								onListItemToggle={handleToggle}
 								onListTitleChange={handleEditListTitle}
 								onListPin={handlePin}
+								onListArchive={handleArchiveToggle}
 								onListDelete={handleDeleteList}
 								maxLength={maxLength}>
 							</ListView>

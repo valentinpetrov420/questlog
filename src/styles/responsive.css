@@ -5,7 +5,7 @@
 }
 
 @media (max-width: 1000px) {
-	#lists-container {
+	.lists-container {
 		margin: 0;
 	}
 }
