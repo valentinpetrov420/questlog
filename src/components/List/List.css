@@ -15,7 +15,7 @@
 
 .list-actions {
 	display: flex;
-    justify-content: space-between;
+	justify-content: space-between;
 	margin: 1rem;
 
 	button {
@@ -80,8 +80,14 @@
 	align-self: end;
 }
 
-@media (max-width: 1500px){
-    .input-form-wrapper{
-        margin-left: 0;
-    }
+@media (max-width: 1500px) {
+	.input-form-wrapper {
+		margin-left: 0;
+	}
+}
+
+@media (max-width: 340px) {
+	.list-component {
+		margin: 0.5rem;
+	}
 }

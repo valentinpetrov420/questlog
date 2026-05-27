@@ -24,3 +24,9 @@
 		height: 100vh;
 	}
 }
+
+@media (max-width: 340px){
+	button {
+		font-size: 0.8rem;
+	}
+}
