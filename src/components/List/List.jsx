@@ -29,7 +29,7 @@ export default function List(props) {
     const isArchived = props.isArchived;
     const actions = isArchived ?
         (<div className="list-actions">
-            <button onClick={() => props.onListArchive(props.id)}>🔃</button>
+            <button onClick={() => props.onListRestore(props.id)}>🔃</button>
             <button onClick={() => props.onListDelete(props.id)}>🗑️</button>
         </div>)
         : (<div className="list-actions">

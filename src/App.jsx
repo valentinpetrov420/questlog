@@ -110,19 +110,8 @@ export default function App() {
 			)
 		)
 	}
-
-	//todo: separate archive and restore into seperate functions
-	function handleArchiveToggle(listId) {
-		const currentList = lists.find(l => l.id === listId);
-		if (!currentList) {
-			return;
-		}
-
-		const isArchiving = !currentList.archived;
-
-		const confirmed = window.confirm(
-			isArchiving ? "Archive this list?" : "Restore this list?"
-		);
+	function handleArchive(listId) {
+		const confirmed = window.confirm("Archive this list?");
 
 		if (!confirmed) {
 			return;
@@ -131,7 +120,22 @@ export default function App() {
 		setLists(prev =>
 			prev.map(list =>
 				list.id === listId
-					? { ...list, archived: isArchiving, updatedAt: Date.now() }
+					? { ...list, archived: true, updatedAt: Date.now() }
+					: list
+			)
+		);
+	}
+	function handleRestore(listId) {
+		const confirmed = window.confirm("Restore this list?");
+
+		if (!confirmed) {
+			return;
+		}
+
+		setLists(prev =>
+			prev.map(list =>
+				list.id === listId
+					? { ...list, archived: false, updatedAt: Date.now() }
 					: list
 			)
 		);
@@ -257,7 +261,8 @@ export default function App() {
 								onListItemToggle={handleToggle}
 								onListTitleChange={handleEditListTitle}
 								onListPin={handlePin}
-								onListArchive={handleArchiveToggle}
+								onListArchive={handleArchive}
+								onListRestore={handleRestore}
 								onListDelete={handleDeleteList}
 								maxLength={maxLength}>
 							</ListView>
@@ -286,7 +291,8 @@ export default function App() {
 								onListItemToggle={handleToggle}
 								onListTitleChange={handleEditListTitle}
 								onListPin={handlePin}
-								onListArchive={handleArchiveToggle}
+								onListArchive={handleArchive}
+								onListRestore={handleRestore}
 								onListDelete={handleDeleteList}
 								maxLength={maxLength}>
 							</ListView>

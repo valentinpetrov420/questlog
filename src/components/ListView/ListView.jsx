@@ -30,6 +30,7 @@ export default function ListView(props) {
                         onListTitleChange={props.onListTitleChange}
                         onListPin={(event) => props.onListPin(list.id)}
                         onListArchive={() => props.onListArchive(list.id)}
+                        onListRestore={() => props.onListRestore(list.id)}
                         onListDelete={(event) => props.onListDelete(list.id, list.title)}
                         maxLength={props.maxLength}
                     />)
@@ -68,6 +69,7 @@ export default function ListView(props) {
                         onListTitleChange={props.onListTitleChange}
                         onListPin={(event) => props.onListPin(list.id)}
                         onListArchive={() => props.onListArchive(list.id)}
+                        onListRestore={() => props.onListRestore(list.id)}
                         onListDelete={(event) => props.onListDelete(list.id, list.title)}
                         maxLength={props.maxLength}
                     />)
