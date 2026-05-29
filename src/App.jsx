@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import { loadLists, saveLists } from './api/services/storage.js';
 import ListView from './components/ListView/ListView.jsx';
 import TodoItem from './components/TodoItem/TodoItem.jsx';
 import List from './components/List/List.jsx';
@@ -9,17 +10,7 @@ import PatchNotesModal from './components/PatchNotesModal/PatchNotesModal.jsx';
 
 
 export default function App() {
-	const [lists, setLists] = useState(() => {
-		const loadLists = JSON.parse(localStorage.getItem("lists") || "[]");
-
-		return loadLists.map(list => ({
-			...list,
-			createdAt: list.createdAt ?? Date.now(),
-			updatedAt: list.updatedAt ?? Date.now(),
-			pinned: list.pinned ?? false,
-			archived: false,
-		}));
-	});
+	const [lists, setLists] = useState(loadLists);
 
 	//todo: persist sortMode so it doesnt default to createdAt on refreshes
 	const [sortMode, setSortMode] = useState(() => {
@@ -51,7 +42,7 @@ export default function App() {
 		console.log("state changed");
 
 		console.log("updated lists:", lists);
-		localStorage.setItem("lists", JSON.stringify(lists));
+		saveLists(lists);
 	}, [lists]);
 
 	useEffect(() => {
