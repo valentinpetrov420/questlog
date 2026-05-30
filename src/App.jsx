@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react'
+
 import './App.css'
 import { loadLists, saveLists } from './api/services/storage.js';
+
+import { onAuthStateChanged } from "firebase/auth";
+import { loginWithGoogle, logout } from "./api/services/authService";
+import { auth, db } from "./api/firebase";
+
 import ListView from './components/ListView/ListView.jsx';
 import TodoItem from './components/TodoItem/TodoItem.jsx';
 import List from './components/List/List.jsx';
@@ -10,6 +16,7 @@ import PatchNotesModal from './components/PatchNotesModal/PatchNotesModal.jsx';
 
 
 export default function App() {
+	const [user, setUser] = useState(null);
 	const [lists, setLists] = useState(loadLists);
 
 	//todo: persist sortMode so it doesnt default to createdAt on refreshes
@@ -27,6 +34,17 @@ export default function App() {
 	const [error, setError] = useState("");
 	const maxLength = 50;
 	const siteName = "QuestLog";
+
+	console.log(auth);
+	console.log(db);
+
+	useEffect(() => {
+		const unsub = onAuthStateChanged(auth, (u) => {
+			setUser(u);
+		});
+
+		return unsub;
+	}, []);
 
 	useEffect(() => {
 		fetch("/changelog.json")
@@ -238,10 +256,15 @@ export default function App() {
 						<h1>{siteName}</h1>
 						<button id="patchnotes-toggle" onClick={togglePatchnotes}>Patch Notes</button>
 						<button id="dark-mode-toggle" onClick={toggleDarkMode}>🌘 Dark Mode</button>
+						<button onClick={loginWithGoogle}>Sign in</button>
 					</nav>
 				</header>
 				<main>
 					<header>
+						<h2>
+							{user ? `Logged in as ${user.displayName}` : "Not logged in"}
+						</h2>
+						{user && (<button onClick={logout}>Logout</button>)}
 						<section className="lists-container">
 							<ListView role="pinned"
 								lists={lists}
