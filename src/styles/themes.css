@@ -8,6 +8,14 @@
 
 	#top-header {
 		background-color: #2B2F3E;
+
+		.nav-menu-toggle {
+			color: #eee;
+		}
+
+		#login-button{
+			color: #eee;
+		}
 	}
 
 	.patchnotes-modal {
@@ -25,6 +33,14 @@
 
 	#top-header {
 		background-color: #f0dcfd;
+
+		.nav-menu-toggle {
+			color: #111;
+		}
+
+		#login-button{
+			color: #111;
+		}
 	}
 
 	.patchnotes-modal {

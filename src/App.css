@@ -1,11 +1,25 @@
 #top-header {
-	height: 3rem;
 	z-index: 1000;
 	position: sticky;
 	top: 0;
 
+	.nav-links {
+		display: flex;
+		gap: 1rem;
+	}
+
+	.nav-menu-toggle {
+		display: none;
+		background: none;
+		border: none;
+	}
+
+	.wrapped-nav-button {
+		background: none;
+		border: none;
+	}
+
 	nav {
-		height: 100%;
 		display: flex;
 		padding-inline: 1rem;
 		flex-direction: row;
@@ -14,6 +28,19 @@
 
 		h1 {
 			align-self: center;
+		}
+
+		.nav-links {
+			display: flex;
+			justify-content: space-between;
+			height: 3rem;
+			width: 70%;
+		}
+
+		.closed {
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
 		}
 	}
 }
@@ -42,6 +69,7 @@
 	margin: 2rem;
 }
 
-#lists-heading, #sort-dropdown{
+#lists-heading,
+#sort-dropdown {
 	margin: 1rem;
 }

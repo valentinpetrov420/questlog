@@ -16,6 +16,57 @@
 	}
 }
 
+@media (min-width: 600px) {
+	.nav-links.opened {
+		width: 100% !important;
+	}
+}
+
+@media (max-width: 600px) {
+	nav {
+		flex-direction: column !important;
+
+		h1 {
+			margin: 1rem;
+		}
+
+		.nav-links.opened {
+			width: auto;
+		}
+	}
+
+	.nav-header {
+		width: 70%;
+	}
+
+	.nav-container {
+		min-height: 3rem;
+		width: 100%;
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.nav-links {
+		height: auto !important;
+		width: 100% !important;
+	}
+
+	.nav-menu-toggle {
+		display: block !important;
+		max-height: 3rem;
+	}
+
+	.nav-links.closed {
+		display: none !important;
+	}
+
+	.nav-links.opened {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+	}
+}
+
 @media (max-width: 500px) {
 	.patchnotes-modal {
 		left: 0px;
@@ -25,7 +76,7 @@
 	}
 }
 
-@media (max-width: 340px){
+@media (max-width: 340px) {
 	button {
 		font-size: 0.8rem;
 	}

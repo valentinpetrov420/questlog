@@ -19,7 +19,6 @@ export default function App() {
 	const [user, setUser] = useState(null);
 	const [lists, setLists] = useState(loadLists);
 
-	//todo: persist sortMode so it doesnt default to createdAt on refreshes
 	const [sortMode, setSortMode] = useState(() => {
 		return localStorage.getItem("sortmode") || "createdAt";
 	});
@@ -30,13 +29,11 @@ export default function App() {
 	const [patchnotesOpen, setPatchnotesOpen] = useState(false);
 
 	const [theme, setTheme] = useState("darkMode");
+	const [menuOpen, setMenuOpen] = useState(false);
 
 	const [error, setError] = useState("");
 	const maxLength = 50;
 	const siteName = "QuestLog";
-
-	console.log(auth);
-	console.log(db);
 
 	useEffect(() => {
 		const unsub = onAuthStateChanged(auth, (u) => {
@@ -254,9 +251,18 @@ export default function App() {
 				<header id="top-header">
 					<nav>
 						<h1>{siteName}</h1>
-						<button id="patchnotes-toggle" onClick={togglePatchnotes}>Patch Notes</button>
-						<button id="dark-mode-toggle" onClick={toggleDarkMode}>🌘 Dark Mode</button>
-						<button onClick={loginWithGoogle}>Sign in</button>
+						<div className="nav-container">
+							<div className={`nav-links ${menuOpen ? "opened" : "closed"}`}>
+								<button id="patchnotes-toggle" className="wrapped-nav-button" onClick={togglePatchnotes}>Patch Notes</button>
+								<button id="dark-mode-toggle" className="wrapped-nav-button" onClick={toggleDarkMode}>🌘 Dark Mode</button>
+								<button id="login-button" className="wrapped-nav-button" onClick={loginWithGoogle}>Sign in</button>
+							</div>
+							<button
+								className="nav-menu-toggle"
+								onClick={() => setMenuOpen(prev => !prev)}>
+								{menuOpen ? "X" : "☰"}
+							</button>
+						</div>
 					</nav>
 				</header>
 				<main>
