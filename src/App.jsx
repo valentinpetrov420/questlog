@@ -255,7 +255,7 @@ export default function App() {
 							<div className={`nav-links ${menuOpen ? "opened" : "closed"}`}>
 								<button id="patchnotes-toggle" className="wrapped-nav-button" onClick={togglePatchnotes}>Patch Notes</button>
 								<button id="dark-mode-toggle" className="wrapped-nav-button" onClick={toggleDarkMode}>🌘 Dark Mode</button>
-								<button id="login-button" className="wrapped-nav-button" onClick={loginWithGoogle}>Sign in</button>
+								{!user ? <button id="login-button" className="wrapped-nav-button" onClick={loginWithGoogle}>Sign in</button> : ""}
 							</div>
 							<button
 								className="nav-menu-toggle"

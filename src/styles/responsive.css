@@ -8,6 +8,12 @@
 	.lists-container {
 		margin: 0;
 	}
+
+	.todo-wrapper {
+		.todo-actions{
+			visibility: visible;
+		}
+	}
 }
 
 @media (max-width: 680px) {
@@ -70,7 +76,7 @@
 @media (max-width: 500px) {
 	.patchnotes-modal {
 		left: 0px;
-		top: 49px;
+		top: 131px;
 		width: 100%;
 		height: 100vh;
 	}
