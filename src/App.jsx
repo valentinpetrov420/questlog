@@ -6,6 +6,7 @@ import { loadLists, saveLists } from './api/services/storage.js';
 import { onAuthStateChanged } from "firebase/auth";
 import { loginWithGoogle, logout } from "./api/services/authService";
 import { auth, db } from "./api/firebase";
+import { test } from "./api/services/firestoreService";
 
 import ListView from './components/ListView/ListView.jsx';
 import TodoItem from './components/TodoItem/TodoItem.jsx';
@@ -280,6 +281,14 @@ export default function App() {
 				</header>
 				<main>
 					<header>
+						{user && (	
+							<div className='test'>
+								<button onClick={() => test(user)}>
+									Test
+								</button>
+								<p>(in the database i can see who clicked this button and when)</p>
+							</div>
+						)}
 						<section className="lists-container">
 							<ListView role="pinned"
 								lists={lists}
