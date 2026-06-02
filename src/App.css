@@ -94,6 +94,7 @@
 
 .lists-container {
 	margin: 2rem;
+	margin-bottom: 0;
 }
 
 #lists-heading,
