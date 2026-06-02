@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import './App.css'
 import { loadLists, saveLists } from './api/services/storage.js';
+import { __loadMockStorage, __clearStorage } from "./dev/devTools.js";
 
 import { onAuthStateChanged } from "firebase/auth";
 import { loginWithGoogle, logout } from "./api/services/authService";
@@ -14,6 +15,8 @@ import List from './components/List/List.jsx';
 import CreateListForm from './components/CreateListForm/CreateListForm.jsx';
 import mockData from './mockdata.js';
 import PatchNotesModal from './components/PatchNotesModal/PatchNotesModal.jsx';
+
+import DevPanel from "./dev/DevPanel.jsx";
 
 
 export default function App() {
@@ -238,13 +241,6 @@ export default function App() {
 			)
 		);
 	}
-	function __clearStorage() {
-		setLists([]);
-		localStorage.setItem("lists", []);
-	}
-	function __loadMockStorage() {
-		setLists(mockData);
-	}
 
 	return (
 		<div id="app" data-theme={theme}>
@@ -281,7 +277,7 @@ export default function App() {
 				</header>
 				<main>
 					<header>
-						{user && (	
+						{user && (
 							<div className='test'>
 								<button onClick={() => test(user)}>
 									Test
@@ -336,8 +332,9 @@ export default function App() {
 							</ListView>
 						</div>
 					</section>
-					<button onClick={__loadMockStorage}>__loadMockStorage()</button>
-					<button onClick={__clearStorage}>__clearStorage()</button>
+					{import.meta.env.DEV && (
+						<DevPanel setLists={setLists} />
+					)}
 				</main>
 			</div>
 			<PatchNotesModal
