@@ -34,3 +34,11 @@
 	border-left: 3px solid currentColor;
 	padding-left: 8px;
 }
+
+@media (max-width: 500px){
+	.todo-wrapper {
+		.todo-item-text{
+			margin: 0;
+		}
+	}
+}

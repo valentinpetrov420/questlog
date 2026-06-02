@@ -17,6 +17,7 @@
 	.wrapped-nav-button {
 		background: none;
 		border: none;
+		cursor: pointer;
 	}
 
 	nav {
@@ -41,6 +42,32 @@
 			width: 100%;
 			display: flex;
 			justify-content: space-between;
+		}
+	}
+
+	#user-info {
+		display: flex;
+		gap: 1rem;
+
+		#user-nav-wrapper {
+			display: flex;
+			justify-content: center;
+
+			.user-photo-container {
+				display: block;
+				height: 2rem;
+				width: 2rem;
+				align-self: center;
+
+				img {
+					height: inherit;
+					width: inherit;
+				}
+			}
+
+			.user-name {
+				align-content: center;
+			}
 		}
 	}
 }

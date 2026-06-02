@@ -255,7 +255,20 @@ export default function App() {
 							<div className={`nav-links ${menuOpen ? "opened" : "closed"}`}>
 								<button id="patchnotes-toggle" className="wrapped-nav-button" onClick={togglePatchnotes}>Patch Notes</button>
 								<button id="dark-mode-toggle" className="wrapped-nav-button" onClick={toggleDarkMode}>🌘 Dark Mode</button>
-								{!user ? <button id="login-button" className="wrapped-nav-button" onClick={loginWithGoogle}>Sign in</button> : ""}
+								{user ?
+									<div id="user-info">
+										<div id="user-nav-wrapper">
+											<div className='user-photo-container'>
+												<img src={user.photoURL}></img>
+											</div>
+											<p className='user-name'>
+												{user.displayName}
+											</p>
+										</div>
+										<button className="login-button wrapped-nav-button" onClick={logout}>Logout</button>
+									</div>
+									: <button className="login-button wrapped-nav-button" onClick={loginWithGoogle}>Sign in</button>
+								}
 							</div>
 							<button
 								className="nav-menu-toggle"
@@ -267,10 +280,6 @@ export default function App() {
 				</header>
 				<main>
 					<header>
-						<h2>
-							{user ? `Logged in as ${user.displayName}` : "Not logged in"}
-						</h2>
-						{user && (<button onClick={logout}>Logout</button>)}
 						<section className="lists-container">
 							<ListView role="pinned"
 								lists={lists}

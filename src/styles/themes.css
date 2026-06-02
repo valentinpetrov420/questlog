@@ -13,7 +13,7 @@
 			color: #eee;
 		}
 
-		#login-button{
+		.login-button{
 			color: #eee;
 		}
 	}
@@ -38,7 +38,7 @@
 			color: #111;
 		}
 
-		#login-button{
+		.login-button{
 			color: #111;
 		}
 	}
