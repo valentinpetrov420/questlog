@@ -20,3 +20,17 @@ export async function getTestDocs() {
         ...doc.data()
     }));
 }
+
+export async function testCreateList(user, title) {
+    const docRef = await addDoc(collection(db, "lists"), {
+        ownerId: user.uid,
+        title,
+        todos: [],
+        pinned: false,
+        archived: false,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+    });
+
+    console.log("created: ", docRef.id);
+}

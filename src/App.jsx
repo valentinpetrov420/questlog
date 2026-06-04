@@ -7,7 +7,9 @@ import { __loadMockStorage, __clearStorage } from "./dev/devTools.js";
 import { onAuthStateChanged } from "firebase/auth";
 import { loginWithGoogle, logout } from "./api/services/authService";
 import { auth, db } from "./api/firebase";
+
 import { test } from "./api/services/firestoreService";
+import { testCreateList } from './api/services/firestoreService';
 
 import ListView from './components/ListView/ListView.jsx';
 import TodoItem from './components/TodoItem/TodoItem.jsx';
@@ -97,6 +99,10 @@ export default function App() {
 				archived: false,
 			}
 		]);
+
+		if (user) {
+			testCreateList(user, title);
+		}
 	}
 	function handleEditListTitle(listId, newTitle) {
 		console.log("received: " + newTitle);
