@@ -339,7 +339,8 @@ export default function App() {
 						</div>
 					</section>
 					{import.meta.env.DEV && (
-						<DevPanel setLists={setLists} />
+						<DevPanel setLists={setLists}
+						userId={user.uid} />
 					)}
 				</main>
 			</div>

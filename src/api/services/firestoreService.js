@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 
 export async function test(user) {
@@ -33,4 +33,23 @@ export async function testCreateList(user, title) {
     });
 
     console.log("created: ", docRef.id);
+}
+
+export async function getTestLists(userId) {
+    try {
+        const q = query(
+            collection(db, "lists"),
+            where("ownerId", "==", userId)
+        );
+
+        const snapshot = await getDocs(q);
+
+        return snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+    } catch (error) {
+        console.error("Failed to fetch lists: ", error);
+        throw error;
+    }
 }

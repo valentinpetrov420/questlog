@@ -1,10 +1,10 @@
 import { __loadMockStorage, __clearStorage } from "./devTools";
-import { getTestDocs } from "../api/services/firestoreService";
+import { getTestDocs, getTestLists } from "../api/services/firestoreService";
 
-export default function DevPanel({ setLists }) {
+export default function DevPanel(props) {
     return <div>
-        <button onClick={() => __loadMockStorage(setLists)}>__loadMockStorage()</button>
-        <button onClick={() => __clearStorage(setLists)}>__clearStorage()</button>
+        <button onClick={() => __loadMockStorage(props.setLists)}>__loadMockStorage()</button>
+        <button onClick={() => __clearStorage(props.setLists)}>__clearStorage()</button>
         <button
             onClick={async () => {
                 const docs = await getTestDocs();
@@ -12,6 +12,14 @@ export default function DevPanel({ setLists }) {
             }}
         >
             getTestDocs()
+        </button>
+        <button
+            onClick={async () => {
+                const docs = await getTestLists(props.userId);
+                console.log(docs);
+            }}
+        >
+            getTestLists()
         </button>
     </div>;
 }
