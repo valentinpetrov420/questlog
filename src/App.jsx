@@ -340,7 +340,7 @@ export default function App() {
 					</section>
 					{import.meta.env.DEV && (
 						<DevPanel setLists={setLists}
-						userId={user.uid} />
+						userId={user?.uid} />
 					)}
 				</main>
 			</div>
