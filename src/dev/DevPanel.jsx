@@ -1,5 +1,5 @@
 import { __loadMockStorage, __clearStorage } from "./devTools";
-import { getTestDocs, getTestLists } from "../api/services/firestoreService";
+import { getTestDocs, getLists } from "../api/services/firestoreService";
 
 export default function DevPanel(props) {
     return <div>
@@ -15,11 +15,10 @@ export default function DevPanel(props) {
         </button>
         <button
             onClick={async () => {
-                const docs = await getTestLists(props.userId);
-                console.log(docs);
+                console.log(await getLists(props.userId));
             }}
         >
-            getTestLists()
+            getLists()
         </button>
     </div>;
 }

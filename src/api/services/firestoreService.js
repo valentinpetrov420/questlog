@@ -35,7 +35,7 @@ export async function testCreateList(user, title) {
     console.log("created: ", docRef.id);
 }
 
-export async function getTestLists(userId) {
+export async function getLists(userId) {
     try {
         const q = query(
             collection(db, "lists"),
@@ -44,10 +44,12 @@ export async function getTestLists(userId) {
 
         const snapshot = await getDocs(q);
 
-        return snapshot.docs.map(doc => ({
+        const lists = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
         }));
+
+        return lists;
     } catch (error) {
         console.error("Failed to fetch lists: ", error);
         throw error;
