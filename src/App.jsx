@@ -8,8 +8,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { loginWithGoogle, logout } from "./api/services/authService";
 import { auth, db } from "./api/firebase";
 
-import { test } from "./api/services/firestoreService";
-import { testCreateList } from './api/services/firestoreService';
+import { createList } from './api/services/firestoreService';
 
 import ListView from './components/ListView/ListView.jsx';
 import TodoItem from './components/TodoItem/TodoItem.jsx';
@@ -101,7 +100,7 @@ export default function App() {
 		]);
 
 		if (user) {
-			testCreateList(user, title);
+			createList(user, title);
 		}
 	}
 	function handleEditListTitle(listId, newTitle) {
@@ -283,14 +282,6 @@ export default function App() {
 				</header>
 				<main>
 					<header>
-						{user && (
-							<div className='test'>
-								<button onClick={() => test(user)}>
-									Test
-								</button>
-								<p>(in the database i can see who clicked this button and when)</p>
-							</div>
-						)}
 						<section className="lists-container">
 							<ListView role="pinned"
 								lists={lists}
