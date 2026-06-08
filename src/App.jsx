@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 
 import './App.css'
-import { loadLists, saveLists } from './api/services/storage.js';
+
+//import { loadLists, saveLists } from './api/services/storage.js';
+import { getLists } from './api/services/firestoreService.js';
 import { __loadMockStorage, __clearStorage } from "./dev/devTools.js";
 
 import { onAuthStateChanged } from "firebase/auth";
@@ -22,7 +24,7 @@ import DevPanel from "./dev/DevPanel.jsx";
 
 export default function App() {
 	const [user, setUser] = useState(null);
-	const [lists, setLists] = useState(loadLists);
+	const [lists, setLists] = useState([]);
 
 	const [sortMode, setSortMode] = useState(() => {
 		return localStorage.getItem("sortmode") || "createdAt";
@@ -59,11 +61,22 @@ export default function App() {
 	}, []);
 
 	useEffect(() => {
-		console.log("state changed");
+		//console.log("state changed");
 
-		console.log("updated lists:", lists);
-		saveLists(lists);
+		//console.log("updated lists:", lists);
+		//saveLists(lists);
 	}, [lists]);
+
+	useEffect(() => {
+		if (!user) {
+			return;
+		}
+
+		getLists(user.uid).then((lists) => {
+			console.log(lists);
+			setLists(lists);
+		});
+	}, [user]);
 
 	useEffect(() => {
 		localStorage.setItem("sortmode", sortMode);
@@ -331,7 +344,7 @@ export default function App() {
 					</section>
 					{import.meta.env.DEV && (
 						<DevPanel setLists={setLists}
-						userId={user?.uid} />
+							userId={user?.uid} />
 					)}
 				</main>
 			</div>
