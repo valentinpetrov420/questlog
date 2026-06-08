@@ -60,15 +60,16 @@ export default function App() {
 			});
 	}, []);
 
-	useEffect(() => {
+	//useEffect(() => {
 		//console.log("state changed");
 
 		//console.log("updated lists:", lists);
 		//saveLists(lists);
-	}, [lists]);
+	//}, [lists]);
 
 	useEffect(() => {
 		if (!user) {
+			setLists([])
 			return;
 		}
 
@@ -97,6 +98,8 @@ export default function App() {
 		}
 	}
 	function handleCreateList(title) {
+		//todo: gate CreateListForm from unauthorized users
+
 		console.log("created list: ", title);
 
 		setLists(prev => [
