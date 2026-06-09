@@ -1,4 +1,16 @@
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import {
+    doc,
+    collection,
+
+    addDoc,
+    getDocs,
+    updateDoc,
+
+    query,
+    where
+}
+    from "firebase/firestore";
+
 import { db } from "../firebase";
 
 export async function createList(user, title) {
@@ -34,4 +46,13 @@ export async function getLists(userId) {
         console.error("Failed to fetch lists: ", error);
         throw error;
     }
+}
+
+export async function updateListTitle(listId, newTitle) {
+    const listDocRef = doc(db, "lists", listId);
+
+    await updateDoc(listDocRef, {
+        title: newTitle,
+        updatedAt: Date.now(),
+    });
 }

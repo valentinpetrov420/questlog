@@ -3,7 +3,14 @@ import { useEffect, useState } from 'react'
 import './App.css'
 
 //import { loadLists, saveLists } from './api/services/storage.js';
-import { getLists } from './api/services/firestoreService.js';
+
+//todo: refactor firestoreService into an exported object of functions
+import {
+	getLists,
+	updateListTitle
+}
+	from './api/services/firestoreService.js';
+
 import { __loadMockStorage, __clearStorage } from "./dev/devTools.js";
 
 import { onAuthStateChanged } from "firebase/auth";
@@ -61,10 +68,10 @@ export default function App() {
 	}, []);
 
 	//useEffect(() => {
-		//console.log("state changed");
+	//console.log("state changed");
 
-		//console.log("updated lists:", lists);
-		//saveLists(lists);
+	//console.log("updated lists:", lists);
+	//saveLists(lists);
 	//}, [lists]);
 
 	useEffect(() => {
@@ -122,6 +129,9 @@ export default function App() {
 	function handleEditListTitle(listId, newTitle) {
 		console.log("received: " + newTitle);
 
+		//todo: assumes the network requests are always successful. 
+		// UI state is updated before firestore confirms the update.
+		// errors and request fails are unhandled.
 		setLists(prev =>
 			prev.map(list =>
 				list.id === listId
@@ -129,6 +139,8 @@ export default function App() {
 					: list
 			)
 		);
+
+		updateListTitle(listId, newTitle);
 	}
 	function handlePin(listId) {
 		console.log("pinned: " + listId);
