@@ -7,7 +7,8 @@ import './App.css'
 //todo: refactor firestoreService into an exported object of functions
 import {
 	getLists,
-	updateListTitle
+	updateListTitle,
+	updateListPin,
 }
 	from './api/services/firestoreService.js';
 
@@ -145,13 +146,23 @@ export default function App() {
 	function handlePin(listId) {
 		console.log("pinned: " + listId);
 
+		const targetList = lists.find(list => list.id === listId);
+
+		if (!targetList) {
+			return;
+		};
+
+		const newPinned = !targetList.pinned;
+
 		setLists(prev =>
-			prev.map(list => list.id === listId
-				? list.pinned ? { ...list, pinned: false, updatedAt: Date.now() }
-					: { ...list, pinned: true, updatedAt: Date.now() }
-				: list
+			prev.map(list =>
+				list.id === listId
+					? { ...list, pinned: newPinned, updatedAt: Date.now() }
+					: list
 			)
-		)
+		);
+
+		updateListPin(listId, newPinned);
 	}
 	function handleArchive(listId) {
 		const confirmed = window.confirm("Archive this list?");
