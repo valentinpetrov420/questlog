@@ -10,6 +10,7 @@ import {
 	updateListTitle,
 	updateListPin,
 	updateListArchived,
+	deleteList,
 }
 	from './api/services/firestoreService.js';
 
@@ -208,6 +209,8 @@ export default function App() {
 
 		const updatedState = lists.filter(list => list.id !== listId);
 		setLists(updatedState);
+
+		deleteList(listId);
 	}
 	function handleChange(value, listId) {
 		setLists(prev => prev.map(list => list.id === listId

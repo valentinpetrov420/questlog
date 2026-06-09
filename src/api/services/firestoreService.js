@@ -5,6 +5,7 @@ import {
     addDoc,
     getDocs,
     updateDoc,
+    deleteDoc,
 
     query,
     where
@@ -59,7 +60,7 @@ export async function updateListTitle(listId, newTitle) {
 
 export async function updateListPin(listId, newPinned) {
     const listDocRef = doc(db, "lists", listId);
-    
+
     await updateDoc(listDocRef, {
         pinned: newPinned,
         updatedAt: Date.now()
@@ -68,9 +69,13 @@ export async function updateListPin(listId, newPinned) {
 
 export async function updateListArchived(listId, newArchived) {
     const listDocRef = doc(db, "lists", listId);
-    
+
     await updateDoc(listDocRef, {
         archived: newArchived,
         updatedAt: Date.now()
     })
+}
+
+export async function deleteList(listId) {
+    await deleteDoc(doc(db, "lists", listId));
 }
