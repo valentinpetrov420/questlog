@@ -9,6 +9,7 @@ import {
 	getLists,
 	updateListTitle,
 	updateListPin,
+	updateListArchived,
 }
 	from './api/services/firestoreService.js';
 
@@ -178,6 +179,8 @@ export default function App() {
 					: list
 			)
 		);
+
+		updateListArchived(listId, true);
 	}
 	function handleRestore(listId) {
 		const confirmed = window.confirm("Restore this list?");
@@ -193,6 +196,8 @@ export default function App() {
 					: list
 			)
 		);
+
+		updateListArchived(listId, false);
 	}
 	function handleDeleteList(listId) {
 		const confirmed = window.confirm("Delete this list?");

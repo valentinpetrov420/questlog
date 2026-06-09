@@ -65,3 +65,12 @@ export async function updateListPin(listId, newPinned) {
         updatedAt: Date.now()
     })
 }
+
+export async function updateListArchived(listId, newArchived) {
+    const listDocRef = doc(db, "lists", listId);
+    
+    await updateDoc(listDocRef, {
+        archived: newArchived,
+        updatedAt: Date.now()
+    })
+}
