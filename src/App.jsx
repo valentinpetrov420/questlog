@@ -11,6 +11,8 @@ import {
 	updateListPin,
 	updateListArchived,
 	deleteList,
+
+	createItem,
 }
 	from './api/services/firestoreService.js';
 
@@ -107,6 +109,7 @@ export default function App() {
 			setTheme("darkMode")
 		}
 	}
+
 	function handleCreateList(title) {
 		//todo: gate CreateListForm from unauthorized users
 
@@ -212,11 +215,41 @@ export default function App() {
 
 		deleteList(listId);
 	}
-	function handleChange(value, listId) {
-		setLists(prev => prev.map(list => list.id === listId
-			? { ...list, inputValue: value, updatedAt: Date.now() }
-			: list
-		)
+
+	function handleCreateItem(text, listId) {
+		if (!text.trim()) {
+			return;
+		}
+
+		setLists(prev => prev.map(list => list.id === listId ? {
+			...list,
+			todos: [...list.todos,
+			{
+				text,
+				type: "todo",
+				completed: false,
+			}
+			], updatedAt: Date.now()
+		} : list
+		));
+
+		const payload = {text: text, type: "todo"};
+		createItem(listId, payload);
+	}
+	function handleToggle(listId, todoId) {
+		setLists(prev =>
+			prev.map(list =>
+				list.id === listId
+					? {
+						...list,
+						todos: list.todos.map(todo =>
+							todo.id === todoId
+								? { ...todo, completed: !todo.completed }
+								: todo
+						), updatedAt: Date.now()
+					}
+					: list
+			)
 		);
 	}
 	function handleTodoEdit(listId, todoId, newTodo) {
@@ -258,41 +291,8 @@ export default function App() {
 				}
 			})
 		);
-	};
-	function handleAdd(text, listId) {
-		if (!text.trim()) {
-			return;
-		}
-
-		setLists(prev => prev.map(list => list.id === listId ? {
-			...list,
-			todos: [...list.todos,
-			{
-				id: crypto.randomUUID(),
-				text,
-				completed: false
-			}
-			], updatedAt: Date.now()
-		} : list
-		)
-		);
 	}
-	function handleToggle(listId, todoId) {
-		setLists(prev =>
-			prev.map(list =>
-				list.id === listId
-					? {
-						...list,
-						todos: list.todos.map(todo =>
-							todo.id === todoId
-								? { ...todo, completed: !todo.completed }
-								: todo
-						), updatedAt: Date.now()
-					}
-					: list
-			)
-		);
-	}
+	
 
 	return (
 		<div id="app" data-theme={theme}>
@@ -332,8 +332,7 @@ export default function App() {
 						<section className="lists-container">
 							<ListView role="pinned"
 								lists={lists}
-								onListItemChange={handleChange}
-								onListItemAdd={handleAdd}
+								onListItemAdd={handleCreateItem}
 								onListItemEdit={handleTodoEdit}
 								onListItemDelete={handleTodoDelete}
 								onListItemToggle={handleToggle}
@@ -362,8 +361,7 @@ export default function App() {
 							</select>
 							<ListView role="sorted" sortMode={sortMode}
 								lists={lists}
-								onListItemChange={handleChange}
-								onListItemAdd={handleAdd}
+								onListItemAdd={handleCreateItem}
 								onListItemEdit={handleTodoEdit}
 								onListItemDelete={handleTodoDelete}
 								onListItemToggle={handleToggle}

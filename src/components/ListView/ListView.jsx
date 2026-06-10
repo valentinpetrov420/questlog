@@ -8,7 +8,7 @@ export default function ListView(props) {
         const allPinnedTodos = pinnedLists.flatMap(list => list.todos)
         const firstUncompleted = allPinnedTodos.find(todo => !todo.completed)
 
-        let highlightedTodoId;
+        let highlightedTodoId = null;
         if (firstUncompleted) {
             highlightedTodoId = firstUncompleted.id;
         }
@@ -39,6 +39,7 @@ export default function ListView(props) {
         </div>
     } else {
         let sortedLists = props.lists.filter(list => !list.pinned && !list.archived);
+
         switch (props.sortMode) {
             case "createdAt":
                 sortedLists = [...sortedLists].sort((a, b) => b.createdAt - a.createdAt);
@@ -53,6 +54,7 @@ export default function ListView(props) {
                 sortedLists = props.lists.filter(list => list.archived);
                 break;
         }
+
         return <div className="list-view">
             {sortedLists.map(list => {
                 return (
@@ -73,7 +75,6 @@ export default function ListView(props) {
                         onListDelete={(event) => props.onListDelete(list.id, list.title)}
                         maxLength={props.maxLength}
                     />)
-
             })}
         </div>
     }

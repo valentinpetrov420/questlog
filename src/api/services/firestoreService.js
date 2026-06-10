@@ -79,3 +79,15 @@ export async function updateListArchived(listId, newArchived) {
 export async function deleteList(listId) {
     await deleteDoc(doc(db, "lists", listId));
 }
+
+export async function createItem(listId, {text, type}) {
+    const itemsRef = collection(db, "lists", listId, "items");
+
+    await addDoc(itemsRef, {
+        text,
+        type,
+        completed: false,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+    });
+}
