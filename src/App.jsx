@@ -114,15 +114,22 @@ export default function App() {
 		}
 	}
 
-	function handleCreateList(title) {
+	async function handleCreateList(title) {
 		//todo: gate CreateListForm from unauthorized users
 
+		if (!user) {
+			return;
+		}
+
 		console.log("created list: ", title);
+
+		const id = await createList(user.uid, title);
 
 		setLists(prev => [
 			...prev,
 			{
 				title,
+				id: id,
 				items: [],
 				createdAt: Date.now(),
 				updatedAt: Date.now(),
@@ -131,9 +138,6 @@ export default function App() {
 			}
 		]);
 
-		if (user) {
-			createList(user, title);
-		}
 	}
 	function handleEditListTitle(listId, newTitle) {
 		console.log("received: " + newTitle);
@@ -241,7 +245,7 @@ export default function App() {
 	}
 	function handleToggle(listId, itemId) {
 		const targetItem = lists.find(list => list.id === listId ? {
-			...list, 
+			...list,
 			items: list.items.map(item => item.id === itemId)
 		}
 			: list);

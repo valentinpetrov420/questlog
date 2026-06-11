@@ -14,9 +14,9 @@ import {
 
 import { db } from "../firebase";
 
-export async function createList(user, title) {
+export async function createList(userId, title) {
     const docRef = await addDoc(collection(db, "lists"), {
-        ownerId: user.uid,
+        ownerId: userId,
         title,
         todos: [],
         pinned: false,
@@ -26,6 +26,8 @@ export async function createList(user, title) {
     });
 
     console.log("created: ", docRef.id);
+
+    return docRef.id;
 }
 
 export async function getLists(userId) {
