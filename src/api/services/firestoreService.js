@@ -124,3 +124,12 @@ export async function toggleItemCompleted(listId, itemId, newCompleted){
         updatedAt: Date.now()
     })
 }
+
+export async function editItem(listId, itemId, newText){
+    const itemDocRef = doc(db, "lists", listId, "items", itemId);
+
+    await updateDoc(itemDocRef, {
+        text: newText,
+        updatedAt: Date.now()
+    })
+}

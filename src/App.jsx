@@ -15,6 +15,7 @@ import {
 
 	createItem,
 	toggleItemCompleted,
+	editItem,
 }
 	from './api/services/firestoreService.js';
 
@@ -263,22 +264,24 @@ export default function App() {
 
 		toggleItemCompleted(listId, itemId, newCompleted);
 	}
-	function handleTodoEdit(listId, todoId, newTodo) {
-		console.log("received: " + newTodo);
+	function handleItemEdit(listId, itemId, newText) {
+		console.log("received: " + newText);
 
 		setLists(prev =>
 			prev.map(list =>
 				list.id === listId
 					? {
-						...list, todos: list.todos.map(todo =>
-							todo.id === todoId
-								? { ...todo, text: newTodo }
-								: todo
+						...list, items: list.items.map(item =>
+							item.id === itemId
+								? { ...item, text: newText }
+								: item
 						), updatedAt: Date.now()
 					}
 					: list
 			)
 		)
+
+		editItem(listId, itemId, newText);
 	}
 	function handleTodoDelete(listId, todoId) {
 		console.log("received: " + todoId);
@@ -344,7 +347,7 @@ export default function App() {
 							<ListView role="pinned"
 								lists={lists}
 								onListItemAdd={handleCreateItem}
-								onListItemEdit={handleTodoEdit}
+								onListItemEdit={handleItemEdit}
 								onListItemDelete={handleTodoDelete}
 								onListItemToggle={handleToggle}
 								onListTitleChange={handleEditListTitle}
@@ -373,7 +376,7 @@ export default function App() {
 							<ListView role="sorted" sortMode={sortMode}
 								lists={lists}
 								onListItemAdd={handleCreateItem}
-								onListItemEdit={handleTodoEdit}
+								onListItemEdit={handleItemEdit}
 								onListItemDelete={handleTodoDelete}
 								onListItemToggle={handleToggle}
 								onListTitleChange={handleEditListTitle}
