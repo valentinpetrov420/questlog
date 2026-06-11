@@ -121,7 +121,7 @@ export default function App() {
 			{
 				id: crypto.randomUUID(),
 				title,
-				todos: [],
+				items: [],
 				createdAt: Date.now(),
 				updatedAt: Date.now(),
 				pinned: false,
@@ -224,7 +224,7 @@ export default function App() {
 
 		setLists(prev => prev.map(list => list.id === listId ? {
 			...list,
-			todos: [...list.todos,
+			items: [...list.items,
 			{
 				text,
 				type: "todo",
