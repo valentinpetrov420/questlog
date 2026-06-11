@@ -14,6 +14,7 @@ import {
 	deleteList,
 
 	createItem,
+	toggleItemCompleted,
 }
 	from './api/services/firestoreService.js';
 
@@ -234,24 +235,33 @@ export default function App() {
 		} : list
 		));
 
-		const payload = {text: text, type: "todo"};
+		const payload = { text: text, type: "todo" };
 		createItem(listId, payload);
 	}
-	function handleToggle(listId, todoId) {
+	function handleToggle(listId, itemId) {
+		const targetItem = lists.find(list => list.id === listId ? {
+			...list, 
+			items: list.items.map(item => item.id === itemId)
+		}
+			: list);
+		const newCompleted = !targetItem.completed;
+
 		setLists(prev =>
 			prev.map(list =>
 				list.id === listId
 					? {
 						...list,
-						todos: list.todos.map(todo =>
-							todo.id === todoId
-								? { ...todo, completed: !todo.completed }
-								: todo
+						items: list.items.map(item =>
+							item.id === itemId
+								? { ...item, completed: !item.completed }
+								: item
 						), updatedAt: Date.now()
 					}
 					: list
 			)
 		);
+
+		toggleItemCompleted(listId, itemId, newCompleted);
 	}
 	function handleTodoEdit(listId, todoId, newTodo) {
 		console.log("received: " + newTodo);
@@ -293,7 +303,7 @@ export default function App() {
 			})
 		);
 	}
-	
+
 
 	return (
 		<div id="app" data-theme={theme}>

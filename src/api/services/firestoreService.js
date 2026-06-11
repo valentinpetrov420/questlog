@@ -115,3 +115,12 @@ export async function createItem(listId, { text, type }) {
         updatedAt: Date.now()
     });
 }
+
+export async function toggleItemCompleted(listId, itemId, newCompleted){
+    const itemDocRef = doc(db, "lists", listId, "items", itemId);
+
+    await updateDoc(itemDocRef, {
+        completed: newCompleted,
+        updatedAt: Date.now()
+    })
+}
