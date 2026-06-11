@@ -49,6 +49,30 @@ export async function getLists(userId) {
     }
 }
 
+export async function getItems(listId) {
+    const snapshot = await getDocs(
+        collection(db, "lists", listId, "items")
+    );
+
+    return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
+}
+
+export async function getHydratedLists(userId) {
+    const lists = await getLists(userId);
+
+    return Promise.all(lists.map(async (list) => {
+        const items = await getItems(list.id);
+
+        return {
+            ...list,
+            items
+        }
+    }))
+}
+
 export async function updateListTitle(listId, newTitle) {
     const listDocRef = doc(db, "lists", listId);
 
@@ -80,7 +104,7 @@ export async function deleteList(listId) {
     await deleteDoc(doc(db, "lists", listId));
 }
 
-export async function createItem(listId, {text, type}) {
+export async function createItem(listId, { text, type }) {
     const itemsRef = collection(db, "lists", listId, "items");
 
     await addDoc(itemsRef, {

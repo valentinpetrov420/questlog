@@ -5,8 +5,8 @@ export default function ListView(props) {
     if (props.role === "pinned") {
         const pinnedLists = props.lists.filter(list => list.pinned && !list.archived);
 
-        const allPinnedTodos = pinnedLists.flatMap(list => list.todos)
-        const firstUncompleted = allPinnedTodos.find(todo => !todo.completed)
+        const allPinnedTodos = pinnedLists.flatMap(list => list.items)
+        const firstUncompleted = allPinnedTodos.find(item => !item.completed)
 
         let highlightedTodoId = null;
         if (firstUncompleted) {
@@ -19,14 +19,14 @@ export default function ListView(props) {
                     <List key={list.id}
                         id={list.id}
                         title={list.title}
-                        listItems={list.todos}
+                        listItems={list.items}
                         isArchived={list.archived}
                         highlightedTodoId={highlightedTodoId}
                         onListItemChange={props.onListItemChange}
                         onListItemAdd={props.onListItemAdd}
                         onListItemEdit={props.onListItemEdit}
                         onListItemDelete={props.onListItemDelete}
-                        onListItemToggle={(todoId) => props.onListItemToggle(list.id, todoId)}
+                        onListItemToggle={(itemId) => props.onListItemToggle(list.id, itemId)}
                         onListTitleChange={props.onListTitleChange}
                         onListPin={(event) => props.onListPin(list.id)}
                         onListArchive={() => props.onListArchive(list.id)}
@@ -61,13 +61,13 @@ export default function ListView(props) {
                     <List key={list.id}
                         id={list.id}
                         title={list.title}
-                        listItems={list.todos}
+                        listItems={list.items}
                         isArchived={list.archived}
                         onListItemChange={props.onListItemChange}
                         onListItemAdd={props.onListItemAdd}
                         onListItemEdit={props.onListItemEdit}
                         onListItemDelete={props.onListItemDelete}
-                        onListItemToggle={(todoId) => props.onListItemToggle(list.id, todoId)}
+                        onListItemToggle={(itemId) => props.onListItemToggle(list.id, itemId)}
                         onListTitleChange={props.onListTitleChange}
                         onListPin={(event) => props.onListPin(list.id)}
                         onListArchive={() => props.onListArchive(list.id)}

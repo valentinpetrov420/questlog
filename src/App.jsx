@@ -6,7 +6,8 @@ import './App.css'
 
 //todo: refactor firestoreService into an exported object of functions
 import {
-	getLists,
+	getHydratedLists,
+
 	updateListTitle,
 	updateListPin,
 	updateListArchived,
@@ -81,11 +82,11 @@ export default function App() {
 
 	useEffect(() => {
 		if (!user) {
-			setLists([])
+			setLists([]);
 			return;
 		}
 
-		getLists(user.uid).then((lists) => {
+		getHydratedLists(user.uid).then((lists) => {
 			console.log(lists);
 			setLists(lists);
 		});

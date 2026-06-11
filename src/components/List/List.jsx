@@ -104,13 +104,13 @@ export default function List(props) {
             </form>
                 : <h2 className="list-title">Title: <span onClick={handleEditTitle}>{props.title}<a>✎</a></span></h2>}
             <ul>
-                {props.listItems.map(todo => (
+                {props.listItems.map(item => (
                     <TodoItem
-                        key={todo.id}
+                        key={item.id}
                         listId={props.id}
-                        id={todo.id}
-                        text={todo.text}
-                        completed={todo.completed}
+                        id={item.id}
+                        text={item.text}
+                        completed={item.completed}
                         highlightedTodoId={props.highlightedTodoId}
                         onToggle={props.onListItemToggle}
                         onTodoEdit={props.onListItemEdit}
