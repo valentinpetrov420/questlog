@@ -101,6 +101,13 @@ export async function updateListArchived(listId, newArchived) {
 }
 
 export async function deleteList(listId) {
+    const itemsRef = collection(db, "lists", listId, "items");
+    const snapshot = await getDocs(itemsRef);
+
+    await Promise.all(
+        snapshot.docs.map(item => deleteDoc(doc(db, "lists", listId, "items", item.id)))
+    );
+
     await deleteDoc(doc(db, "lists", listId));
 }
 
@@ -116,7 +123,7 @@ export async function createItem(listId, { text, type }) {
     });
 }
 
-export async function toggleItemCompleted(listId, itemId, newCompleted){
+export async function toggleItemCompleted(listId, itemId, newCompleted) {
     const itemDocRef = doc(db, "lists", listId, "items", itemId);
 
     await updateDoc(itemDocRef, {
@@ -125,7 +132,7 @@ export async function toggleItemCompleted(listId, itemId, newCompleted){
     })
 }
 
-export async function editItem(listId, itemId, newText){
+export async function editItem(listId, itemId, newText) {
     const itemDocRef = doc(db, "lists", listId, "items", itemId);
 
     await updateDoc(itemDocRef, {
@@ -134,6 +141,6 @@ export async function editItem(listId, itemId, newText){
     })
 }
 
-export async function deleteItem(listId, itemId){
+export async function deleteItem(listId, itemId) {
     await deleteDoc(doc(db, "lists", listId, "items", itemId));
 }
