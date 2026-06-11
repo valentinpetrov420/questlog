@@ -133,3 +133,7 @@ export async function editItem(listId, itemId, newText){
         updatedAt: Date.now()
     })
 }
+
+export async function deleteItem(listId, itemId){
+    await deleteDoc(doc(db, "lists", listId, "items", itemId));
+}

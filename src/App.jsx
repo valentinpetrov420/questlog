@@ -16,6 +16,7 @@ import {
 	createItem,
 	toggleItemCompleted,
 	editItem,
+	deleteItem,
 }
 	from './api/services/firestoreService.js';
 
@@ -283,8 +284,8 @@ export default function App() {
 
 		editItem(listId, itemId, newText);
 	}
-	function handleTodoDelete(listId, todoId) {
-		console.log("received: " + todoId);
+	function handleItemDelete(listId, itemId) {
+		console.log("received: " + itemId);
 
 		const confirmed = window.confirm("Delete this task?");
 
@@ -299,12 +300,13 @@ export default function App() {
 				} else {
 					return {
 						...list,
-						todos: list.todos.filter(todo => todo.id !== todoId),
+						items: list.items.filter(item => item.id !== itemId),
 						updatedAt: Date.now()
 					};
 				}
 			})
 		);
+		deleteItem(listId, itemId);
 	}
 
 
@@ -348,7 +350,7 @@ export default function App() {
 								lists={lists}
 								onListItemAdd={handleCreateItem}
 								onListItemEdit={handleItemEdit}
-								onListItemDelete={handleTodoDelete}
+								onListItemDelete={handleItemDelete}
 								onListItemToggle={handleToggle}
 								onListTitleChange={handleEditListTitle}
 								onListPin={handlePin}
@@ -377,7 +379,7 @@ export default function App() {
 								lists={lists}
 								onListItemAdd={handleCreateItem}
 								onListItemEdit={handleItemEdit}
-								onListItemDelete={handleTodoDelete}
+								onListItemDelete={handleItemDelete}
 								onListItemToggle={handleToggle}
 								onListTitleChange={handleEditListTitle}
 								onListPin={handlePin}
