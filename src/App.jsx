@@ -122,7 +122,6 @@ export default function App() {
 		setLists(prev => [
 			...prev,
 			{
-				id: crypto.randomUUID(),
 				title,
 				items: [],
 				createdAt: Date.now(),
