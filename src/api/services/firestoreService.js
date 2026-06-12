@@ -123,6 +123,8 @@ export async function createItem(listId, { text, type }) {
         createdAt: Date.now(),
         updatedAt: Date.now()
     });
+
+    return itemsRef.id;
 }
 
 export async function toggleItemCompleted(listId, itemId, newCompleted) {

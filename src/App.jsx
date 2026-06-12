@@ -223,15 +223,19 @@ export default function App() {
 		deleteList(listId);
 	}
 
-	function handleCreateItem(text, listId) {
+	async function handleCreateItem(text, listId) {
 		if (!text.trim()) {
 			return;
 		}
+
+		const payload = { text: text, type: "todo" };
+		const id = await createItem(text, payload);
 
 		setLists(prev => prev.map(list => list.id === listId ? {
 			...list,
 			items: [...list.items,
 			{
+				id: id,
 				text,
 				type: "todo",
 				completed: false,
@@ -240,8 +244,6 @@ export default function App() {
 		} : list
 		));
 
-		const payload = { text: text, type: "todo" };
-		createItem(listId, payload);
 	}
 	function handleToggle(listId, itemId) {
 		const targetItem = lists.find(list => list.id === listId ? {
