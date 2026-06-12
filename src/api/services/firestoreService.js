@@ -116,7 +116,7 @@ export async function deleteList(listId) {
 export async function createItem(listId, { text, type }) {
     const itemsRef = collection(db, "lists", listId, "items");
 
-    await addDoc(itemsRef, {
+    const docRef = await addDoc(itemsRef, {
         text,
         type,
         completed: false,
@@ -124,7 +124,7 @@ export async function createItem(listId, { text, type }) {
         updatedAt: Date.now()
     });
 
-    return itemsRef.id;
+    return docRef.id;
 }
 
 export async function toggleItemCompleted(listId, itemId, newCompleted) {

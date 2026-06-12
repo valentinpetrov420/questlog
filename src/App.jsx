@@ -246,6 +246,7 @@ export default function App() {
 
 	}
 	function handleToggle(listId, itemId) {
+		console.log(listId, itemId);
 		const targetItem = lists.find(list => list.id === listId ? {
 			...list,
 			items: list.items.map(item => item.id === itemId)
