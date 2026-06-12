@@ -229,7 +229,7 @@ export default function App() {
 		}
 
 		const payload = { text: text, type: "todo" };
-		const id = await createItem(text, payload);
+		const id = await createItem(listId, payload);
 
 		setLists(prev => prev.map(list => list.id === listId ? {
 			...list,
