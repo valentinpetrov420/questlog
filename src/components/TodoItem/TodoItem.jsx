@@ -41,44 +41,44 @@ export default function TodoItem(props) {
         props.onTodoDelete(props.listId, props.id);
     }
 
-    return <li className={isEditingTodo ? "input-form-wrapper" : "todo-wrapper"}>
-        <StatusMessage text={error}/>
-        {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
-            <input autoFocus
-                value={draftTitleTodo}
-                onChange={(event) => setDraftTitleTodo(event.target.value)}
-                onBlur={() => {
-                    cancelEdit();
-                }}
-                onKeyDown={(event) => {
-                    if (event.key === "Escape") {
+    return <li>
+        <StatusMessage text={error} />
+        <div className={isEditingTodo ? "input-form-wrapper" : "todo-wrapper"}>
+            {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
+                <input autoFocus
+                    value={draftTitleTodo}
+                    onChange={(event) => setDraftTitleTodo(event.target.value)}
+                    onBlur={() => {
                         cancelEdit();
+                    }}
+                    onKeyDown={(event) => {
+                        if (event.key === "Escape") {
+                            cancelEdit();
+                        }
+                    }}></input>
+            </form>
+                :
+                <span className={`todo-item-text ${props.highlightedTodoId === props.id ? "highlighted" : ""
                     }
-                }}></input>
-        </form>
-            :
-            <span className={`todo-item-text ${
-                props.highlightedTodoId === props.id ? "highlighted" : ""
-            }
                 ${props.completed ? "completed" : ""}`}
-                onClick={() => props.onToggle(props.id)}>
-                {props.text}
-            </span>
-        }
+                    onClick={() => props.onToggle(props.id)}>
+                    {props.text}
+                </span>
+            }
 
-        {!isEditingTodo ? <div className="todo-actions">
-            <button onMouseDown={(event) => {
-                event.preventDefault();
-                handleEditTodo();
+            {!isEditingTodo ? <div className="todo-actions">
+                <button onMouseDown={(event) => {
+                    event.preventDefault();
+                    handleEditTodo();
                 }}>
-                ✎
-            </button>
-            <button onClick={handleDeleteTodo}>
-                🗑️
-            </button>
-        </div> :
-            <div></div>
-        }
-
+                    ✎
+                </button>
+                <button onClick={handleDeleteTodo}>
+                    🗑️
+                </button>
+            </div> :
+                <div></div>
+            }
+        </div>
     </li>
 }

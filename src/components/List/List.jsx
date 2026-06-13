@@ -61,19 +61,26 @@ export default function List(props) {
         setDraftTitle(props.title);
         setEditing(true);
     }
-    function handleSubmitEdit(event) {
+    async function handleSubmitEdit(event) {
         event.preventDefault();
 
-        const result = validateText(draftTitle, props.maxLength)
+        const result = validateText(draftTitle, props.maxLength);
 
         if (!result.valid) {
             setError(result.error);
             setTitleStatus(true);
-            setDraftTitle(props.title);
-        } else {
+            return;
+        }
+
+        const response = await props.onListTitleChange(props.id, draftTitle);
+        console.log("edit result: ", response);
+
+        if (response.success) {
             setError("");
-            props.onListTitleChange(props.id, draftTitle);
             setEditing(false);
+        } else {
+            setError(response.message);
+            setTitleStatus(true);
         }
     }
     function handlePin(event) {

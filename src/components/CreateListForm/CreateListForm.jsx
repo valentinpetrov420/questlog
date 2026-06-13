@@ -22,7 +22,7 @@ export default function CreateListForm(props) {
         return () => clearTimeout(timeout);
     }, [status]);
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
 
         const result = validateText(title, props.maxLength);
@@ -33,9 +33,16 @@ export default function CreateListForm(props) {
             return;
         }
 
-        setError("");
-        props.onCreateList(title);
-        setTitle("");
+        const response = await props.onCreateList(title);
+        console.log("create result: ", response);
+
+        if (response.success) {
+            setError("");
+            setStatus(false);
+        } else {
+            setError(response.message);
+            setStatus(true);
+        }
     }
 
     return <form id="create-list-form" onSubmit={handleSubmit}>

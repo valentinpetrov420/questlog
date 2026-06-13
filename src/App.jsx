@@ -116,16 +116,16 @@ export default function App() {
 
 	async function handleCreateList(title) {
 		//todo: gate CreateListForm from unauthorized users
-
 		if (!user) {
 			return;
 		}
 
 		console.log("created list: ", title);
 
-		const id = await createList(user.uid, title);
+		try {
+			const id = await createList(user.uid, title);
 
-		setLists(prev => [
+			setLists(prev => [
 			...prev,
 			{
 				title,
@@ -138,22 +138,40 @@ export default function App() {
 			}
 		]);
 
+			return {
+				success: true
+			};
+		} catch (error) {
+			return {
+				success: false,
+				message: "Failed to create list"
+			};
+		}
 	}
-	function handleEditListTitle(listId, newTitle) {
+	async function handleEditListTitle(listId, newTitle) {
 		console.log("received: " + newTitle);
 
-		//todo: assumes the network requests are always successful. 
-		// UI state is updated before firestore confirms the update.
-		// errors and request fails are unhandled.
-		setLists(prev =>
-			prev.map(list =>
-				list.id === listId
-					? { ...list, title: newTitle, updatedAt: Date.now() }
-					: list
-			)
-		);
+		try {
+			await updateListTitle(listId, newTitle);
 
-		updateListTitle(listId, newTitle);
+			setLists(prev =>
+				prev.map(list =>
+					list.id === listId
+						? { ...list, title: newTitle, updatedAt: Date.now() }
+						: list
+				)
+			);
+
+			return {
+				success: true
+			};
+		} catch (error) {
+			return {
+				success: false,
+				message: "Failed to create item"
+			};
+		}
+
 	}
 	function handlePin(listId) {
 		console.log("pinned: " + listId);
