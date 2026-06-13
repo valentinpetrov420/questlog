@@ -1,49 +1,63 @@
+#app {
+	--bg: #eee;
+	--text: #111;
+	--list-bg: #f0dcfd;
+	--header-bg: #f0dcfd;
+	--list-input-bg: #f0dcfd;
+	--modal-bg: rgba(237, 232, 208, 0.95);
+}
+
 #app[data-theme="darkMode"] {
-	background: #191E2C;
-	color: #eee;
-
-	.list-component {
-		background-color: #2B2F3E;
-	}
-
-	#top-header {
-		background-color: #2B2F3E;
-
-		.nav-menu-toggle {
-			color: #eee;
-		}
-
-		.login-button{
-			color: #eee;
-		}
-	}
-
-	.patchnotes-modal {
-		background-color: rgba(0, 0, 0, 0.9);
-	}
+	--bg: #191E2C;
+	--text: #eee;
+	--list-bg: #2B2F3E;
+	--header-bg: #2B2F3E;
+	--list-input-bg: #2B2F3E;
+	--modal-bg: rgba(0, 0, 0, 0.9);
 }
 
 #app[data-theme="lightMode"] {
-	background: #eee;
-	color: #111;
+	--bg: #eee;
+	--text: #111;
+	--list-bg: #f0dcfd;
+	--header-bg: #f0dcfd;
+	--list-input-bg: #f0dcfd;
+	--modal-bg: rgba(237, 232, 208, 0.95);
+}
 
-	.list-component {
-		background-color: #f0dcfd;
+#app {
+	background: var(--bg);
+	color: var(--text);
+}
+
+#create-list-form {
+	input {
+		background-color: var(--bg);
+		color: var(--text);
 	}
+}
 
-	#top-header {
-		background-color: #f0dcfd;
+.list-component {
+	background-color: var(--list-bg);
+}
 
-		.nav-menu-toggle {
-			color: #111;
-		}
+.list-component input {
+	background-color: var(--list-input-bg);
+	color: var(--text);
+}
 
-		.login-button{
-			color: #111;
-		}
-	}
+#top-header {
+	background-color: var(--header-bg);
+}
 
-	.patchnotes-modal {
-		background-color: rgba(237, 232, 208, 0.95);
-	}
+#top-header .nav-menu-toggle {
+	color: var(--text);
+}
+
+#top-header .login-button {
+	color: var(--text);
+}
+
+.patchnotes-modal {
+	background-color: var(--modal-bg);
 }

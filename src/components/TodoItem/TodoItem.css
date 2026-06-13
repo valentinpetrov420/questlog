@@ -2,6 +2,8 @@
 	margin: 1rem;
 	display: flex;
 	align-items: flex-start;
+	margin-top: 0;
+	margin-bottom: 0;
 
 	.todo-item-text {
 		margin: 1rem;
@@ -9,6 +11,7 @@
 		min-width: auto;
 		overflow-wrap: break-word;
 		word-break: break-word;
+		margin-top: 0;
 	}
 
 	.todo-actions {
@@ -35,9 +38,15 @@
 	padding-left: 8px;
 }
 
-@media (max-width: 500px){
+.input-form-wrapper{
+	.edit-todo-form {
+		margin-left: 1rem;
+	}
+}
+
+@media (max-width: 500px) {
 	.todo-wrapper {
-		.todo-item-text{
+		.todo-item-text {
 			margin: 0;
 		}
 	}
