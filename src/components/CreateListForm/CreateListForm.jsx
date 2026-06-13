@@ -39,6 +39,7 @@ export default function CreateListForm(props) {
         if (response.success) {
             setError("");
             setStatus(false);
+            setTitle("");
         } else {
             setError(response.message);
             setStatus(true);

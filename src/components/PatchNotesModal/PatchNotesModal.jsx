@@ -29,8 +29,6 @@ export default function PatchNotesModal({ open, onClose, patchnotes, }) {
         return null;
     }
 
-    console.log(grouped);
-
     return (
         <div className="patchnotes-modal">
             <button onClick={onClose}>Close</button>
