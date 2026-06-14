@@ -28,7 +28,7 @@ export default function TodoItem(props) {
             return;
         }
 
-        const response = await props.onTodoEdit(props.id, draftTitleTodo);
+        const response = await props.onTodoEdit(props.listId, props.id, draftTitleTodo);
         console.log("edit result: ", response);
 
         if (response.success) {
