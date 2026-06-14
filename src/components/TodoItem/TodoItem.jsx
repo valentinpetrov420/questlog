@@ -17,17 +17,27 @@ export default function TodoItem(props) {
         setDraftTitleTodo(props.text);
         setError("");
     }
-    function handleSubmitEditTodo(event) {
+    async function handleSubmitEditTodo(event) {
         event.preventDefault();
-        const result = validateText(draftTitleTodo, props.maxLength);
+
+        const result = validateText(draftTitle, props.maxLength);
 
         if (!result.valid) {
             setError(result.error);
-            setDraftTitleTodo(props.text);
-        } else {
-            setEditingTodo(false);
+            setEditingTodo(true);
+            return;
+        }
+
+        const response = await props.onTodoEdit(props.id, draftTitleTodo);
+        console.log("edit result: ", response);
+
+        if (response.success) {
             setError("");
-            props.onTodoEdit(props.listId, props.id, draftTitleTodo);
+            setEditingTodo(false);
+            setDraftTitleTodo("");
+        } else {
+            setError(response.message);
+            setEditingTodo(true);
         }
 
     }

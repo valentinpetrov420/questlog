@@ -42,7 +42,7 @@ export default function List(props) {
         setDraftTitle(props.text);
         setTitleStatus(null);
     }
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
 
         const result = validateText(value, props.maxLength)
@@ -53,9 +53,17 @@ export default function List(props) {
             return;
         }
 
-        setError("");
-        props.onListItemAdd(value, props.id);
-        setValue("");
+        const response = await props.onListItemAdd(value, props.id);
+        console.log("create result: ", response);
+
+        if (response.success) {
+            setError("");
+            setAddTodoStatus(false);
+            setValue("");
+        } else {
+            setError(response.message);
+            setAddTodoStatus(true);
+        }
     }
     function handleEditTitle() {
         setDraftTitle(props.title);

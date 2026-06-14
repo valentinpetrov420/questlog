@@ -126,17 +126,17 @@ export default function App() {
 			const id = await createList(user.uid, title);
 
 			setLists(prev => [
-			...prev,
-			{
-				title,
-				id: id,
-				items: [],
-				createdAt: Date.now(),
-				updatedAt: Date.now(),
-				pinned: false,
-				archived: false,
-			}
-		]);
+				...prev,
+				{
+					title,
+					id: id,
+					items: [],
+					createdAt: Date.now(),
+					updatedAt: Date.now(),
+					pinned: false,
+					archived: false,
+				}
+			]);
 
 			return {
 				success: true
@@ -247,21 +247,32 @@ export default function App() {
 		}
 
 		const payload = { text: text, type: "todo" };
-		const id = await createItem(listId, payload);
 
-		setLists(prev => prev.map(list => list.id === listId ? {
-			...list,
-			items: [...list.items,
-			{
-				id: id,
-				text,
-				type: "todo",
-				completed: false,
-			}
-			], updatedAt: Date.now()
-		} : list
-		));
+		try {
+			const id = await createItem(listId, payload);
 
+			setLists(prev => prev.map(list => list.id === listId ? {
+				...list,
+				items: [...list.items,
+				{
+					id: id,
+					text,
+					type: "todo",
+					completed: false,
+				}
+				], updatedAt: Date.now()
+			} : list
+			));
+
+			return {
+				success: true
+			};
+		} catch (error) {
+			return {
+				success: false,
+				message: "Failed to create list"
+			};
+		}
 	}
 	function handleToggle(listId, itemId) {
 		console.log(listId, itemId);
@@ -289,24 +300,35 @@ export default function App() {
 
 		toggleItemCompleted(listId, itemId, newCompleted);
 	}
-	function handleItemEdit(listId, itemId, newText) {
+	async function handleItemEdit(listId, itemId, newText) {
 		console.log("received: " + newText);
 
-		setLists(prev =>
-			prev.map(list =>
-				list.id === listId
-					? {
-						...list, items: list.items.map(item =>
-							item.id === itemId
-								? { ...item, text: newText }
-								: item
-						), updatedAt: Date.now()
-					}
-					: list
-			)
-		)
+		try {
+			await editItem(listId, itemId, newText);
 
-		editItem(listId, itemId, newText);
+			setLists(prev =>
+				prev.map(list =>
+					list.id === listId
+						? {
+							...list, items: list.items.map(item =>
+								item.id === itemId
+									? { ...item, text: newText }
+									: item
+							), updatedAt: Date.now()
+						}
+						: list
+				)
+			)
+
+			return {
+				success: true
+			};
+		} catch (error) {
+			return {
+				success: false,
+				message: "Failed to create list"
+			};
+		}
 	}
 	function handleItemDelete(listId, itemId) {
 		console.log("received: " + itemId);
