@@ -8,6 +8,7 @@ import './App.css'
 import {
 	getHydratedLists,
 
+	createList, 
 	updateListTitle,
 	updateListPin,
 	updateListArchived,
@@ -26,8 +27,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import { loginWithGoogle, logout } from "./api/services/authService";
 import { auth, db } from "./api/firebase";
 
-import { createList } from './api/services/firestoreService';
-
 import ListView from './components/ListView/ListView.jsx';
 import TodoItem from './components/TodoItem/TodoItem.jsx';
 import List from './components/List/List.jsx';
@@ -39,6 +38,10 @@ import DevPanel from "./dev/DevPanel.jsx";
 
 
 export default function App() {
+	const [theme, setTheme] = useState(() => {
+		return localStorage.getItem("theme") || "darkMode";
+	});
+
 	const [user, setUser] = useState(null);
 	const [lists, setLists] = useState([]);
 
@@ -50,13 +53,16 @@ export default function App() {
 
 	const [patchnotes, setPatchnotes] = useState([]);
 	const [patchnotesOpen, setPatchnotesOpen] = useState(false);
-
-	const [theme, setTheme] = useState("darkMode");
+	
 	const [menuOpen, setMenuOpen] = useState(false);
 
 	const [error, setError] = useState("");
 	const maxLength = 50;
 	const siteName = "QuestLog";
+
+	useEffect(() => {
+		localStorage.setItem("theme", theme);
+	}, [theme]);
 
 	useEffect(() => {
 		const unsub = onAuthStateChanged(auth, (u) => {

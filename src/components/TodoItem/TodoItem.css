@@ -15,20 +15,33 @@
 	}
 
 	.todo-actions {
-		visibility: hidden;
-		cursor: pointer;
-		transition: opacity 0.15s ease;
-	}
+		button {
+			cursor: pointer;
 
-	&:hover .todo-actions {
-		opacity: 1;
-		visibility: visible;
-		transform: translateX(0);
+			color: var(--text);
+			background: transparent;
+			border: 1px solid transparent;
+			border-radius: 6px;
+			opacity: 0.3;
+
+			&:hover {
+				transition: opacity 0.2s ease;
+				opacity: 1;
+			}
+
+			&:active {
+				transform: scale(0.96);
+			}
+		}
 	}
 }
 
 .todo-item-text.completed {
+	color: var(--text-muted);
+
 	text-decoration: line-through;
+	text-decoration-thickness: 1px;
+	opacity: 0.55;
 }
 
 .todo-item-text.highlighted {
@@ -38,7 +51,7 @@
 	padding-left: 8px;
 }
 
-.input-form-wrapper{
+.input-form-wrapper {
 	.edit-todo-form {
 		margin-left: 1rem;
 	}
