@@ -286,25 +286,25 @@ export default function App() {
 	}
 	function handleToggle(listId, itemId) {
 		console.log(listId, itemId);
-		const targetItem = lists.find(list => list.id === listId ? {
-			...list,
-			items: list.items.map(item => item.id === itemId)
-		}
-			: list);
-		const newCompleted = !targetItem.completed;
+		const list = lists.find(l => l.id === listId);
+		const item = list.items.find(i => i.id === itemId);
+
+		const newCompleted = !item.completed;
+		console.log("old: " + item.completed)
+		console.log("new: " + newCompleted)
 
 		setLists(prev =>
-			prev.map(list =>
-				list.id === listId
+			prev.map(l =>
+				l.id === listId
 					? {
-						...list,
-						items: list.items.map(item =>
-							item.id === itemId
-								? { ...item, completed: !item.completed }
-								: item
-						), updatedAt: Date.now()
+						...l,
+						items: l.items.map(i =>
+							i.id === itemId
+								? { ...i, completed: !i.completed }
+								: i
+						)
 					}
-					: list
+					: l
 			)
 		);
 
