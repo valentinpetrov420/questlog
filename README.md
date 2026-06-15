@@ -22,10 +22,11 @@ It focuses on simplicity and minimalism. Fast task entry and tracking without ov
     - Empty input validation.
     - Maximum length validation.
 - Reusable StatusMessage component for contextual feedback
-- Network error handling for list creation and list title editing.
+- Network error handling for list creation, edits and deletion.
 - Responsive layout for desktop and mobile devices.
 - Local development tools for state seeding and reset testing.
-- Patch notes / changelog modal 
+- Includes a utility script that generates a .json changelog from the project's Git commit history.
+- The generated file is consumed by the in-app Patch Notes modal, allowing recent project changes to be displayed directly within the application.
 
 ## How to run it locally
 
@@ -55,32 +56,32 @@ This project is very early stage prototype focused on relearning React and also 
 
 ## Architecture
 
-- State management refactor using useReducer
-- Further normalization of list/item state structure
-- Firestore service refactor and response standardization
-- Improved separation between UI, business logic, and data layers
+- State management refactor using useReducer.
+- Further normalization of list/item state structure.
+- Firestore service refactor and response standardization.
+- Improved separation between UI, business logic, and data layers.
 
 ## Navigation
 
-- Client-side routing
-- Dedicated list pages
-- Shareable URLs for specific lists
+- Client-side routing.
+- Dedicated list pages.
+- Shareable URLs for specific lists.
 
 ## List Item Types
 
-- Support for multiple item types beyond standard todos
-- Extensible item rendering based on type
-- Future nested content structures
+- Support for multiple item types beyond standard todos.
+- Extensible item rendering based on type.
+- Future nested content structures.
 
 ## Features
 
-- Search and filtering
-- Drag-and-drop reordering
-- Custom list organization tools
+- Search and filtering.
+- Drag-and-drop reordering.
+- Custom list organization tools.
 
 ## DevPanel 
 
-- Simulated network failures
-- Simulated latency
-- State inspection
-- Test data generation
+- Simulated network failures.
+- Simulated latency.
+- State inspection.
+- Test data generation.

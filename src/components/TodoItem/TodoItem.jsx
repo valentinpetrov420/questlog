@@ -45,11 +45,17 @@ export default function TodoItem(props) {
         setEditingTodo(true);
         setDraftTitleTodo(props.text);
     }
-    function handleDeleteTodo() {
-        console.log("sending upward: " + props.text);
+    async function handleDeleteClick() {
+        const response = await props.onTodoDelete(props.listId, props.id);
+        console.log("delete result: ", response)
 
-        props.onTodoDelete(props.listId, props.id);
+        if (response.success) {
+            setError("");
+        } else {
+            setError(response.message);
+        }
     }
+    
 
     return <li>
         <StatusMessage text={error} />
@@ -83,7 +89,7 @@ export default function TodoItem(props) {
                 }}>
                     ✎
                 </button>
-                <button onClick={handleDeleteTodo}>
+                <button onClick={handleDeleteClick}>
                     🗑️
                 </button>
             </div> :

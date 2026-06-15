@@ -103,6 +103,7 @@ export async function updateListArchived(listId, newArchived) {
 }
 
 export async function deleteList(listId) {
+    console.log(listId);
     const itemsRef = collection(db, "lists", listId, "items");
     const snapshot = await getDocs(itemsRef);
 

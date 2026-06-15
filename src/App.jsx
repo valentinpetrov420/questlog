@@ -228,19 +228,29 @@ export default function App() {
 
 		updateListArchived(listId, false);
 	}
-	function handleDeleteList(listId) {
+	async function handleDeleteList(listId) {
 		const confirmed = window.confirm("Delete this list?");
 
 		if (!confirmed) {
 			return;
 		}
 
-		const updatedState = lists.filter(list => list.id !== listId);
-		setLists(updatedState);
+		try {
+			await deleteList(listId);
 
-		deleteList(listId);
+			const updatedState = lists.filter(list => list.id !== listId);
+			setLists(updatedState);
+
+			return {
+				success: true
+			};
+		} catch (error) {
+			return {
+				success: false,
+				message: "Failed to delete list"
+			};
+		}
 	}
-
 	async function handleCreateItem(text, listId) {
 		if (!text.trim()) {
 			return;
@@ -330,8 +340,7 @@ export default function App() {
 			};
 		}
 	}
-	function handleItemDelete(listId, itemId) {
-		console.log("received: " + itemId);
+	async function handleItemDelete(listId, itemId) {
 
 		const confirmed = window.confirm("Delete this task?");
 
@@ -339,20 +348,32 @@ export default function App() {
 			return;
 		}
 
-		setLists(prev =>
-			prev.map(list => {
-				if (list.id !== listId) {
-					return list
-				} else {
-					return {
-						...list,
-						items: list.items.filter(item => item.id !== itemId),
-						updatedAt: Date.now()
-					};
-				}
-			})
-		);
-		deleteItem(listId, itemId);
+		try {
+			await deleteItem(listId, itemId);
+
+			setLists(prev =>
+				prev.map(list => {
+					if (list.id !== listId) {
+						return list
+					} else {
+						return {
+							...list,
+							items: list.items.filter(item => item.id !== itemId),
+							updatedAt: Date.now()
+						};
+					}
+				})
+			);
+
+			return {
+				success: true
+			};
+		} catch (error) {
+			return {
+				success: false,
+				message: "Failed to delete task"
+			};
+		}
 	}
 
 

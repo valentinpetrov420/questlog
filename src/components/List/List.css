@@ -11,6 +11,9 @@
 			cursor: pointer;
 		}
 	}
+	.form-error{
+		margin-left: 1rem;
+	}
 }
 
 .list-actions {
@@ -28,6 +31,7 @@
 
 .list-title {
 	padding: 1rem;
+	padding-top: 0;
 
 	span {
 		font-style: italic;

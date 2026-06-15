@@ -30,7 +30,7 @@ export default function List(props) {
     const actions = isArchived ?
         (<div className="list-actions">
             <button onClick={() => props.onListRestore(props.id)}>🔃</button>
-            <button onClick={() => props.onListDelete(props.id)}>🗑️</button>
+            <button onClick={handleDeleteClick}>🗑️</button>
         </div>)
         : (<div className="list-actions">
             <button onClick={() => props.onListArchive(props.id)}>🗑️</button>
@@ -94,14 +94,26 @@ export default function List(props) {
     function handlePin(event) {
         props.onListPin(props.id);
     }
+    async function handleDeleteClick() {
+        const response = await props.onListDelete();
+        console.log("delete result: ", response)
+
+        if (response.success) {
+            setError("");
+            setTitleStatus(false);
+        } else {
+            setTitleStatus(true);
+            setError(response.message);
+        }
+    }
 
     return (
         <div className="list-component">
             {actions}
+            <StatusMessage text={titleStatus ? error : ""} />
             {isEditing ? <form className="edit-list-title" onSubmit={handleSubmitEdit}>
                 <h2 className="list-title-edit">Title:</h2>
                 <div className="input-form-wrapper">
-                    <StatusMessage text={titleStatus ? error : ""} />
                     <input autoFocus
                         value={draftTitle}
                         onBlur={() => {
