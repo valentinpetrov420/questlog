@@ -4,22 +4,7 @@ import './App.css'
 
 //import { loadLists, saveLists } from './api/services/storage.js';
 
-//todo: refactor firestoreService into an exported object of functions
-import {
-	getHydratedLists,
-
-	createList, 
-	updateListTitle,
-	updateListPin,
-	updateListArchived,
-	deleteList,
-
-	createItem,
-	toggleItemCompleted,
-	editItem,
-	deleteItem,
-}
-	from './api/services/firestoreService.js';
+import firestoreService	from './api/services/firestoreService.js';
 
 import { __loadMockStorage, __clearStorage } from "./dev/devTools.js";
 
@@ -53,7 +38,7 @@ export default function App() {
 
 	const [patchnotes, setPatchnotes] = useState([]);
 	const [patchnotesOpen, setPatchnotesOpen] = useState(false);
-	
+
 	const [menuOpen, setMenuOpen] = useState(false);
 
 	const [error, setError] = useState("");
@@ -95,7 +80,7 @@ export default function App() {
 			return;
 		}
 
-		getHydratedLists(user.uid).then((lists) => {
+		firestoreService.lists.getHydratedLists(user.uid).then((lists) => {
 			console.log(lists);
 			setLists(lists);
 		});
@@ -129,7 +114,7 @@ export default function App() {
 		console.log("created list: ", title);
 
 		try {
-			const id = await createList(user.uid, title);
+			const id = await firestoreService.lists.createList(user.uid, title);
 
 			setLists(prev => [
 				...prev,
@@ -158,7 +143,7 @@ export default function App() {
 		console.log("received: " + newTitle);
 
 		try {
-			await updateListTitle(listId, newTitle);
+			await firestoreService.lists.updateListTitle(listId, newTitle);
 
 			setLists(prev =>
 				prev.map(list =>
@@ -198,7 +183,7 @@ export default function App() {
 			)
 		);
 
-		updateListPin(listId, newPinned);
+		firestoreService.lists.updateListPin(listId, newPinned);
 	}
 	function handleArchive(listId) {
 		const confirmed = window.confirm("Archive this list?");
@@ -215,7 +200,7 @@ export default function App() {
 			)
 		);
 
-		updateListArchived(listId, true);
+		firestoreService.lists.updateListArchived(listId, true);
 	}
 	function handleRestore(listId) {
 		const confirmed = window.confirm("Restore this list?");
@@ -232,7 +217,7 @@ export default function App() {
 			)
 		);
 
-		updateListArchived(listId, false);
+		firestoreService.lists.updateListArchived(listId, false);
 	}
 	async function handleDeleteList(listId) {
 		const confirmed = window.confirm("Delete this list?");
@@ -242,7 +227,7 @@ export default function App() {
 		}
 
 		try {
-			await deleteList(listId);
+			await firestoreService.lists.deleteList(listId);
 
 			const updatedState = lists.filter(list => list.id !== listId);
 			setLists(updatedState);
@@ -257,6 +242,7 @@ export default function App() {
 			};
 		}
 	}
+
 	async function handleCreateItem(text, listId) {
 		if (!text.trim()) {
 			return;
@@ -265,7 +251,7 @@ export default function App() {
 		const payload = { text: text, type: "todo" };
 
 		try {
-			const id = await createItem(listId, payload);
+			const id = await firestoreService.items.createItem(listId, payload);
 
 			setLists(prev => prev.map(list => list.id === listId ? {
 				...list,
@@ -314,13 +300,13 @@ export default function App() {
 			)
 		);
 
-		toggleItemCompleted(listId, itemId, newCompleted);
+		firestoreService.items.toggleItemCompleted(listId, itemId, newCompleted);
 	}
 	async function handleItemEdit(listId, itemId, newText) {
 		console.log("received: " + newText);
 
 		try {
-			await editItem(listId, itemId, newText);
+			await firestoreService.items.editItem(listId, itemId, newText);
 
 			setLists(prev =>
 				prev.map(list =>
@@ -355,7 +341,7 @@ export default function App() {
 		}
 
 		try {
-			await deleteItem(listId, itemId);
+			await firestoreService.items.deleteItem(listId, itemId);
 
 			setLists(prev =>
 				prev.map(list => {

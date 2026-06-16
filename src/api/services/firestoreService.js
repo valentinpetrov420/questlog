@@ -14,7 +14,7 @@ import {
 
 import { db } from "../firebase";
 
-export async function createList(userId, title) {
+async function createList(userId, title) {
     const docRef = await addDoc(collection(db, "lists"), {
         ownerId: userId,
         title,
@@ -29,8 +29,7 @@ export async function createList(userId, title) {
 
     return docRef.id;
 }
-
-export async function getLists(userId) {
+async function getLists(userId) {
     try {
         const q = query(
             collection(db, "lists"),
@@ -50,8 +49,7 @@ export async function getLists(userId) {
         throw error;
     }
 }
-
-export async function getItems(listId) {
+async function getItems(listId) {
     const snapshot = await getDocs(
         collection(db, "lists", listId, "items")
     );
@@ -61,8 +59,7 @@ export async function getItems(listId) {
         ...doc.data()
     }));
 }
-
-export async function getHydratedLists(userId) {
+async function getHydratedLists(userId) {
     const lists = await getLists(userId);
 
     return Promise.all(lists.map(async (list) => {
@@ -74,8 +71,7 @@ export async function getHydratedLists(userId) {
         }
     }))
 }
-
-export async function updateListTitle(listId, newTitle) {
+async function updateListTitle(listId, newTitle) {
     const listDocRef = doc(db, "lists", listId);
 
     await updateDoc(listDocRef, {
@@ -83,8 +79,7 @@ export async function updateListTitle(listId, newTitle) {
         updatedAt: Date.now(),
     });
 }
-
-export async function updateListPin(listId, newPinned) {
+async function updateListPin(listId, newPinned) {
     const listDocRef = doc(db, "lists", listId);
 
     await updateDoc(listDocRef, {
@@ -92,8 +87,7 @@ export async function updateListPin(listId, newPinned) {
         updatedAt: Date.now()
     })
 }
-
-export async function updateListArchived(listId, newArchived) {
+async function updateListArchived(listId, newArchived) {
     const listDocRef = doc(db, "lists", listId);
 
     await updateDoc(listDocRef, {
@@ -101,8 +95,7 @@ export async function updateListArchived(listId, newArchived) {
         updatedAt: Date.now()
     })
 }
-
-export async function deleteList(listId) {
+async function deleteList(listId) {
     console.log(listId);
     const itemsRef = collection(db, "lists", listId, "items");
     const snapshot = await getDocs(itemsRef);
@@ -114,7 +107,7 @@ export async function deleteList(listId) {
     await deleteDoc(doc(db, "lists", listId));
 }
 
-export async function createItem(listId, { text, type }) {
+async function createItem(listId, { text, type }) {
     const itemsRef = collection(db, "lists", listId, "items");
 
     const docRef = await addDoc(itemsRef, {
@@ -127,8 +120,7 @@ export async function createItem(listId, { text, type }) {
 
     return docRef.id;
 }
-
-export async function toggleItemCompleted(listId, itemId, newCompleted) {
+async function toggleItemCompleted(listId, itemId, newCompleted) {
     const itemDocRef = doc(db, "lists", listId, "items", itemId);
 
     await updateDoc(itemDocRef, {
@@ -136,8 +128,7 @@ export async function toggleItemCompleted(listId, itemId, newCompleted) {
         updatedAt: Date.now()
     })
 }
-
-export async function editItem(listId, itemId, newText) {
+async function editItem(listId, itemId, newText) {
     const itemDocRef = doc(db, "lists", listId, "items", itemId);
 
     await updateDoc(itemDocRef, {
@@ -145,7 +136,26 @@ export async function editItem(listId, itemId, newText) {
         updatedAt: Date.now()
     })
 }
-
-export async function deleteItem(listId, itemId) {
+async function deleteItem(listId, itemId) {
     await deleteDoc(doc(db, "lists", listId, "items", itemId));
 }
+
+const firestoreService = {
+    lists: {
+        createList,
+        getHydratedLists,
+        updateListTitle,
+        updateListPin,
+        updateListArchived,
+        deleteList
+    },
+
+    items: {
+        createItem,
+        toggleItemCompleted,
+        editItem,
+        deleteItem
+    }
+}
+
+export default firestoreService;

@@ -1,5 +1,5 @@
 import { __loadMockStorage, __clearStorage } from "./devTools";
-import { getLists } from "../api/services/firestoreService";
+import firestoreService from "../api/services/firestoreService";
 
 export default function DevPanel(props) {
     return <div>
@@ -8,7 +8,7 @@ export default function DevPanel(props) {
         
         <button
             onClick={async () => {
-                console.log(await getLists(props.userId));
+                console.log(await firestoreService.lists.getHydratedLists(props.userId));
             }}
         >
             getLists()
