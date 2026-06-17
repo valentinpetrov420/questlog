@@ -34,7 +34,6 @@ export default function CreateListForm(props) {
         }
 
         const response = await props.onCreateList(title);
-        console.log("create result: ", response);
 
         if (response.success) {
             setError("");

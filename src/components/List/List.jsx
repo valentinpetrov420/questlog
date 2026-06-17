@@ -54,7 +54,6 @@ export default function List(props) {
         }
 
         const response = await props.onListItemAdd(value, props.id);
-        console.log("create result: ", response);
 
         if (response.success) {
             setError("");
@@ -81,7 +80,6 @@ export default function List(props) {
         }
 
         const response = await props.onListTitleChange(props.id, draftTitle);
-        console.log("edit result: ", response);
 
         if (response.success) {
             setError("");
@@ -96,7 +94,6 @@ export default function List(props) {
     }
     async function handleDeleteClick() {
         const response = await props.onListDelete();
-        console.log("delete result: ", response)
 
         if (response.success) {
             setError("");

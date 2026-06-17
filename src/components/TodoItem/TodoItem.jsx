@@ -29,7 +29,6 @@ export default function TodoItem(props) {
         }
 
         const response = await props.onTodoEdit(props.listId, props.id, draftTitleTodo);
-        console.log("edit result: ", response);
 
         if (response.success) {
             setError("");
@@ -47,7 +46,6 @@ export default function TodoItem(props) {
     }
     async function handleDeleteClick() {
         const response = await props.onTodoDelete(props.listId, props.id);
-        console.log("delete result: ", response)
 
         if (response.success) {
             setError("");

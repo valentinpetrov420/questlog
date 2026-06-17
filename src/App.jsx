@@ -4,7 +4,7 @@ import './App.css'
 
 //import { loadLists, saveLists } from './api/services/storage.js';
 
-import firestoreService	from './api/services/firestoreService.js';
+import firestoreService from './api/services/firestoreService.js';
 
 import { __loadMockStorage, __clearStorage } from "./dev/devTools.js";
 
@@ -20,6 +20,7 @@ import mockData from './mockdata.js';
 import PatchNotesModal from './components/PatchNotesModal/PatchNotesModal.jsx';
 
 import DevPanel from "./dev/DevPanel.jsx";
+import { formatError } from './util/errorResponse.js';
 
 
 export default function App() {
@@ -133,10 +134,7 @@ export default function App() {
 				success: true
 			};
 		} catch (error) {
-			return {
-				success: false,
-				message: "Failed to create list"
-			};
+			return formatError(error, "Failed to create list", "createList");
 		}
 	}
 	async function handleEditListTitle(listId, newTitle) {
@@ -157,10 +155,7 @@ export default function App() {
 				success: true
 			};
 		} catch (error) {
-			return {
-				success: false,
-				message: "Failed to create item"
-			};
+			return formatError(error, "Failed to edit list", "editListTitle");
 		}
 
 	}
@@ -236,10 +231,7 @@ export default function App() {
 				success: true
 			};
 		} catch (error) {
-			return {
-				success: false,
-				message: "Failed to delete list"
-			};
+			return formatError(error, "Failed to delete list", "deleteList");
 		}
 	}
 
@@ -270,10 +262,7 @@ export default function App() {
 				success: true
 			};
 		} catch (error) {
-			return {
-				success: false,
-				message: "Failed to create list"
-			};
+			return formatError(error, "Failed to create item", "createItem");
 		}
 	}
 	function handleToggle(listId, itemId) {
@@ -326,10 +315,7 @@ export default function App() {
 				success: true
 			};
 		} catch (error) {
-			return {
-				success: false,
-				message: "Failed to create list"
-			};
+			return formatError(error, "Failed to edit item", "editItem");
 		}
 	}
 	async function handleItemDelete(listId, itemId) {
@@ -361,10 +347,7 @@ export default function App() {
 				success: true
 			};
 		} catch (error) {
-			return {
-				success: false,
-				message: "Failed to delete task"
-			};
+			return formatError(error, "Failed to delete item", "deleteItem");
 		}
 	}
 
