@@ -37,7 +37,11 @@ export default function PatchNotesModal({ open, onClose, patchnotes, }) {
                     <h3>{date}</h3>
                     <ul>
                         {grouped[date].map((e, i) => {
-                            return <li key={i}>{e.message}</li>;
+                            return <li key={i}>
+                                {e.message.split("\n").map((line, index) => (
+                                    <div key={index}>{line}</div>
+                                ))}
+                            </li>;
                         })}
                     </ul>
                 </div>
