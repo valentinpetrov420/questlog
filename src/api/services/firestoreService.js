@@ -22,7 +22,6 @@ async function createList(userId, title) {
     const docRef = await addDoc(collection(db, "lists"), {
         ownerId: userId,
         title,
-        todos: [],
         pinned: false,
         archived: false,
         createdAt: Date.now(),
