@@ -7,11 +7,13 @@ import "./CreateListForm.css";
 export default function CreateListForm(props) {
     const [title, setTitle] = useState("");
 
+    const [pending, setPending] = useState(false);
+
     const [error, setError] = useState("");
     const [status, setStatus] = useState(null);
 
     useEffect(() => {
-        if (!status){ 
+        if (!status) {
             return;
         };
 
@@ -33,15 +35,21 @@ export default function CreateListForm(props) {
             return;
         }
 
-        const response = await props.onCreateList(title);
+        setPending(true);
 
-        if (response.success) {
-            setError("");
-            setStatus(false);
-            setTitle("");
-        } else {
-            setError(response.message);
-            setStatus(true);
+        try {
+            const response = await props.onCreateList(title);
+
+            if (response.success) {
+                setError("");
+                setStatus(false);
+                setTitle("");
+            } else {
+                setError(response.message);
+                setStatus(true);
+            }
+        } finally {
+            setPending(false);
         }
     }
 
@@ -49,8 +57,12 @@ export default function CreateListForm(props) {
         <h2>Add Quest</h2>
         <StatusMessage text={status ? error : ""} />
         <input value={title}
+            disabled={pending}
             onChange={(event) => { setTitle(event.target.value) }}
             placeholder="Enter Quest Name"></input>
-        <button type="submit">Add New Quest</button>
+        <button type="submit"
+            disabled={pending}>
+            {pending ? "Creating..." : "Create new quest"}
+        </button>
     </form>
 }

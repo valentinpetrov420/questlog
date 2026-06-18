@@ -14,7 +14,11 @@ import {
 
 import { db } from "../firebase";
 
+import { __devDelay } from "../../dev/networkStress";
+
 async function createList(userId, title) {
+    await __devDelay();
+
     const docRef = await addDoc(collection(db, "lists"), {
         ownerId: userId,
         title,

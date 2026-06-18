@@ -18,6 +18,11 @@
 		margin-bottom: 0.5rem;
 	}
 
+	button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 	input {
 		margin: 0.5rem;
 		padding: 0.5rem;
