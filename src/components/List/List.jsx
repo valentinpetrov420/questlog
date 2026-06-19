@@ -44,23 +44,12 @@ export default function List(props) {
 
     function cancelEdit() {
         setEditing(false);
-        setDraftTitle(props.text);
+        setDraftTitle(props.title);
         setTitleStatus(null);
     }
     async function handleSubmit(e) {
         e.preventDefault();
 
-        const result = validateText(value, props.maxLength)
-
-        if (!result.valid) {
-            setError(result.error);
-            setAddTodoStatus(true);
-            return;
-        }
-
-        // shared pending state for the entire List component,
-        // prevents duplicate requests but also disables item creation,
-        // refactor into per-action pending states if needed
         setAddItemPending(true);
 
         try {
@@ -85,14 +74,6 @@ export default function List(props) {
     async function handleSubmitEdit(event) {
         event.preventDefault();
 
-        const result = validateText(draftTitle, props.maxLength);
-
-        if (!result.valid) {
-            setError(result.error);
-            setTitleStatus(true);
-            return;
-        }
-
         setTitlePending(true);
 
         try {
@@ -102,7 +83,6 @@ export default function List(props) {
                 setEditing(false);
                 setError("");
                 setTitleStatus(false);
-                setValue("");
             } else {
                 setError(response.message);
                 setTitleStatus(true);
@@ -137,6 +117,9 @@ export default function List(props) {
                         disabled={titlePending}
                         value={draftTitle}
                         onChange={(event) => setDraftTitle(event.target.value)}
+                        onBlur={() => {
+                            cancelEdit();
+                        }}
                         onKeyDown={(event) => {
                             if (event.key === "Escape") {
                                 cancelEdit();
@@ -174,9 +157,9 @@ export default function List(props) {
                         onChange={(event) => setValue(event.target.value)}
                     />
                 </div>
-                <button 
-                disabled={addItemPending}
-                className="list-form-button" type="submit">
+                <button
+                    disabled={addItemPending}
+                    className="list-form-button" type="submit">
                     {addItemPending ? "Adding..." : "Add new quest"}
                 </button>
             </form>

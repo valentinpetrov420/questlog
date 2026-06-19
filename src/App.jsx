@@ -21,6 +21,7 @@ import PatchNotesModal from './components/PatchNotesModal/PatchNotesModal.jsx';
 
 import DevPanel from "./dev/DevPanel.jsx";
 import { formatError } from './util/errorResponse.js';
+import { validateText } from './util/validation.js';
 
 
 export default function App() {
@@ -114,13 +115,22 @@ export default function App() {
 
 		console.log("created list: ", title);
 
+		const result = validateText(title, maxLength);
+
+		if (!result.valid) {
+			return {
+				success: false,
+				message: result.error
+			};
+		}
+
 		try {
-			const id = await firestoreService.lists.createList(user.uid, title);
+			const id = await firestoreService.lists.createList(user.uid, result.value);
 
 			setLists(prev => [
 				...prev,
 				{
-					title,
+					title: result.value,
 					id: id,
 					items: [],
 					createdAt: Date.now(),
@@ -140,13 +150,29 @@ export default function App() {
 	async function handleEditListTitle(listId, newTitle) {
 		console.log("received: " + newTitle);
 
+		if (!listId) {
+			return {
+				success: false,
+				message: "Missing listId"
+			};
+		}
+
+		const result = validateText(newTitle, maxLength);
+
+		if (!result.valid) {
+			return {
+				success: false,
+				message: result.error
+			};
+		}
+
 		try {
-			await firestoreService.lists.updateListTitle(listId, newTitle);
+			await firestoreService.lists.updateListTitle(listId, result.value);
 
 			setLists(prev =>
 				prev.map(list =>
 					list.id === listId
-						? { ...list, title: newTitle, updatedAt: Date.now() }
+						? { ...list, title: result.value, updatedAt: Date.now() }
 						: list
 				)
 			);
@@ -236,11 +262,24 @@ export default function App() {
 	}
 
 	async function handleCreateItem(text, listId) {
-		if (!text.trim()) {
-			return;
+
+		if (!listId) {
+			return {
+				success: false,
+				message: "Missing listId"
+			};
 		}
 
-		const payload = { text: text, type: "todo" };
+		const result = validateText(text, maxLength);
+
+		if (!result.valid) {
+			return {
+				success: false,
+				message: result.error
+			};
+		}
+
+		const payload = { text: result.value, type: "todo" };
 
 		try {
 			const id = await firestoreService.items.createItem(listId, payload);
@@ -250,7 +289,7 @@ export default function App() {
 				items: [...list.items,
 				{
 					id: id,
-					text,
+					text: result.value,
 					type: "todo",
 					completed: false,
 				}
@@ -294,8 +333,24 @@ export default function App() {
 	async function handleItemEdit(listId, itemId, newText) {
 		console.log("received: " + newText);
 
+		if (!listId) {
+			return {
+				success: false,
+				message: "Missing listId"
+			};
+		}
+
+		const result = validateText(newText, maxLength);
+
+		if (!result.valid) {
+			return {
+				success: false,
+				message: result.error
+			};
+		}
+
 		try {
-			await firestoreService.items.editItem(listId, itemId, newText);
+			await firestoreService.items.editItem(listId, itemId, result.value);
 
 			setLists(prev =>
 				prev.map(list =>
@@ -303,7 +358,7 @@ export default function App() {
 						? {
 							...list, items: list.items.map(item =>
 								item.id === itemId
-									? { ...item, text: newText }
+									? { ...item, text: result.value }
 									: item
 							), updatedAt: Date.now()
 						}

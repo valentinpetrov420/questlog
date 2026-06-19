@@ -20,14 +20,6 @@ export default function TodoItem(props) {
     async function handleSubmitEditTodo(event) {
         event.preventDefault();
 
-        const result = validateText(draftTitleTodo, props.maxLength);
-
-        if (!result.valid) {
-            setError(result.error);
-            setEditingTodo(true);
-            return;
-        }
-
         const response = await props.onTodoEdit(props.listId, props.id, draftTitleTodo);
 
         if (response.success) {

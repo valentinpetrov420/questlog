@@ -21,6 +21,6 @@ export function validateText(text, maxLength){
 
     return {
         valid: true,
-        value: text
+        value: cleaned
     }
 }
