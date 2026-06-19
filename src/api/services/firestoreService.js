@@ -75,6 +75,8 @@ async function getHydratedLists(userId) {
     }))
 }
 async function updateListTitle(listId, newTitle) {
+    await __devDelay();
+
     const listDocRef = doc(db, "lists", listId);
 
     await updateDoc(listDocRef, {
@@ -111,6 +113,8 @@ async function deleteList(listId) {
 }
 
 async function createItem(listId, { text, type }) {
+    await __devDelay();
+
     const itemsRef = collection(db, "lists", listId, "items");
 
     const docRef = await addDoc(itemsRef, {

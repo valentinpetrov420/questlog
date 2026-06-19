@@ -11,7 +11,8 @@
 			cursor: pointer;
 		}
 	}
-	.form-error{
+
+	.form-error {
 		margin-left: 1rem;
 	}
 }
@@ -82,6 +83,11 @@
 	margin-bottom: 0.5rem;
 	height: 2.5rem;
 	align-self: end;
+
+	&:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
 }
 
 @media (max-width: 1500px) {

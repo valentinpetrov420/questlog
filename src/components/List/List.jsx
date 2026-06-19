@@ -7,11 +7,16 @@ import './List.css';
 
 export default function List(props) {
     const [value, setValue] = useState("");
+
     const [draftTitle, setDraftTitle] = useState("");
     const [isEditing, setEditing] = useState(false);
 
+    const [addItemPending, setAddItemPending] = useState(false);
+    const [titlePending, setTitlePending] = useState(false);
+
     const [addTodoStatus, setAddTodoStatus] = useState(null);
     const [titleStatus, setTitleStatus] = useState(null);
+
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -53,15 +58,24 @@ export default function List(props) {
             return;
         }
 
-        const response = await props.onListItemAdd(value, props.id);
+        // shared pending state for the entire List component,
+        // prevents duplicate requests but also disables item creation,
+        // refactor into per-action pending states if needed
+        setAddItemPending(true);
 
-        if (response.success) {
-            setError("");
-            setAddTodoStatus(false);
-            setValue("");
-        } else {
-            setError(response.message);
-            setAddTodoStatus(true);
+        try {
+            const response = await props.onListItemAdd(value, props.id);
+
+            if (response.success) {
+                setError("");
+                setAddTodoStatus(false);
+                setValue("");
+            } else {
+                setError(response.message);
+                setAddTodoStatus(true);
+            }
+        } finally {
+            setAddItemPending(false);
         }
     }
     function handleEditTitle() {
@@ -79,14 +93,22 @@ export default function List(props) {
             return;
         }
 
-        const response = await props.onListTitleChange(props.id, draftTitle);
+        setTitlePending(true);
 
-        if (response.success) {
-            setError("");
-            setEditing(false);
-        } else {
-            setError(response.message);
-            setTitleStatus(true);
+        try {
+            const response = await props.onListTitleChange(props.id, draftTitle);
+
+            if (response.success) {
+                setEditing(false);
+                setError("");
+                setTitleStatus(false);
+                setValue("");
+            } else {
+                setError(response.message);
+                setTitleStatus(true);
+            }
+        } finally {
+            setTitlePending(false);
         }
     }
     function handlePin(event) {
@@ -112,10 +134,8 @@ export default function List(props) {
                 <h2 className="list-title-edit">Title:</h2>
                 <div className="input-form-wrapper">
                     <input autoFocus
+                        disabled={titlePending}
                         value={draftTitle}
-                        onBlur={() => {
-                            cancelEdit();
-                        }}
                         onChange={(event) => setDraftTitle(event.target.value)}
                         onKeyDown={(event) => {
                             if (event.key === "Escape") {
@@ -148,13 +168,16 @@ export default function List(props) {
                 <div className="input-form-wrapper">
                     <StatusMessage text={addTodoStatus ? error : ""} />
                     <input
+                        disabled={addItemPending}
                         placeholder="New quest task..."
                         value={value}
                         onChange={(event) => setValue(event.target.value)}
                     />
                 </div>
-                <button className="list-form-button" type="submit">
-                    Add Quest Task
+                <button 
+                disabled={addItemPending}
+                className="list-form-button" type="submit">
+                    {addItemPending ? "Adding..." : "Add new quest"}
                 </button>
             </form>
         </div>
