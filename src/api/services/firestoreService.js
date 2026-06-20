@@ -136,6 +136,8 @@ async function toggleItemCompleted(listId, itemId, newCompleted) {
     })
 }
 async function editItem(listId, itemId, newText) {
+    await __devDelay();
+    
     const itemDocRef = doc(db, "lists", listId, "items", itemId);
 
     await updateDoc(itemDocRef, {

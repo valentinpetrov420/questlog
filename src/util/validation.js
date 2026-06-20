@@ -1,4 +1,7 @@
 export function normalizeText(text){
+    if (text === undefined){
+        return "";
+    }
     return text.trim();
 }
 

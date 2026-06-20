@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import StatusMessage from "../StatusMessage/StatusMessage.jsx";
-import { validateText } from "../../util/validation.js";
 import './TodoItem.css';
 
 export default function TodoItem(props) {
     const [isEditingTodo, setEditingTodo] = useState(false);
     const [draftTitleTodo, setDraftTitleTodo] = useState("");
+
+    const [pending, setPending] = useState(false);
 
     const [error, setError] = useState("");
 
@@ -20,15 +21,21 @@ export default function TodoItem(props) {
     async function handleSubmitEditTodo(event) {
         event.preventDefault();
 
-        const response = await props.onTodoEdit(props.listId, props.id, draftTitleTodo);
+        setPending(true);
 
-        if (response.success) {
-            setError("");
-            setEditingTodo(false);
-            setDraftTitleTodo("");
-        } else {
-            setError(response.message);
-            setEditingTodo(true);
+        try {
+            const response = await props.onTodoEdit(props.listId, props.id, draftTitleTodo);
+
+            if (response.success) {
+                setError("");
+                setEditingTodo(false);
+                setDraftTitleTodo("");
+            } else {
+                setError(response.message);
+                setEditingTodo(true);
+            }
+        } finally {
+            setPending(false);
         }
 
     }
@@ -37,6 +44,10 @@ export default function TodoItem(props) {
         setDraftTitleTodo(props.text);
     }
     async function handleDeleteClick() {
+        if (pending) {
+            return;
+        }
+
         const response = await props.onTodoDelete(props.listId, props.id);
 
         if (response.success) {
@@ -45,13 +56,14 @@ export default function TodoItem(props) {
             setError(response.message);
         }
     }
-    
+
 
     return <li>
         <StatusMessage text={error} />
         <div className={isEditingTodo ? "input-form-wrapper" : "todo-wrapper"}>
             {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
                 <input autoFocus
+                    disabled={pending}
                     value={draftTitleTodo}
                     onChange={(event) => setDraftTitleTodo(event.target.value)}
                     onBlur={() => {
@@ -64,8 +76,7 @@ export default function TodoItem(props) {
                     }}></input>
             </form>
                 :
-                <span className={`todo-item-text ${props.highlightedTodoId === props.id ? "highlighted" : ""
-                    }
+                <span className={`todo-item-text ${props.highlightedTodoId === props.id ? "highlighted" : ""}
                 ${props.completed ? "completed" : ""}`}
                     onClick={() => props.onToggle(props.id)}>
                     {props.text}
@@ -73,13 +84,17 @@ export default function TodoItem(props) {
             }
 
             {!isEditingTodo ? <div className="todo-actions">
-                <button onMouseDown={(event) => {
-                    event.preventDefault();
-                    handleEditTodo();
-                }}>
+                <button
+                    disabled={pending}
+                    onMouseDown={(event) => {
+                        event.preventDefault();
+                        handleEditTodo();
+                    }}>
                     ✎
                 </button>
-                <button onClick={handleDeleteClick}>
+                <button
+                    disabled={pending}
+                    onClick={handleDeleteClick}>
                     🗑️
                 </button>
             </div> :

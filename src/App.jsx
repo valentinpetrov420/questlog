@@ -340,6 +340,13 @@ export default function App() {
 			};
 		}
 
+		if (!itemId) {
+			return {
+				success: false,
+				message: "Missing itemId"
+			};
+		}
+
 		const result = validateText(newText, maxLength);
 
 		if (!result.valid) {

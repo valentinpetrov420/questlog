@@ -27,14 +27,6 @@ export default function CreateListForm(props) {
     async function handleSubmit(event) {
         event.preventDefault();
 
-        const result = validateText(title, props.maxLength);
-
-        if (!result.valid) {
-            setError(result.error);
-            setStatus(true);
-            return;
-        }
-
         setPending(true);
 
         try {
