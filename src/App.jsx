@@ -188,6 +188,13 @@ export default function App() {
 	function handlePin(listId) {
 		console.log("pinned: " + listId);
 
+		if (!listId) {
+			return {
+				success: false,
+				message: "Missing listId"
+			};
+		}
+
 		const targetList = lists.find(list => list.id === listId);
 
 		if (!targetList) {
@@ -213,6 +220,13 @@ export default function App() {
 			return;
 		}
 
+		if (!listId) {
+			return {
+				success: false,
+				message: "Missing listId"
+			};
+		}
+
 		setLists(prev =>
 			prev.map(list =>
 				list.id === listId
@@ -230,6 +244,13 @@ export default function App() {
 			return;
 		}
 
+		if (!listId) {
+			return {
+				success: false,
+				message: "Missing listId"
+			};
+		}
+
 		setLists(prev =>
 			prev.map(list =>
 				list.id === listId
@@ -245,6 +266,13 @@ export default function App() {
 
 		if (!confirmed) {
 			return;
+		}
+
+		if (!listId) {
+			return {
+				success: false,
+				message: "Missing listId"
+			};
 		}
 
 		try {
@@ -306,6 +334,21 @@ export default function App() {
 	}
 	function handleToggle(listId, itemId) {
 		console.log(listId, itemId);
+
+		if (!listId) {
+			return {
+				success: false,
+				message: "Missing listId"
+			};
+		}
+
+		if (!itemId) {
+			return {
+				success: false,
+				message: "Missing itemId"
+			};
+		}
+
 		const list = lists.find(l => l.id === listId);
 		const item = list.items.find(i => i.id === itemId);
 
@@ -386,6 +429,20 @@ export default function App() {
 
 		if (!confirmed) {
 			return;
+		}
+
+		if (!listId) {
+			return {
+				success: false,
+				message: "Missing listId"
+			};
+		}
+
+		if (!itemId) {
+			return {
+				success: false,
+				message: "Missing itemId"
+			};
 		}
 
 		try {
