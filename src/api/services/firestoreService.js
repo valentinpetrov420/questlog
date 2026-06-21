@@ -101,7 +101,8 @@ async function updateListArchived(listId, newArchived) {
     })
 }
 async function deleteList(listId) {
-    console.log(listId);
+    await __devDelay();
+    
     const itemsRef = collection(db, "lists", listId, "items");
     const snapshot = await getDocs(itemsRef);
 
@@ -110,6 +111,8 @@ async function deleteList(listId) {
     );
 
     await deleteDoc(doc(db, "lists", listId));
+
+    console.log(listId);
 }
 
 async function createItem(listId, { text, type }) {

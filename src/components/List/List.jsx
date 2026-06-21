@@ -11,6 +11,7 @@ export default function List(props) {
     const [draftTitle, setDraftTitle] = useState("");
     const [isEditing, setEditing] = useState(false);
 
+    const [deletePending, setDeletePending] = useState(false);
     const [addItemPending, setAddItemPending] = useState(false);
     const [titlePending, setTitlePending] = useState(false);
 
@@ -34,12 +35,20 @@ export default function List(props) {
     const isArchived = props.isArchived;
     const actions = isArchived ?
         (<div className="list-actions">
-            <button onClick={() => props.onListRestore(props.id)}>🔃</button>
-            <button onClick={handleDeleteClick}>🗑️</button>
+            <button
+                disabled={deletePending}
+                onClick={() => props.onListRestore(props.id)}>🔃</button>
+            <button
+                disabled={deletePending}
+                onClick={handleDeleteClick}>🗑️</button>
         </div>)
         : (<div className="list-actions">
-            <button onClick={() => props.onListArchive(props.id)}>🗑️</button>
-            <button onClick={() => props.onListPin(props.id)}>📌</button>
+            <button
+                disabled={deletePending}
+                onClick={() => props.onListArchive(props.id)}>🗑️</button>
+            <button
+                disabled={deletePending}
+                onClick={() => props.onListPin(props.id)}>📌</button>
         </div>);
 
     function cancelEdit() {
@@ -49,6 +58,10 @@ export default function List(props) {
     }
     async function handleSubmit(e) {
         e.preventDefault();
+
+        if (deletePending) {
+            return;
+        }
 
         setAddItemPending(true);
 
@@ -68,11 +81,19 @@ export default function List(props) {
         }
     }
     function handleEditTitle() {
+        if (deletePending) {
+            return;
+        }
+
         setDraftTitle(props.title);
         setEditing(true);
     }
     async function handleSubmitEdit(event) {
         event.preventDefault();
+
+        if (deletePending) {
+            return;
+        }
 
         setTitlePending(true);
 
@@ -95,14 +116,24 @@ export default function List(props) {
         props.onListPin(props.id);
     }
     async function handleDeleteClick() {
-        const response = await props.onListDelete();
+        if (deletePending) {
+            return;
+        }
 
-        if (response.success) {
-            setError("");
-            setTitleStatus(false);
-        } else {
-            setTitleStatus(true);
-            setError(response.message);
+        setDeletePending(true);
+
+        try {
+            const response = await props.onListDelete();
+
+            if (response.success) {
+                setError("");
+                setTitleStatus(false);
+            } else {
+                setError(response.message);
+                setTitleStatus(true);
+            }
+        } finally {
+            setDeletePending(false);
         }
     }
 
@@ -151,14 +182,14 @@ export default function List(props) {
                 <div className="input-form-wrapper">
                     <StatusMessage text={addTodoStatus ? error : ""} />
                     <input
-                        disabled={addItemPending}
+                        disabled={addItemPending || deletePending}
                         placeholder="New quest task..."
                         value={value}
                         onChange={(event) => setValue(event.target.value)}
                     />
                 </div>
                 <button
-                    disabled={addItemPending}
+                    disabled={addItemPending || deletePending}
                     className="list-form-button" type="submit">
                     {addItemPending ? "Adding..." : "Add new quest"}
                 </button>
