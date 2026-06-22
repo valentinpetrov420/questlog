@@ -11,6 +11,8 @@ export default function TodoItem(props) {
 
     const [error, setError] = useState("");
 
+    const disabled = pending || props.deletePending;
+
     const highlightedTodoId = props.highlightedTodoId;
 
     function cancelEdit() {
@@ -37,23 +39,28 @@ export default function TodoItem(props) {
         } finally {
             setPending(false);
         }
-
     }
     function handleEditTodo() {
         setEditingTodo(true);
         setDraftTitleTodo(props.text);
     }
     async function handleDeleteClick() {
-        if (pending) {
+        if (disabled) {
             return;
         }
 
-        const response = await props.onTodoDelete(props.listId, props.id);
+        setPending(true);
 
-        if (response.success) {
-            setError("");
-        } else {
-            setError(response.message);
+        try {
+            const response = await props.onTodoDelete(props.listId, props.id);
+
+            if (response.success) {
+                setError("");
+            } else {
+                setError(response.message);
+            }
+        } finally {
+            setPending(false);
         }
     }
 
@@ -63,7 +70,7 @@ export default function TodoItem(props) {
         <div className={isEditingTodo ? "input-form-wrapper" : "todo-wrapper"}>
             {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
                 <input autoFocus
-                    disabled={pending}
+                    disabled={disabled}
                     value={draftTitleTodo}
                     onChange={(event) => setDraftTitleTodo(event.target.value)}
                     onBlur={() => {
@@ -78,22 +85,32 @@ export default function TodoItem(props) {
                 :
                 <span className={`todo-item-text ${props.highlightedTodoId === props.id ? "highlighted" : ""}
                 ${props.completed ? "completed" : ""}`}
-                    onClick={() => props.onToggle(props.id)}>
+                    onClick={() => {
+                        if (disabled) {
+                            return;
+                        }
+
+                        props.onToggle(props.id)
+                    }}>
                     {props.text}
                 </span>
             }
 
             {!isEditingTodo ? <div className="todo-actions">
                 <button
-                    disabled={pending}
+                    disabled={disabled}
                     onMouseDown={(event) => {
+                        if (disabled) {
+                            return;
+                        }
+
                         event.preventDefault();
                         handleEditTodo();
                     }}>
                     ✎
                 </button>
                 <button
-                    disabled={pending}
+                    disabled={disabled}
                     onClick={handleDeleteClick}>
                     🗑️
                 </button>

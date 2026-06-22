@@ -164,6 +164,9 @@ export default function List(props) {
             <ul>
                 {props.listItems.map(item => (
                     <TodoItem
+
+                        deletePending={deletePending}
+
                         key={item.id}
                         listId={props.id}
                         id={item.id}

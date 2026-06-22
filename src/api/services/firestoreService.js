@@ -149,6 +149,8 @@ async function editItem(listId, itemId, newText) {
     })
 }
 async function deleteItem(listId, itemId) {
+    await __devDelay();
+    
     await deleteDoc(doc(db, "lists", listId, "items", itemId));
 }
 
