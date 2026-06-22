@@ -21,7 +21,7 @@ It focuses on simplicity and minimalism. Fast task entry and tracking without ov
 - Reusable input validation system:
     - Empty input validation.
     - Maximum length validation.
-- Reusable StatusMessage component for contextual feedback
+- Reusable StatusMessage component for contextual feedback.
 - Network error handling for list creation, edits and deletion.
 - Responsive layout for desktop and mobile devices.
 - Local development tools for state seeding and reset testing.
