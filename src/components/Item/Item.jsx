@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import StatusMessage from "../StatusMessage/StatusMessage.jsx";
-import './TodoItem.css';
+import './Item.css';
 
-export default function TodoItem(props) {
+export default function Item(props) {
     const [isEditingTodo, setEditingTodo] = useState(false);
     const [draftTitleTodo, setDraftTitleTodo] = useState("");
 

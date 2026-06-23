@@ -1,5 +1,5 @@
 import { useState } from "react";
-import TodoItem from "../TodoItem/TodoItem.jsx"
+import Item from "../Item/Item.jsx"
 import { validateText } from "../../util/validation";
 import StatusMessage from "../StatusMessage/StatusMessage.jsx";
 import { useEffect } from "react";
@@ -163,7 +163,7 @@ export default function List(props) {
                 : <h2 className="list-title">Title: <span onClick={handleEditTitle}>{props.title}<a>✎</a></span></h2>}
             <ul>
                 {props.listItems.map(item => (
-                    <TodoItem
+                    <Item
 
                         deletePending={deletePending}
 

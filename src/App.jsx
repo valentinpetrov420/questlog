@@ -13,8 +13,6 @@ import { loginWithGoogle, logout } from "./api/services/authService";
 import { auth, db } from "./api/firebase";
 
 import ListView from './components/ListView/ListView.jsx';
-import TodoItem from './components/TodoItem/TodoItem.jsx';
-import List from './components/List/List.jsx';
 import CreateListForm from './components/CreateListForm/CreateListForm.jsx';
 import mockData from './mockdata.js';
 import PatchNotesModal from './components/PatchNotesModal/PatchNotesModal.jsx';
