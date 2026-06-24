@@ -12,6 +12,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import { loginWithGoogle, logout } from "./api/services/authService";
 import { auth, db } from "./api/firebase";
 
+import NavBar from './components/NavBar/NavBar.jsx';
+
 import ListView from './components/ListView/ListView.jsx';
 import CreateListForm from './components/CreateListForm/CreateListForm.jsx';
 import mockData from './mockdata.js';
@@ -23,23 +25,18 @@ import { validateText } from './util/validation.js';
 
 
 export default function App() {
-	const [theme, setTheme] = useState(() => {
-		return localStorage.getItem("theme") || "darkMode";
-	});
-
 	const [user, setUser] = useState(null);
 	const [lists, setLists] = useState([]);
+	
+	const [theme, setTheme] = useState(() => {
+        return localStorage.getItem("theme") || "darkMode";
+    });
 
 	const [sortMode, setSortMode] = useState(() => {
 		return localStorage.getItem("sortmode") || "createdAt";
 	});
 
 	const [inputValue, setInputValue] = useState("");
-
-	const [patchnotes, setPatchnotes] = useState([]);
-	const [patchnotesOpen, setPatchnotesOpen] = useState(false);
-
-	const [menuOpen, setMenuOpen] = useState(false);
 
 	const [error, setError] = useState("");
 	const maxLength = 50;
@@ -57,15 +54,7 @@ export default function App() {
 		return unsub;
 	}, []);
 
-	useEffect(() => {
-		fetch("/changelog.json")
-			.then((res) => res.json())
-			.then((data) => {
-
-				setPatchnotes(data);
-				localStorage.setItem("changelog", JSON.stringify(data));
-			});
-	}, []);
+	
 
 	//useEffect(() => {
 	//console.log("state changed");
@@ -90,20 +79,13 @@ export default function App() {
 		localStorage.setItem("sortmode", sortMode);
 	}, [sortMode]);
 
-	function togglePatchnotes() {
-		if (patchnotesOpen) {
-			setPatchnotesOpen(false);
-		} else if (!patchnotesOpen) {
-			setPatchnotesOpen(true);
-		}
-	}
 	function toggleDarkMode() {
-		if (theme === "darkMode") {
-			setTheme("lightMode");
-		} else if (theme === "lightMode") {
-			setTheme("darkMode")
-		}
-	}
+        if (theme === "darkMode") {
+            setTheme("lightMode");
+        } else if (theme === "lightMode") {
+            setTheme("darkMode")
+        }
+    }
 
 	async function handleCreateList(title) {
 		//todo: gate CreateListForm from unauthorized users
@@ -473,34 +455,16 @@ export default function App() {
 		<div id="app" data-theme={theme}>
 			<div id="page-container">
 				<header id="top-header">
-					<nav>
-						<h1>{siteName}</h1>
-						<div className="nav-container">
-							<div className={`nav-links ${menuOpen ? "opened" : "closed"}`}>
-								<button id="patchnotes-toggle" className="wrapped-nav-button" onClick={togglePatchnotes}>Patch Notes</button>
-								<button id="dark-mode-toggle" className="wrapped-nav-button" onClick={toggleDarkMode}>🌘 Dark Mode</button>
-								{user ?
-									<div id="user-info">
-										<div id="user-nav-wrapper">
-											<div className='user-photo-container'>
-												<img src={user.photoURL}></img>
-											</div>
-											<p className='user-name'>
-												{user.displayName}
-											</p>
-										</div>
-										<button className="login-button wrapped-nav-button" onClick={logout}>Logout</button>
-									</div>
-									: <button className="login-button wrapped-nav-button" onClick={loginWithGoogle}>Sign in</button>
-								}
-							</div>
-							<button
-								className="nav-menu-toggle"
-								onClick={() => setMenuOpen(prev => !prev)}>
-								{menuOpen ? "X" : "☰"}
-							</button>
-						</div>
-					</nav>
+					<NavBar siteName={siteName}
+
+						theme={theme}
+						toggleDarkMode={toggleDarkMode}
+
+						user={user}
+						loginWithGoogle={loginWithGoogle}
+						logout={logout}
+					/>
+
 				</header>
 				<main>
 					<header>
@@ -555,11 +519,6 @@ export default function App() {
 					)}
 				</main>
 			</div>
-			<PatchNotesModal
-				open={patchnotesOpen}
-				onClose={() => setPatchnotesOpen(false)}
-				patchnotes={patchnotes}
-			/>
 		</div>
 	);
 }
