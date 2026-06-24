@@ -119,34 +119,57 @@ async function createItem(listId, { text, type }) {
     await __devDelay();
 
     const itemsRef = collection(db, "lists", listId, "items");
+    const listRef = doc(db, "lists", listId);
+
+    const now = Date.now();
 
     const docRef = await addDoc(itemsRef, {
         text,
         type,
         completed: false,
-        createdAt: Date.now(),
-        updatedAt: Date.now()
+        createdAt: now,
+        updatedAt: now
+    });
+
+    await updateDoc(listRef, {
+        updatedAt: now
     });
 
     return docRef.id;
 }
 async function toggleItemCompleted(listId, itemId, newCompleted) {
     const itemDocRef = doc(db, "lists", listId, "items", itemId);
+    const listDocRef = doc(db, "lists", listId);
 
-    await updateDoc(itemDocRef, {
-        completed: newCompleted,
-        updatedAt: Date.now()
-    })
+    const now = Date.now();
+
+    await Promise.all([
+        updateDoc(itemDocRef, {
+            completed: newCompleted,
+            updatedAt: now
+        }),
+        updateDoc(listDocRef, {
+            updatedAt: now
+        })
+    ]);
 }
 async function editItem(listId, itemId, newText) {
     await __devDelay();
     
     const itemDocRef = doc(db, "lists", listId, "items", itemId);
+    const listDocRef = doc(db, "lists", listId);
 
-    await updateDoc(itemDocRef, {
-        text: newText,
-        updatedAt: Date.now()
-    })
+    const now = Date.now();
+
+    await Promise.all([
+        updateDoc(itemDocRef, {
+            text: newText,
+            updatedAt: now
+        }),
+        updateDoc(listDocRef, {
+            updatedAt: now
+        })
+    ]);
 }
 async function deleteItem(listId, itemId) {
     await __devDelay();

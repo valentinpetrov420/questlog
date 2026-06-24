@@ -54,8 +54,6 @@ export default function App() {
 		return unsub;
 	}, []);
 
-	
-
 	//useEffect(() => {
 	//console.log("state changed");
 
