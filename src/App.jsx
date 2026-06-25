@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 
+import { Routes, Route } from 'react-router-dom'
+import { useLocation } from 'react-router-dom';
+
 import './App.css'
 
 //import { loadLists, saveLists } from './api/services/storage.js';
@@ -25,12 +28,15 @@ import { validateText } from './util/validation.js';
 
 
 export default function App() {
+	//todo: remove later
+	const location = useLocation()
+
 	const [user, setUser] = useState(null);
 	const [lists, setLists] = useState([]);
-	
+
 	const [theme, setTheme] = useState(() => {
-        return localStorage.getItem("theme") || "darkMode";
-    });
+		return localStorage.getItem("theme") || "darkMode";
+	});
 
 	const [sortMode, setSortMode] = useState(() => {
 		return localStorage.getItem("sortmode") || "createdAt";
@@ -78,12 +84,12 @@ export default function App() {
 	}, [sortMode]);
 
 	function toggleDarkMode() {
-        if (theme === "darkMode") {
-            setTheme("lightMode");
-        } else if (theme === "lightMode") {
-            setTheme("darkMode")
-        }
-    }
+		if (theme === "darkMode") {
+			setTheme("lightMode");
+		} else if (theme === "lightMode") {
+			setTheme("darkMode")
+		}
+	}
 
 	async function handleCreateList(title) {
 		//todo: gate CreateListForm from unauthorized users
@@ -450,73 +456,78 @@ export default function App() {
 
 
 	return (
-		<div id="app" data-theme={theme}>
-			<div id="page-container">
-				<header id="top-header">
-					<NavBar siteName={siteName}
+		<Routes>
+			<Route path="/" element={
+				//todo: remove data-route later
+				<div id="app" data-theme={theme} data-route={location.pathname}>
+					<div id="page-container">
+						<header id="top-header">
+							<NavBar siteName={siteName}
 
-						theme={theme}
-						toggleDarkMode={toggleDarkMode}
+								theme={theme}
+								toggleDarkMode={toggleDarkMode}
 
-						user={user}
-						loginWithGoogle={loginWithGoogle}
-						logout={logout}
-					/>
+								user={user}
+								loginWithGoogle={loginWithGoogle}
+								logout={logout}
+							/>
 
-				</header>
-				<main>
-					<header>
-						<section className="lists-container">
-							<ListView role="pinned"
-								lists={lists}
-								onListItemAdd={handleCreateItem}
-								onListItemEdit={handleItemEdit}
-								onListItemDelete={handleItemDelete}
-								onListItemToggle={handleToggle}
-								onListTitleChange={handleEditListTitle}
-								onListPin={handlePin}
-								onListArchive={handleArchive}
-								onListRestore={handleRestore}
-								onListDelete={handleDeleteList}
-								maxLength={maxLength}>
-							</ListView>
-						</section>
-					</header>
-					<section className="lists-container">
-						<CreateListForm onCreateList={handleCreateList} maxLength={maxLength} />
-						<div id="all-lists">
-							<h2 id="lists-heading">Current Quests: </h2>
-							<select id="sort-dropdown"
-								value={sortMode}
-								onChange={(event) => {
-									setSortMode(event.target.value);
-								}}>
-								<option value="createdAt">Newest</option>
-								<option value="updatedAt">Last updated</option>
-								<option value="alphabetical">Alphabetical</option>
-								<option value="archived">Archived only</option>
-							</select>
-							<ListView role="sorted" sortMode={sortMode}
-								lists={lists}
-								onListItemAdd={handleCreateItem}
-								onListItemEdit={handleItemEdit}
-								onListItemDelete={handleItemDelete}
-								onListItemToggle={handleToggle}
-								onListTitleChange={handleEditListTitle}
-								onListPin={handlePin}
-								onListArchive={handleArchive}
-								onListRestore={handleRestore}
-								onListDelete={handleDeleteList}
-								maxLength={maxLength}>
-							</ListView>
-						</div>
-					</section>
-					{import.meta.env.DEV && (
-						<DevPanel setLists={setLists}
-							userId={user?.uid} />
-					)}
-				</main>
-			</div>
-		</div>
+						</header>
+						<main>
+							<header>
+								<section className="lists-container">
+									<ListView role="pinned"
+										lists={lists}
+										onListItemAdd={handleCreateItem}
+										onListItemEdit={handleItemEdit}
+										onListItemDelete={handleItemDelete}
+										onListItemToggle={handleToggle}
+										onListTitleChange={handleEditListTitle}
+										onListPin={handlePin}
+										onListArchive={handleArchive}
+										onListRestore={handleRestore}
+										onListDelete={handleDeleteList}
+										maxLength={maxLength}>
+									</ListView>
+								</section>
+							</header>
+							<section className="lists-container">
+								<CreateListForm onCreateList={handleCreateList} maxLength={maxLength} />
+								<div id="all-lists">
+									<h2 id="lists-heading">Current Quests: </h2>
+									<select id="sort-dropdown"
+										value={sortMode}
+										onChange={(event) => {
+											setSortMode(event.target.value);
+										}}>
+										<option value="createdAt">Newest</option>
+										<option value="updatedAt">Last updated</option>
+										<option value="alphabetical">Alphabetical</option>
+										<option value="archived">Archived only</option>
+									</select>
+									<ListView role="sorted" sortMode={sortMode}
+										lists={lists}
+										onListItemAdd={handleCreateItem}
+										onListItemEdit={handleItemEdit}
+										onListItemDelete={handleItemDelete}
+										onListItemToggle={handleToggle}
+										onListTitleChange={handleEditListTitle}
+										onListPin={handlePin}
+										onListArchive={handleArchive}
+										onListRestore={handleRestore}
+										onListDelete={handleDeleteList}
+										maxLength={maxLength}>
+									</ListView>
+								</div>
+							</section>
+							{import.meta.env.DEV && (
+								<DevPanel setLists={setLists}
+									userId={user?.uid} />
+							)}
+						</main>
+					</div>
+				</div>
+			} />
+		</Routes>
 	);
 }
