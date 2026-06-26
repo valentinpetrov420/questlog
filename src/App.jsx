@@ -32,6 +32,7 @@ import LoginPage from './pages/LoginPage.jsx';
 
 export default function App() {
 	const [user, setUser] = useState(null);
+	const [authReady, setAuthReady] = useState(false);
 
 	const [theme, setTheme] = useState(() => {
 		return localStorage.getItem("theme") || "darkMode";
@@ -47,6 +48,7 @@ export default function App() {
 	useEffect(() => {
 		const unsub = onAuthStateChanged(auth, (u) => {
 			setUser(u);
+			setAuthReady(true);
 		});
 
 		return unsub;
@@ -73,15 +75,19 @@ export default function App() {
 						logout={logout}
 					/>
 				</header>
-				<Routes>
-					<Route path="/"
-						element={user
-							? <MainPage user={user} maxLength={maxLength} siteName={siteName} />
-							: <Navigate to="/login" replace />
-						}
-					/>
-					<Route path="/login" element={<LoginPage loginWithGoogle={loginWithGoogle} />} />
-				</Routes>
+				{!authReady ? (
+					<div>Loading...</div>
+				) : (
+					<Routes>
+						<Route path="/"
+							element={user
+								? <MainPage user={user} maxLength={maxLength} siteName={siteName} />
+								: <Navigate to="/login" replace />
+							}
+						/>
+						<Route path="/login" element={<LoginPage loginWithGoogle={loginWithGoogle} />} />
+					</Routes>
+				)}
 			</div>
 		</div>
 
