@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom';
 
 import './App.css'
@@ -74,8 +74,13 @@ export default function App() {
 					/>
 				</header>
 				<Routes>
-					<Route path="/" element={<MainPage user={user} maxLength={maxLength} siteName={siteName}/>}/>
-					<Route path="/login" element={<LoginPage loginWithGoogle={loginWithGoogle} />}/>
+					<Route path="/"
+						element={user
+							? <MainPage user={user} maxLength={maxLength} siteName={siteName} />
+							: <Navigate to="/login" replace />
+						}
+					/>
+					<Route path="/login" element={<LoginPage loginWithGoogle={loginWithGoogle} />} />
 				</Routes>
 			</div>
 		</div>

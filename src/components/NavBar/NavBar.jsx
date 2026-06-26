@@ -2,10 +2,14 @@ import { useState, useEffect } from "react";
 import './NavBar.css';
 import PatchNotesModal from "../PatchNotesModal/PatchNotesModal";
 
+import { useNavigate } from "react-router-dom";
+
 export default function NavBar(props) {
 	const [patchnotes, setPatchnotes] = useState([]);
     const [patchnotesOpen, setPatchnotesOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
+
+    const navigate = useNavigate();
     
     useEffect(() => { fetch("././changelog.json")
 			.then((res) => res.json())
@@ -24,6 +28,11 @@ export default function NavBar(props) {
         }
     }
 
+    async function handleLogout(){
+        await props.logout();
+        navigate("/login");
+    }
+
     return <nav>
         <h1>{props.siteName}</h1>
         <div className="nav-container">
@@ -40,7 +49,7 @@ export default function NavBar(props) {
                                 {props.user.displayName}
                             </p>
                         </div>
-                        <button className="login-button wrapped-nav-button" onClick={props.logout}>Logout</button>
+                        <button className="login-button wrapped-nav-button" onClick={handleLogout}>Logout</button>
                     </div>
                     : <button className="login-button wrapped-nav-button" onClick={props.loginWithGoogle}>Sign in</button>
                 }
