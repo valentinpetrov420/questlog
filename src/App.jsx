@@ -73,6 +73,7 @@ export default function App() {
 
 						user={user}
 						logout={logout}
+						loginWithGoogle={loginWithGoogle}
 					/>
 				</header>
 				{!authReady ? (

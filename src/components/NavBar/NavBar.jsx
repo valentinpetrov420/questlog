@@ -5,20 +5,21 @@ import PatchNotesModal from "../PatchNotesModal/PatchNotesModal";
 import { useNavigate } from "react-router-dom";
 
 export default function NavBar(props) {
-	const [patchnotes, setPatchnotes] = useState([]);
+    const [patchnotes, setPatchnotes] = useState([]);
     const [patchnotesOpen, setPatchnotesOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
 
     const navigate = useNavigate();
-    
-    useEffect(() => { fetch("././changelog.json")
-			.then((res) => res.json())
-			.then((data) => {
 
-				setPatchnotes(data);
-				localStorage.setItem("changelog", JSON.stringify(data));
-			});
-	}, []);
+    useEffect(() => {
+        fetch("././changelog.json")
+        .then((res) => res.json())
+        .then((data) => {
+
+            setPatchnotes(data);
+            localStorage.setItem("changelog", JSON.stringify(data));
+        });
+    }, []);
 
     function togglePatchnotes() {
         if (patchnotesOpen) {
@@ -28,9 +29,14 @@ export default function NavBar(props) {
         }
     }
 
-    async function handleLogout(){
+    async function handleLogout() {
         await props.logout();
         navigate("/login");
+    }
+
+    async function handleLogin() {
+        await props.loginWithGoogle();
+        navigate("/");
     }
 
     return <nav>
@@ -51,7 +57,7 @@ export default function NavBar(props) {
                         </div>
                         <button className="login-button wrapped-nav-button" onClick={handleLogout}>Logout</button>
                     </div>
-                    : <button className="login-button wrapped-nav-button" onClick={props.loginWithGoogle}>Sign in</button>
+                    : <button className="login-button wrapped-nav-button" onClick={handleLogin}>Sign in</button>
                 }
             </div>
             <button
