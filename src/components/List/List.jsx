@@ -32,6 +32,8 @@ export default function List(props) {
         return () => clearTimeout(timeout);
     }, [addTodoStatus]);
 
+    const disabled = addItemPending || deletePending;
+
     const isArchived = props.isArchived;
     const actions = isArchived ?
         (<div className="list-actions">
@@ -185,14 +187,14 @@ export default function List(props) {
                 <div className="input-form-wrapper">
                     <StatusMessage text={addTodoStatus ? error : ""} />
                     <input
-                        disabled={addItemPending || deletePending}
-                        placeholder="New quest task..."
+                        disabled={disabled}
+                        placeholder={disabled ? "Please wait..." : "New quest task..."}
                         value={value}
                         onChange={(event) => setValue(event.target.value)}
                     />
                 </div>
                 <button
-                    disabled={addItemPending || deletePending}
+                    disabled={disabled}
                     className="list-form-button" type="submit">
                     {addItemPending ? "Adding..." : "Add new quest"}
                 </button>
