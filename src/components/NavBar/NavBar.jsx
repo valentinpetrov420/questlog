@@ -28,12 +28,11 @@ export default function NavBar(props) {
             setPatchnotesOpen(true);
         }
     }
-
+    
     async function handleLogout() {
         await props.logout();
         navigate("/login");
     }
-
     async function handleLogin() {
         await props.loginWithGoogle();
         navigate("/");

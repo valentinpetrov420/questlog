@@ -9,18 +9,11 @@ import './App.css'
 
 import firestoreService from './api/services/firestoreService.js';
 
-import { __loadMockStorage, __clearStorage } from "./dev/devTools.js";
-
 import { onAuthStateChanged } from "firebase/auth";
 import { loginWithGoogle, logout } from "./api/services/authService";
 import { auth, db } from "./api/firebase";
 
 import NavBar from './components/NavBar/NavBar.jsx';
-
-import ListView from './components/ListView/ListView.jsx';
-import CreateListForm from './components/CreateListForm/CreateListForm.jsx';
-import mockData from './mockdata.js';
-import PatchNotesModal from './components/PatchNotesModal/PatchNotesModal.jsx';
 
 import DevPanel from "./dev/DevPanel.jsx";
 import { formatError } from './util/errorResponse.js';
