@@ -22,21 +22,17 @@ import { validateText } from './util/validation.js';
 import MainPage from './pages/MainPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 
+import { useTheme } from './contexts/ThemeContext.jsx';
+
 
 export default function App() {
 	const [user, setUser] = useState(null);
 	const [authReady, setAuthReady] = useState(false);
 
-	const [theme, setTheme] = useState(() => {
-		return localStorage.getItem("theme") || "darkMode";
-	});
+	const { theme } = useTheme();
 
 	const maxLength = 50;
 	const siteName = "QuestLog";
-
-	useEffect(() => {
-		localStorage.setItem("theme", theme);
-	}, [theme]);
 
 	useEffect(() => {
 		const unsub = onAuthStateChanged(auth, (u) => {
@@ -47,23 +43,11 @@ export default function App() {
 		return unsub;
 	}, []);
 
-	function toggleDarkMode() {
-		if (theme === "darkMode") {
-			setTheme("lightMode");
-		} else if (theme === "lightMode") {
-			setTheme("darkMode")
-		}
-	}
-
 	return (
 		<div id="app" data-theme={theme}>
 			<div id="page-container">
 				<header id="top-header">
 					<NavBar siteName={siteName}
-
-						theme={theme}
-						toggleDarkMode={toggleDarkMode}
-
 						user={user}
 						logout={logout}
 						loginWithGoogle={loginWithGoogle}
@@ -84,6 +68,5 @@ export default function App() {
 				)}
 			</div>
 		</div>
-
 	);
 }
