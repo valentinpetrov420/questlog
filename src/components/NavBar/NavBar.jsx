@@ -16,13 +16,13 @@ export default function NavBar(props) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch("././changelog.json")
+        fetch("././patchnotes.json")
         .then((res) => res.json())
         .then((data) => {
-
+            
             setPatchnotes(data);
             localStorage.setItem("changelog", JSON.stringify(data));
-        });
+        }).catch((err) => console.error("Failed to load patchnotes: ", err));
     }, []);
 
     function togglePatchnotes() {
