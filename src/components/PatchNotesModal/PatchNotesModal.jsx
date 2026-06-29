@@ -1,10 +1,14 @@
 import './PatchNotesModal.css';
 
 export default function PatchNotesModal({ open, onClose, patchnotes, }) {
+    function getSofiaDate(timestamp) {
+        const date = new Date(timestamp);
+        return date.toLocaleDateString("en-CA", { timeZone: "Europe/Sofia" });
+    }
 
     function groupByDate(entries) {
         return entries.reduce((grouped, entry) => {
-            const date = entry.date.split("T")[0];
+            const date = getSofiaDate(entry.date);
 
             if (entry.message.startsWith("Merge branch")) {
                 return grouped;
