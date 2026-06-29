@@ -1,47 +1,24 @@
 import { useEffect, useState } from 'react'
 
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 
 import './App.css'
 
 //import { loadLists, saveLists } from './api/services/storage.js';
 
-import firestoreService from './api/services/firestoreService.js';
-
-import { onAuthStateChanged } from "firebase/auth";
-import { loginWithGoogle, logout } from "./api/services/authService";
-import { auth, db } from "./api/firebase";
-
 import NavBar from './components/NavBar/NavBar.jsx';
-
-import DevPanel from "./dev/DevPanel.jsx";
-import { formatError } from './util/errorResponse.js';
-import { validateText } from './util/validation.js';
-
 import MainPage from './pages/MainPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 
 import { useTheme } from './contexts/ThemeContext.jsx';
-
+import { useAuth } from './contexts/AuthContext.jsx';
 
 export default function App() {
-	const [user, setUser] = useState(null);
-	const [authReady, setAuthReady] = useState(false);
-
+	const { user, authReady, logout, loginWithGoogle } = useAuth();
 	const { theme } = useTheme();
 
 	const maxLength = 50;
 	const siteName = "QuestLog";
-
-	useEffect(() => {
-		const unsub = onAuthStateChanged(auth, (u) => {
-			setUser(u);
-			setAuthReady(true);
-		});
-
-		return unsub;
-	}, []);
 
 	return (
 		<div id="app" data-theme={theme}>
