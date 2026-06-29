@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
  
 const OWNER = "valentinpetrov420";
 const REPO = "questlog";
+const OUTPUT_FILE = new URL("../public/patchnotes.json", import.meta.url);
  
 async function fetchAllCommits() {
     let url = `https://api.github.com/repos/${OWNER}/${REPO}/commits?per_page=100`;
@@ -43,7 +44,7 @@ async function run() {
     const commits = await fetchAllCommits();
     const entries = commits.map(toPatchEntry);
  
-    await fs.writeFile("../public/patchnotes.json", JSON.stringify(entries, null, 2));
+    await fs.writeFile(OUTPUT_FILE, JSON.stringify(entries, null, 2));
 }
  
 run();
