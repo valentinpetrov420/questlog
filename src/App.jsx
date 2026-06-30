@@ -13,9 +13,10 @@ import LoginPage from './pages/LoginPage.jsx';
 import { useTheme } from './contexts/ThemeContext.jsx';
 import { useAuth } from './contexts/AuthContext.jsx';
 import ProtectedRoute from './contexts/ProtectedRoute.jsx';
+import PublicRoute from './contexts/PublicRoute.jsx';
 
 export default function App() {
-	const { logout, loginWithGoogle } = useAuth();
+	const { user, logout, loginWithGoogle } = useAuth();
 	const { theme } = useTheme();
 
 	const maxLength = 50;
@@ -41,9 +42,13 @@ export default function App() {
 							/>
 						</ProtectedRoute>
 					} />
-					<Route path="/login" element={<LoginPage
-						loginWithGoogle={loginWithGoogle}
-					/>} />
+					<Route path="/login" element={
+						<PublicRoute>
+							<LoginPage
+								loginWithGoogle={loginWithGoogle}
+							/>
+						</PublicRoute>
+					} />
 				</Routes>
 			</div>
 		</div>

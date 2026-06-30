@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { Routes, Route } from 'react-router-dom'
-import { useLocation } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
 //import { loadLists, saveLists } from './api/services/storage.js';
 
@@ -18,11 +17,7 @@ import DevPanel from "../dev/DevPanel.jsx";
 import { formatError } from '../util/errorResponse.js';
 import { validateText } from '../util/validation.js';
 
-export default function MainPage(props) {
-    //todo: remove later
-	const location = useLocation()
-
-    
+export default function MainPage(props) {    
 	const [lists, setLists] = useState([]);
 
     const user = props.user;
