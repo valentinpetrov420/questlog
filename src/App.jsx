@@ -12,9 +12,10 @@ import LoginPage from './pages/LoginPage.jsx';
 
 import { useTheme } from './contexts/ThemeContext.jsx';
 import { useAuth } from './contexts/AuthContext.jsx';
+import ProtectedRoute from './contexts/ProtectedRoute.jsx';
 
 export default function App() {
-	const { user, authReady, logout, loginWithGoogle } = useAuth();
+	const { logout, loginWithGoogle } = useAuth();
 	const { theme } = useTheme();
 
 	const maxLength = 50;
@@ -30,19 +31,20 @@ export default function App() {
 						loginWithGoogle={loginWithGoogle}
 					/>
 				</header>
-				{!authReady ? (
-					<div>Loading...</div>
-				) : (
-					<Routes>
-						<Route path="/"
-							element={user
-								? <MainPage user={user} maxLength={maxLength} siteName={siteName} />
-								: <Navigate to="/login" replace />
-							}
-						/>
-						<Route path="/login" element={<LoginPage loginWithGoogle={loginWithGoogle} />} />
-					</Routes>
-				)}
+				<Routes>
+					<Route path="/" element={
+						<ProtectedRoute>
+							<MainPage
+								user={user}
+								maxLength={maxLength}
+								siteName={siteName}
+							/>
+						</ProtectedRoute>
+					} />
+					<Route path="/login" element={<LoginPage
+						loginWithGoogle={loginWithGoogle}
+					/>} />
+				</Routes>
 			</div>
 		</div>
 	);
