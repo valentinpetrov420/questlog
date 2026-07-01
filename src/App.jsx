@@ -14,6 +14,7 @@ import { useTheme } from './contexts/ThemeContext.jsx';
 import { useAuth } from './contexts/AuthContext.jsx';
 import ProtectedRoute from './contexts/ProtectedRoute.jsx';
 import PublicRoute from './contexts/PublicRoute.jsx';
+import ListPage from './pages/ListPage.jsx';
 
 export default function App() {
 	const { user, logout, loginWithGoogle } = useAuth();
@@ -40,6 +41,11 @@ export default function App() {
 								maxLength={maxLength}
 								siteName={siteName}
 							/>
+						</ProtectedRoute>
+					} />
+					<Route path="/:listId" element={
+						<ProtectedRoute>
+							<ListPage />
 						</ProtectedRoute>
 					} />
 					<Route path="/login" element={

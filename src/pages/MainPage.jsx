@@ -17,35 +17,46 @@ import DevPanel from "../dev/DevPanel.jsx";
 import { formatError } from '../util/errorResponse.js';
 import { validateText } from '../util/validation.js';
 
-export default function MainPage(props) {    
+export default function MainPage(props) {
 	const [lists, setLists] = useState([]);
 
-    const user = props.user;
-    const maxLength = props.maxLength;
-    const siteName = props.siteName;
-    
+	const user = props.user;
+	const maxLength = props.maxLength;
+	const siteName = props.siteName;
+
 	const [sortMode, setSortMode] = useState(() => {
 		return localStorage.getItem("sortmode") || "createdAt";
 	});
 
-    useEffect(() => {
+	useEffect(() => {
 		localStorage.setItem("sortmode", sortMode);
 	}, [sortMode]);
 
-    useEffect(() => {
+	useEffect(() => {
 		if (!user) {
 			setLists([]);
 			return;
 		}
 
+		//todo: page mount is instant but loading lists is not
+		// communicate loading state to the user =>
+		// possibly [loadingState, setLoadingState] architecture with try {} finally {}
+		// also loading is indistinguishable from no lists when the user is new as they both render as []
+
+		// i think it is better to separate authReady gate from lists loading 
+		// authReady (its in context now, dw about it) = nothing to valid to render yet, blank (dark mode themed) page
+		// lists loading = skeleton shell
+		// goal is user perceived progress, not actual speed
+
+		// i saw that tiktok does this too, blank unstyled white Please wait page (= pre-theme) =>
+		// skeleton boxes with a pulsing animation (= pre-content)
+
 		firestoreService.lists.getHydratedLists(user.uid).then((lists) => {
-			console.log(lists);
 			setLists(lists);
 		});
 	}, [user]);
 
 	async function handleCreateList(title) {
-		//todo: gate CreateListForm from unauthorized users
 		if (!user) {
 			return;
 		}
@@ -408,56 +419,56 @@ export default function MainPage(props) {
 	}
 
 
-    return <main>
-        <header>
-            <section className="lists-container">
-                <ListView role="pinned"
-                    lists={lists}
-                    onListItemAdd={handleCreateItem}
-                    onListItemEdit={handleItemEdit}
-                    onListItemDelete={handleItemDelete}
-                    onListItemToggle={handleToggle}
-                    onListTitleChange={handleEditListTitle}
-                    onListPin={handlePin}
-                    onListArchive={handleArchive}
-                    onListRestore={handleRestore}
-                    onListDelete={handleDeleteList}
-                    maxLength={maxLength}>
-                </ListView>
-            </section>
-        </header>
-        <section className="lists-container">
-            <CreateListForm onCreateList={handleCreateList} maxLength={maxLength} />
-            <div id="all-lists">
-                <h2 id="lists-heading">Current Quests: </h2>
-                <select id="sort-dropdown"
-                    value={sortMode}
-                    onChange={(event) => {
-                        setSortMode(event.target.value);
-                    }}>
-                    <option value="createdAt">Newest</option>
-                    <option value="updatedAt">Last updated</option>
-                    <option value="alphabetical">Alphabetical</option>
-                    <option value="archived">Archived only</option>
-                </select>
-                <ListView role="sorted" sortMode={sortMode}
-                    lists={lists}
-                    onListItemAdd={handleCreateItem}
-                    onListItemEdit={handleItemEdit}
-                    onListItemDelete={handleItemDelete}
-                    onListItemToggle={handleToggle}
-                    onListTitleChange={handleEditListTitle}
-                    onListPin={handlePin}
-                    onListArchive={handleArchive}
-                    onListRestore={handleRestore}
-                    onListDelete={handleDeleteList}
-                    maxLength={maxLength}>
-                </ListView>
-            </div>
-        </section>
-        {import.meta.env.DEV && (
-            <DevPanel setLists={setLists}
-                userId={user?.uid} />
-        )}
-    </main>
+	return <main>
+		<header>
+			<section className="lists-container">
+				<ListView role="pinned"
+					lists={lists}
+					onListItemAdd={handleCreateItem}
+					onListItemEdit={handleItemEdit}
+					onListItemDelete={handleItemDelete}
+					onListItemToggle={handleToggle}
+					onListTitleChange={handleEditListTitle}
+					onListPin={handlePin}
+					onListArchive={handleArchive}
+					onListRestore={handleRestore}
+					onListDelete={handleDeleteList}
+					maxLength={maxLength}>
+				</ListView>
+			</section>
+		</header>
+		<section className="lists-container">
+			<CreateListForm onCreateList={handleCreateList} maxLength={maxLength} />
+			<div id="all-lists">
+				<h2 id="lists-heading">Current Quests: </h2>
+				<select id="sort-dropdown"
+					value={sortMode}
+					onChange={(event) => {
+						setSortMode(event.target.value);
+					}}>
+					<option value="createdAt">Newest</option>
+					<option value="updatedAt">Last updated</option>
+					<option value="alphabetical">Alphabetical</option>
+					<option value="archived">Archived only</option>
+				</select>
+				<ListView role="sorted" sortMode={sortMode}
+					lists={lists}
+					onListItemAdd={handleCreateItem}
+					onListItemEdit={handleItemEdit}
+					onListItemDelete={handleItemDelete}
+					onListItemToggle={handleToggle}
+					onListTitleChange={handleEditListTitle}
+					onListPin={handlePin}
+					onListArchive={handleArchive}
+					onListRestore={handleRestore}
+					onListDelete={handleDeleteList}
+					maxLength={maxLength}>
+				</ListView>
+			</div>
+		</section>
+		{import.meta.env.DEV && (
+			<DevPanel setLists={setLists}
+				userId={user?.uid} />
+		)}
+	</main>
 }

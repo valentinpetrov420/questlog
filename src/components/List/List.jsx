@@ -4,6 +4,7 @@ import { validateText } from "../../util/validation";
 import StatusMessage from "../StatusMessage/StatusMessage.jsx";
 import { useEffect } from "react";
 import './List.css';
+import { Link } from "react-router-dom";
 
 export default function List(props) {
     const [value, setValue] = useState("");
@@ -164,6 +165,7 @@ export default function List(props) {
             </form>
                 : <h2 className="list-title">Title: <span onClick={handleEditTitle}>{props.title}<a>✎</a></span></h2>}
             <ul>
+                <Link to={`/${props.id}`}>Details</Link>
                 {props.listItems.map(item => (
                     <Item
 

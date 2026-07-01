@@ -15,6 +15,13 @@
 	.form-error {
 		margin-left: 1rem;
 	}
+	
+	ul {
+		a {
+			color: var(--text);
+			margin-left: 1rem;
+		}
+	}
 }
 
 .list-actions {
