@@ -6,6 +6,8 @@ import './App.css'
 
 //import { loadLists, saveLists } from './api/services/storage.js';
 
+import { siteName, maxLength } from "./constants/app.js";
+
 import NavBar from './components/NavBar/NavBar.jsx';
 import MainPage from './pages/MainPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
@@ -19,9 +21,6 @@ import ListPage from './pages/ListPage.jsx';
 export default function App() {
 	const { user, logout, loginWithGoogle } = useAuth();
 	const { theme } = useTheme();
-
-	const maxLength = 50;
-	const siteName = "QuestLog";
 
 	return (
 		<div id="app" data-theme={theme}>
