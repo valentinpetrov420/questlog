@@ -17,14 +17,22 @@ export default function NavBar(props) {
 
     useEffect(() => {
         fetch("././patchnotes.json")
-        .then((res) => res.json())
-        .then((data) => {
-            
-            setPatchnotes(data);
-            localStorage.setItem("changelog", JSON.stringify(data));
-        }).catch((err) => console.error("Failed to load patchnotes: ", err));
+            .then((res) => res.json())
+            .then((data) => {
+
+                setPatchnotes(data);
+                localStorage.setItem("changelog", JSON.stringify(data));
+            }).catch((err) => console.error("Failed to load patchnotes: ", err));
     }, []);
 
+    function handleGoHome(){
+
+        if (!props.user) {
+            return;
+        }
+
+        navigate("/");
+    }
     function togglePatchnotes() {
         if (patchnotesOpen) {
             setPatchnotesOpen(false);
@@ -32,7 +40,7 @@ export default function NavBar(props) {
             setPatchnotesOpen(true);
         }
     }
-    
+
     async function handleLogout() {
         await props.logout();
         navigate("/login");
@@ -43,7 +51,7 @@ export default function NavBar(props) {
     }
 
     return <nav>
-        <h1>{props.siteName}</h1>
+        <button className="wrapped-nav-button" onClick={handleGoHome}>{props.siteName}</button>
         <div className="nav-container">
             <div className={`nav-links ${menuOpen ? "opened" : "closed"}`}>
                 <button id="patchnotes-toggle" className="wrapped-nav-button" onClick={togglePatchnotes}>Patch Notes</button>

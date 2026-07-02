@@ -16,13 +16,12 @@ import PatchNotesModal from '../components/PatchNotesModal/PatchNotesModal.jsx';
 import DevPanel from "../dev/DevPanel.jsx";
 import { formatError } from '../util/errorResponse.js';
 import { validateText } from '../util/validation.js';
+import { maxLength, siteName } from '../constants/app.js';
 
 import { useLists } from '../contexts/ListsContext.jsx';
 
 export default function MainPage(props) {
 	const user = props.user;
-	const maxLength = props.maxLength;
-	const siteName = props.siteName;
 
 	const {
 		lists, setLists,

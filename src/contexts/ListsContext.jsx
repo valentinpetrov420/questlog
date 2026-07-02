@@ -10,9 +10,10 @@ import firestoreService from "../api/services/firestoreService.js";
 export const ListsContext = createContext();
 
 export function ListsProvider({children}) {
+	const [listsLoading, setListsLoading] = useState(true);
     const [lists, setLists] = useState([]);
 
-	const { user } = useAuth();
+	const { user, authReady } = useAuth();
 
 	const [sortMode, setSortMode] = useState(() => {
 		return localStorage.getItem("sortmode") || "createdAt";
@@ -23,8 +24,12 @@ export function ListsProvider({children}) {
 	}, [sortMode]);
 
 	useEffect(() => {
+		if (!authReady) {
+			return;
+		}	
 		if (!user) {
 			setLists([]);
+			setListsLoading(false);
 			return;
 		}
 
@@ -43,8 +48,11 @@ export function ListsProvider({children}) {
 
 		firestoreService.lists.getHydratedLists(user.uid).then((lists) => {
 			setLists(lists);
+		})
+		.finally(() => {
+			setListsLoading(false);
 		});
-	}, [user]);
+	}, [user, authReady]);
 
 	async function handleCreateList(title) {
 		if (!user) {
@@ -411,7 +419,7 @@ export function ListsProvider({children}) {
     return (
         <ListsContext.Provider
         value={{
-            lists, setLists,
+            lists, setLists, listsLoading,
 
             sortMode, setSortMode,
 
