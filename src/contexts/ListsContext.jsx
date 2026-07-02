@@ -1,6 +1,6 @@
 import { useContext, createContext, useEffect, useState } from "react";
 
-import { siteName, maxLength } from "../constants/App.js";
+import { siteName, maxLength } from "../constants/app.js";
 import { formatError } from '../util/errorResponse.js';
 import { validateText } from '../util/validation.js';
 
