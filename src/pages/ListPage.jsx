@@ -9,16 +9,19 @@ export default function ListPage() {
 
     const { lists, listsLoading,
 
-        onListItemChange,
-        onListItemAdd,
-        onListItemEdit,
-        onListItemDelete,
+        handleEditListTitle,
 
-        onListItemToggle,
-        onListTitleChange,
-        onListPin,
-        onListArchive,
-        onListRestore,
+        //listpage doesnt need this stuff
+        handlePin,
+        handleArchive,
+        handleRestore,
+        handleDeleteList,
+        //maybe it needs archive
+
+        handleCreateItem,
+        handleToggle,
+        handleItemEdit,
+        handleItemDelete
 
     } = useLists();
 
@@ -29,7 +32,7 @@ export default function ListPage() {
         return <p>Loading...</p>
     };
 
-    if (!list) { 
+    if (!list) {
         return <p>404</p>;
     }
 
@@ -39,16 +42,15 @@ export default function ListPage() {
             title={list.title}
             listItems={list.items}
             isArchived={list.archived}
-            onListItemChange={onListItemChange}
-            onListItemAdd={onListItemAdd}
-            onListItemEdit={onListItemEdit}
-            onListItemDelete={onListItemDelete}
-            onListItemToggle={(itemId) => onListItemToggle(list.id, itemId)}
-            onListTitleChange={onListTitleChange}
-            onListPin={(event) => onListPin(list.id)}
-            onListArchive={() => ponListArchive(list.id)}
-            onListRestore={() => onListRestore(list.id)}
-            onListDelete={(event) => onListDelete(list.id)}
+            onListItemAdd={handleCreateItem}
+            onListItemEdit={handleItemEdit}
+            onListItemDelete={handleItemDelete}
+            onListItemToggle={(itemId) => handleToggle(list.id, itemId)}
+            onListTitleChange={handleEditListTitle}
+            onListPin={(event) => handlePin(list.id)}
+            onListArchive={() => handleArchive(list.id)}
+            onListRestore={() => handleRestore(list.id)}
+            onListDelete={(event) => handleDeleteList(list.id)}
             maxLength={maxLength}
         />
     )
