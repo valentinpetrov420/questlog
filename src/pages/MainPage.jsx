@@ -88,9 +88,5 @@ export default function MainPage(props) {
 				</ListView>
 			</div>
 		</section>
-		{import.meta.env.DEV && (
-			<DevPanel setLists={setLists}
-				userId={user?.uid} />
-		)}
 	</main>
 }

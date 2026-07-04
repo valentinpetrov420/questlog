@@ -42,6 +42,7 @@ export default function ListPage() {
             title={list.title}
             listItems={list.items}
             isArchived={list.archived}
+            ownerId={list.ownerId}
             onListItemAdd={handleCreateItem}
             onListItemEdit={handleItemEdit}
             onListItemDelete={handleItemDelete}

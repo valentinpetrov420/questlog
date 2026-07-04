@@ -5,6 +5,7 @@ import StatusMessage from "../StatusMessage/StatusMessage.jsx";
 import { useEffect } from "react";
 import './List.css';
 import { Link } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext.jsx";
 
 export default function List(props) {
     const [value, setValue] = useState("");
@@ -21,6 +22,8 @@ export default function List(props) {
 
     const [error, setError] = useState("");
 
+    const { user } = useAuth();
+
     useEffect(() => {
         if (!addTodoStatus) {
             return;
@@ -33,6 +36,7 @@ export default function List(props) {
         return () => clearTimeout(timeout);
     }, [addTodoStatus]);
 
+    const isOwner = user?.uid === props.ownerId;
     const disabled = addItemPending || deletePending;
 
     const isArchived = props.isArchived;
@@ -142,7 +146,7 @@ export default function List(props) {
 
     return (
         <div className="list-component">
-            {actions}
+            {isOwner ? actions : ""}
             <StatusMessage text={titleStatus ? error : ""} />
             {isEditing ? <form className="edit-list-title" onSubmit={handleSubmitEdit}>
                 <h2 className="list-title-edit">Title:</h2>
