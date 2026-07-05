@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { validateText } from "../../util/validation.js";
 import StatusMessage from "../StatusMessage/StatusMessage.jsx";
 import { useEffect } from "react";
@@ -6,6 +6,7 @@ import "./CreateListForm.css";
 
 export default function CreateListForm(props) {
     const [title, setTitle] = useState("");
+    const [draftVisibility, setDraftVisibility] = useState("private");
 
     const [pending, setPending] = useState(false);
 
@@ -29,8 +30,10 @@ export default function CreateListForm(props) {
 
         setPending(true);
 
+        const isPublic = draftVisibility === "public";
+
         try {
-            const response = await props.onCreateList(title);
+            const response = await props.onCreateList(title, isPublic);
 
             if (response.success) {
                 setError("");
@@ -56,5 +59,13 @@ export default function CreateListForm(props) {
             disabled={pending}>
             {pending ? "Creating..." : "Create new quest"}
         </button>
+        <select id="visibility-dropdown"
+            value={draftVisibility}
+            onChange={(event) => {
+                setDraftVisibility(event.target.value);
+            }}>
+            <option value="private">Private</option>
+            <option value="public">Public</option>
+        </select>
     </form>
 }

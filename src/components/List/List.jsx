@@ -36,7 +36,7 @@ export default function List(props) {
         return () => clearTimeout(timeout);
     }, [addTodoStatus]);
 
-    
+
     const disabled = addItemPending || deletePending;
 
     const isArchived = props.isArchived;
@@ -144,7 +144,7 @@ export default function List(props) {
             setDeletePending(false);
         }
     }
-
+    
     return (
         <div className="list-component">
             {isOwner ? actions : ""}
@@ -169,8 +169,17 @@ export default function List(props) {
                 </div>
             </form>
                 : <h2 className="list-title">Title: <span onClick={handleEditTitle}>{props.title}<a>✎</a></span></h2>}
+            {props.isListPage ?
+                <select
+                    value={props.isPublic ? "public" : "private"}
+                    onChange={(event) => props.onListVisibilityChange(props.id)}>
+                    <option value="public">Public</option>
+                    <option value="private">Private</option>
+                </select>
+                : ""}
+
             <ul>
-                <Link to={`/${props.id}`}>Details</Link>
+                {!props.isListPage ? <Link to={`/${props.id}`}>Details</Link> : ""}
                 {props.listItems.map(item => (
                     <Item
 

@@ -54,12 +54,13 @@ export function ListsProvider({children}) {
 		});
 	}, [user, authReady]);
 
-	async function handleCreateList(title) {
+	async function handleCreateList(title, visibility) {
 		if (!user) {
 			return;
 		}
 
 		console.log("created list: ", title);
+		console.log("created list with visibility: " + visibility);
 
 		const result = validateText(title, maxLength);
 
@@ -71,12 +72,14 @@ export function ListsProvider({children}) {
 		}
 
 		try {
-			const id = await firestoreService.lists.createList(user.uid, result.value);
+			const id = await firestoreService.lists.createList(user.uid, result.value, visibility);
 
 			setLists(prev => [
 				...prev,
 				{
 					title: result.value,
+					isPublic: visibility,
+					ownerId: user.uid,
 					id: id,
 					items: [],
 					createdAt: Date.now(),
@@ -92,6 +95,47 @@ export function ListsProvider({children}) {
 		} catch (error) {
 			return formatError(error, "Failed to create list", "createList");
 		}
+	}
+	async function handleVisibility(listId){
+		//todo: archived lists should be forced set to private 
+		console.log("new visibility on list: " + listId);
+
+		if (!listId) {
+			return {
+				success: false,
+				message: "Missing listId"
+			};
+		}
+
+		const targetList = lists.find(list => list.id === listId);
+
+		if (!targetList) {
+			return {
+				success: false,
+				message: "Something went wrong"
+			}
+		};
+
+		const newVisibility = !targetList.isPublic;
+
+		try {
+			await firestoreService.lists.updateListVisibility(listId, newVisibility);
+
+			setLists(prev =>
+				prev.map(list =>
+					list.id === listId
+						? { ...list, isPublic: newVisibility, updatedAt: Date.now() }
+						: list
+				)
+			);
+
+			return {
+				success: true
+			};
+		} catch (error) {
+			return formatError(error, "Failed to change visibility", "handleVisibility");
+		}
+
 	}
 	async function handleEditListTitle(listId, newTitle) {
 		console.log("received: " + newTitle);
@@ -144,7 +188,10 @@ export function ListsProvider({children}) {
 		const targetList = lists.find(list => list.id === listId);
 
 		if (!targetList) {
-			return;
+			return {
+				success: false,
+				message: "Something went wrong"
+			}
 		};
 
 		const newPinned = !targetList.pinned;
@@ -424,6 +471,7 @@ export function ListsProvider({children}) {
             sortMode, setSortMode,
 
             handleCreateList,
+			handleVisibility,
             handleEditListTitle,
             handlePin,
             handleArchive,

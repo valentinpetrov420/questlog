@@ -9,6 +9,7 @@ export default function ListPage() {
 
     const { lists, listsLoading,
 
+        handleVisibility,
         handleEditListTitle,
 
         //listpage doesnt need this stuff
@@ -37,12 +38,18 @@ export default function ListPage() {
     }
 
     return (
-        <List key={list.id}
+        <List
+
+            isListPage={true}
+
+            key={list.id}
             id={list.id}
             title={list.title}
             listItems={list.items}
             isArchived={list.archived}
             ownerId={list.ownerId}
+            isPublic={list.isPublic}
+            onListVisibilityChange={handleVisibility}
             onListItemAdd={handleCreateItem}
             onListItemEdit={handleItemEdit}
             onListItemDelete={handleItemDelete}

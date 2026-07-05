@@ -16,12 +16,13 @@ import { db } from "../firebase";
 
 import { __devDelay } from "../../dev/networkStress";
 
-async function createList(userId, title) {
+async function createList(userId, title, isPublic) {
     await __devDelay();
 
     const docRef = await addDoc(collection(db, "lists"), {
         ownerId: userId,
         title,
+        isPublic: isPublic,
         pinned: false,
         archived: false,
         createdAt: Date.now(),
@@ -70,9 +71,21 @@ async function getHydratedLists(userId) {
 
         return {
             ...list,
+            isPublic: list.isPublic ?? false,
             items
         }
     }))
+}
+
+async function updateListVisibility(listId, newVisibility) {
+    await __devDelay();
+
+    const listDocRef = doc(db, "lists", listId);
+
+    await updateDoc(listDocRef, {
+        isPublic: newVisibility,
+        updatedAt: Date.now(),
+    });
 }
 async function updateListTitle(listId, newTitle) {
     await __devDelay();
@@ -102,7 +115,7 @@ async function updateListArchived(listId, newArchived) {
 }
 async function deleteList(listId) {
     await __devDelay();
-    
+
     const itemsRef = collection(db, "lists", listId, "items");
     const snapshot = await getDocs(itemsRef);
 
@@ -155,7 +168,7 @@ async function toggleItemCompleted(listId, itemId, newCompleted) {
 }
 async function editItem(listId, itemId, newText) {
     await __devDelay();
-    
+
     const itemDocRef = doc(db, "lists", listId, "items", itemId);
     const listDocRef = doc(db, "lists", listId);
 
@@ -173,7 +186,7 @@ async function editItem(listId, itemId, newText) {
 }
 async function deleteItem(listId, itemId) {
     await __devDelay();
-    
+
     await deleteDoc(doc(db, "lists", listId, "items", itemId));
 }
 
@@ -181,6 +194,7 @@ const firestoreService = {
     lists: {
         createList,
         getHydratedLists,
+        updateListVisibility,
         updateListTitle,
         updateListPin,
         updateListArchived,
