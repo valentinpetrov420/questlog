@@ -36,10 +36,11 @@ export default function List(props) {
         return () => clearTimeout(timeout);
     }, [addTodoStatus]);
 
-    const isOwner = user?.uid === props.ownerId;
+    
     const disabled = addItemPending || deletePending;
 
     const isArchived = props.isArchived;
+    const isOwner = user?.uid === props.ownerId;
     const actions = isArchived ?
         (<div className="list-actions">
             <button

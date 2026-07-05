@@ -64,6 +64,7 @@ export default function ListView(props) {
                         title={list.title}
                         listItems={list.items}
                         isArchived={list.archived}
+                        ownerId={list.ownerId}
                         onListItemChange={props.onListItemChange}
                         onListItemAdd={props.onListItemAdd}
                         onListItemEdit={props.onListItemEdit}
