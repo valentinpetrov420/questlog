@@ -146,6 +146,10 @@ export default function List(props) {
         }
     }
     async function handleVisibilityChange() {
+        if (deletePending) {
+            return;
+        }
+
         try {
             setVisibilityPending(true);
 
@@ -189,7 +193,7 @@ export default function List(props) {
                 : <h2 className="list-title">Title: <span onClick={handleEditTitle}>{props.title}<a>✎</a></span></h2>}
             {props.isListPage && isOwner ?
                 <select className="visibility-dropdown"
-                    disabled={visibilityPending}
+                    disabled={visibilityPending || deletePending}
                     value={props.isPublic ? "public" : "private"}
                     onChange={handleVisibilityChange}>
                     <option value="public">Public</option>
