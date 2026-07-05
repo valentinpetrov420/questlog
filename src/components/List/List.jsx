@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import './List.css';
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 export default function List(props) {
     const [value, setValue] = useState("");
@@ -24,6 +25,7 @@ export default function List(props) {
     const [error, setError] = useState("");
 
     const { user } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!addTodoStatus) {
@@ -137,6 +139,11 @@ export default function List(props) {
             if (response.success) {
                 setError("");
                 setTitleStatus(false);
+
+                if (props.isListPage) {
+                    navigate("/");
+                }
+
             } else {
                 setError(response.message);
                 setTitleStatus(true);
