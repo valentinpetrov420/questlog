@@ -16,6 +16,7 @@ export default function List(props) {
     const [deletePending, setDeletePending] = useState(false);
     const [addItemPending, setAddItemPending] = useState(false);
     const [titlePending, setTitlePending] = useState(false);
+    const [visibilityPending, setVisibilityPending] = useState(false);
 
     const [addTodoStatus, setAddTodoStatus] = useState(null);
     const [titleStatus, setTitleStatus] = useState(null);
@@ -144,7 +145,24 @@ export default function List(props) {
             setDeletePending(false);
         }
     }
-    
+    async function handleVisibilityChange() {
+        try {
+            setVisibilityPending(true);
+
+            const response = await props.onListVisibilityChange(props.id);
+
+            if (response.success) {
+                setError("");
+                setTitleStatus(false);
+            } else {
+                setError(response.message);
+                setTitleStatus(true);
+            }
+        } finally {
+            setVisibilityPending(false);
+        }
+    }
+
     return (
         <div className="list-component">
             {isOwner ? actions : ""}
@@ -169,10 +187,11 @@ export default function List(props) {
                 </div>
             </form>
                 : <h2 className="list-title">Title: <span onClick={handleEditTitle}>{props.title}<a>✎</a></span></h2>}
-            {props.isListPage ?
-                <select
+            {props.isListPage && isOwner ?
+                <select className="visibility-dropdown"
+                    disabled={visibilityPending}
                     value={props.isPublic ? "public" : "private"}
-                    onChange={(event) => props.onListVisibilityChange(props.id)}>
+                    onChange={handleVisibilityChange}>
                     <option value="public">Public</option>
                     <option value="private">Private</option>
                 </select>

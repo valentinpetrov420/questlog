@@ -59,7 +59,7 @@ export default function CreateListForm(props) {
             disabled={pending}>
             {pending ? "Creating..." : "Create new quest"}
         </button>
-        <select id="visibility-dropdown"
+        <select className="visibility-dropdown"
             value={draftVisibility}
             onChange={(event) => {
                 setDraftVisibility(event.target.value);
