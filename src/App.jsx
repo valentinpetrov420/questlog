@@ -44,9 +44,7 @@ export default function App() {
 						</ProtectedRoute>
 					} />
 					<Route path="/:listId" element={
-						<ProtectedRoute>
-							<ListPage />
-						</ProtectedRoute>
+						<ListPage />
 					} />
 					<Route path="/login" element={
 						<PublicRoute>

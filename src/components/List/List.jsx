@@ -123,9 +123,6 @@ export default function List(props) {
             setTitlePending(false);
         }
     }
-    function handlePin(event) {
-        props.onListPin(props.id);
-    }
     async function handleDeleteClick() {
         if (deletePending) {
             return;

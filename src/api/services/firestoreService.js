@@ -77,6 +77,24 @@ async function getHydratedLists(userId) {
     }))
 }
 
+async function getList(listId) {
+    try {
+        const docRef = doc(db, "lists", listId);
+        const snapshot = await getDoc(docRef);
+        const items = await getItems(listId);
+
+        return {
+            id: snapshot.id,
+            ...snapshot.data(),
+            isPublic: snapshot.data().isPublic ?? false,
+            items
+        }
+    } catch (error) {
+        console.error("Failed to fetch list: ", error);
+        throw error;
+    }
+}
+
 async function updateListVisibility(listId, newVisibility) {
     await __devDelay();
 
@@ -192,6 +210,7 @@ async function deleteItem(listId, itemId) {
 
 const firestoreService = {
     lists: {
+        getList,
         createList,
         getHydratedLists,
         updateListVisibility,

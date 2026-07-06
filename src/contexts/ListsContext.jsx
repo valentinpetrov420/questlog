@@ -466,7 +466,8 @@ export function ListsProvider({children}) {
     return (
         <ListsContext.Provider
         value={{
-            lists, setLists, listsLoading,
+            lists, setLists, 
+			listsLoading, setListsLoading,
 
             sortMode, setSortMode,
 
