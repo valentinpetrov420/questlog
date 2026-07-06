@@ -1,0 +1,9 @@
+.list-title {
+    p {
+        display: inline;
+    }
+}
+
+.todo-wrapper {
+    padding-bottom: 1rem;
+}
