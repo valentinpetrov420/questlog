@@ -4,6 +4,7 @@ import { useLists } from "../contexts/ListsContext";
 import { maxLength } from "../constants/app";
 import List from "../components/List/List";
 import { use, useEffect, useState } from "react";
+import './ListPage.css';
 
 import firestoreService from '../api/services/firestoreService.js';
 
@@ -67,28 +68,30 @@ export default function ListPage() {
     }
 
     return (
-        <List
+        <div id="list-page-wrapper">
+            <List
 
-            isListPage={true}
+                isListPage={true}
 
-            key={list.id}
-            id={list.id}
-            title={list.title}
-            listItems={list.items}
-            isArchived={list.archived}
-            ownerId={list.ownerId}
-            isPublic={list.isPublic}
-            onListVisibilityChange={handleVisibility}
-            onListItemAdd={handleCreateItem}
-            onListItemEdit={handleItemEdit}
-            onListItemDelete={handleItemDelete}
-            onListItemToggle={(itemId) => handleToggle(list.id, itemId)}
-            onListTitleChange={handleEditListTitle}
-            onListPin={(event) => handlePin(list.id)}
-            onListArchive={() => handleArchive(list.id)}
-            onListRestore={() => handleRestore(list.id)}
-            onListDelete={(event) => handleDeleteList(list.id)}
-            maxLength={maxLength}
-        />
+                key={list.id}
+                id={list.id}
+                title={list.title}
+                listItems={list.items}
+                isArchived={list.archived}
+                ownerId={list.ownerId}
+                isPublic={list.isPublic}
+                onListVisibilityChange={handleVisibility}
+                onListItemAdd={handleCreateItem}
+                onListItemEdit={handleItemEdit}
+                onListItemDelete={handleItemDelete}
+                onListItemToggle={(itemId) => handleToggle(list.id, itemId)}
+                onListTitleChange={handleEditListTitle}
+                onListPin={(event) => handlePin(list.id)}
+                onListArchive={() => handleArchive(list.id)}
+                onListRestore={() => handleRestore(list.id)}
+                onListDelete={(event) => handleDeleteList(list.id)}
+                maxLength={maxLength}
+            />
+        </div>
     )
 }

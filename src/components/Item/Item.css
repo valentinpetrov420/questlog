@@ -5,6 +5,10 @@
 	margin-top: 0;
 	margin-bottom: 0;
 
+	.todo-wrapper {
+		padding-bottom: 1rem;
+	}
+
 	.todo-item-text {
 		margin: 1rem;
 		flex: 1;

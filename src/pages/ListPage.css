@@ -1,9 +1,21 @@
-.list-title {
-    p {
-        display: inline;
+#list-page-wrapper {
+    width: 50%;
+    position: absolute;
+    left: 25%;
+
+    .list-component {
+        .list-title {
+            p {
+                display: inline;
+            }
+        }
     }
 }
 
-.todo-wrapper {
-    padding-bottom: 1rem;
+
+@media (max-width: 780px) {
+    #list-page-wrapper {
+        width: 100%;
+        left: 0;
+    }
 }
