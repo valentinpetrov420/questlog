@@ -225,23 +225,25 @@ export default function List(props) {
                     />
                 ))}
             </ul>
-
-            <form className="list-form" onSubmit={handleSubmit}>
-                <div className="input-form-wrapper">
-                    <StatusMessage text={addTodoStatus ? error : ""} />
-                    <input
+            {isOwner ?
+                <form className="list-form" onSubmit={handleSubmit}>
+                    <div className="input-form-wrapper">
+                        <StatusMessage text={addTodoStatus ? error : ""} />
+                        <input
+                            disabled={disabled}
+                            placeholder={disabled ? "Please wait..." : "New quest task..."}
+                            value={value}
+                            onChange={(event) => setValue(event.target.value)}
+                        />
+                    </div>
+                    <button
                         disabled={disabled}
-                        placeholder={disabled ? "Please wait..." : "New quest task..."}
-                        value={value}
-                        onChange={(event) => setValue(event.target.value)}
-                    />
-                </div>
-                <button
-                    disabled={disabled}
-                    className="list-form-button" type="submit">
-                    {addItemPending ? "Adding..." : "Add new quest"}
-                </button>
-            </form>
+                        className="list-form-button" type="submit">
+                        {addItemPending ? "Adding..." : "Add new quest"}
+                    </button>
+                </form>
+                : ""
+            }
         </div>
     );
 }
