@@ -96,7 +96,7 @@ export default function Item(props) {
                 </span>
             }
 
-            {!isEditingTodo ? <div className="todo-actions">
+            {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                 <button
                     disabled={disabled}
                     onMouseDown={(event) => {

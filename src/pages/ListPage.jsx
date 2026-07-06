@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useLists } from "../contexts/ListsContext";
 import { maxLength } from "../constants/app";
 import List from "../components/List/List";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 import firestoreService from '../api/services/firestoreService.js';
 
@@ -46,10 +46,17 @@ export default function ListPage() {
                 .finally(() => {
                     setListsLoading(false)
                 }
-            );
+                );
         }
 
-    }, [listId])
+    }, [listId]);
+
+    useEffect(() => {
+        const updated = lists.find(l => l.id === listId);
+        if (updated) {
+            setList(updated);
+        }
+    }, [lists]);
 
     if (listsLoading) {
         return <p>Loading...</p>

@@ -194,7 +194,7 @@ export default function List(props) {
                     </input>
                 </div>
             </form>
-                : <h2 className="list-title">Title: <span onClick={handleEditTitle}>{props.title}<a>✎</a></span></h2>}
+                : <h2 className="list-title">Title: {isOwner ? <span onClick={handleEditTitle}>{props.title}<a>✎</a></span> : <p>{props.title}</p>} </h2>}
             {props.isListPage && isOwner ?
                 <select className="visibility-dropdown"
                     disabled={visibilityPending || deletePending}
@@ -208,7 +208,7 @@ export default function List(props) {
             <ul>
                 {!props.isListPage ? <Link to={`/${props.id}`}>Details</Link> : ""}
                 {props.listItems.map(item => (
-                    <Item
+                    <Item isOwner={isOwner}
 
                         deletePending={deletePending}
 
