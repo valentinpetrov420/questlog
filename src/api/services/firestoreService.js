@@ -209,6 +209,25 @@ async function deleteItem(listId, itemId) {
     await deleteDoc(doc(db, "lists", listId, "items", itemId));
 }
 
+async function createNode(ownerId, { type, parentId = null, title = "", text = "", isPublic = false }) {
+
+    const docRef = await addDoc(collection(db, "nodes"), {
+        type,
+        parentId,
+        title,
+        text,
+        completed: false,
+        ownerId,
+        isPublic,
+        pinned: false,
+        archived: false,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+    });
+
+    return docRef.id;
+}
+
 const firestoreService = {
     lists: {
         getList,
@@ -226,6 +245,10 @@ const firestoreService = {
         toggleItemCompleted,
         editItem,
         deleteItem
+    },
+
+    nodes: {
+        createNode
     }
 }
 

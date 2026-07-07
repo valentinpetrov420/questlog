@@ -68,6 +68,7 @@
 	.todo-wrapper {
 		.todo-item-text {
 			margin: 0;
+			margin-bottom: 1rem;
 		}
 	}
 }

@@ -5,12 +5,18 @@ import { networkStress } from "./networkStress";
 export default function DevPanel(props) {
     return <div className="devPanel">
 
-        <button
+        <button 
             onClick={async () => {
-                console.log(await firestoreService.lists.getHydratedLists(props.userId));
-            }}
-        >
-            getLists()
+                console.log(props.userId);
+                console.log(await firestoreService.nodes.createNode(props.userId, {
+                    type: "todo", 
+                    parentId: "K45SQVA1sKFE1zzwXMoz",
+                    title: "",
+                    text: "test todo",
+                    isPublic: false,
+                }))
+            }}>
+                createNode()
         </button>
         <select
             onChange={(event) => {
