@@ -7,16 +7,21 @@ export default function DevPanel(props) {
 
         <button 
             onClick={async () => {
-                console.log(props.userId);
                 console.log(await firestoreService.nodes.createNode(props.userId, {
                     type: "todo", 
                     parentId: "K45SQVA1sKFE1zzwXMoz",
                     title: "",
-                    text: "test todo",
+                    text: "test todo 2",
                     isPublic: false,
-                }))
+                }));
             }}>
                 createNode()
+        </button>
+        <button 
+            onClick={async () => {
+                console.log(await firestoreService.nodes.getNodes(props.userId));
+            }}>
+                getNodes()
         </button>
         <select
             onChange={(event) => {

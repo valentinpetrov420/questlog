@@ -228,6 +228,27 @@ async function createNode(ownerId, { type, parentId = null, title = "", text = "
     return docRef.id;
 }
 
+async function getNodes(userId){
+    try {
+        const q = query(
+            collection(db, "nodes"),
+            where("ownerId", "==", userId)
+        );
+
+        const snapshot = await getDocs(q);
+
+        const nodes = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        return nodes;
+    } catch (error) {
+        console.error("Failed to fetch nodes: ", error);
+        throw error;
+    }
+}
+
 const firestoreService = {
     lists: {
         getList,
@@ -248,7 +269,8 @@ const firestoreService = {
     },
 
     nodes: {
-        createNode
+        createNode,
+        getNodes
     }
 }
 
