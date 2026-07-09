@@ -228,7 +228,21 @@ async function createNode(ownerId, { type, parentId = null, title = "", text = "
     return docRef.id;
 }
 
-async function getNodes(userId){
+function nestNodes(flatNodes) {
+    const roots = flatNodes.filter(node => node.parentId === null);
+    const children = flatNodes.filter(node => node.parentId !== null);
+
+    const nested = roots.map(root => {
+        return {
+            ...root,
+            children: children.filter(child => child.parentId === root.id)
+        }
+    });
+
+    return nested;
+}
+
+async function getNodes(userId) {
     try {
         const q = query(
             collection(db, "nodes"),
@@ -242,7 +256,7 @@ async function getNodes(userId){
             ...doc.data()
         }));
 
-        return nodes;
+        return nestNodes(nodes);
     } catch (error) {
         console.error("Failed to fetch nodes: ", error);
         throw error;
