@@ -1,8 +1,14 @@
 import "./DevPanel.css";
+
 import firestoreService from "../api/services/firestoreService";
+
+import { useNodes } from "../contexts/NodesContext";
+
 import { networkStress } from "./networkStress";
 
 export default function DevPanel(props) {
+    const { nodes } = useNodes();
+
     return <div className="devPanel">
 
         <button 
@@ -19,7 +25,7 @@ export default function DevPanel(props) {
         </button>
         <button 
             onClick={async () => {
-                console.log(await firestoreService.nodes.getNodes(props.userId));
+                console.log(nodes);
             }}>
                 getNodes()
         </button>
