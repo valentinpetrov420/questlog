@@ -228,6 +228,36 @@ async function createNode(ownerId, { type, parentId = null, title = "", text = "
     return docRef.id;
 }
 
+async function getNode(nodeId) {
+    try {
+        const docRef = doc(db, "nodes", nodeId);
+        const snapshot = await getDoc(docRef);
+
+        if (!snapshot.exists()) {
+            return null;
+        }
+
+        const childrenSnapshot = await getDocs(
+            query(collection(db, "nodes"), where("parentId", "==", nodeId))
+        );
+
+        const children = childrenSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        return {
+            id: snapshot.id,
+            ...snapshot.data(),
+            isPublic: snapshot.data().isPublic ?? false,
+            children
+        }
+    } catch (error) {
+        console.error("Failed to fetch node: ", error);
+        throw error;
+    }
+}
+
 function nestNodes(flatNodes) {
     const roots = flatNodes.filter(node => node.parentId === null);
     const children = flatNodes.filter(node => node.parentId !== null);
@@ -284,6 +314,7 @@ const firestoreService = {
 
     nodes: {
         createNode,
+        getNode,
         getNodes
     }
 }

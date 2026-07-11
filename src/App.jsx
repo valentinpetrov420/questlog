@@ -15,9 +15,14 @@ import DevPanel from './dev/DevPanel.jsx';
 
 import { useTheme } from './contexts/ThemeContext.jsx';
 import { useAuth } from './contexts/AuthContext.jsx';
+
 import ProtectedRoute from './contexts/ProtectedRoute.jsx';
 import PublicRoute from './contexts/PublicRoute.jsx';
+
 import ListPage from './pages/ListPage.jsx';
+
+import Dashboard from './pages/Dashboard.jsx';
+import NodePage from './pages/NodePage.jsx';
 
 export default function App() {
 	const { user, logout, loginWithGoogle } = useAuth();
@@ -53,6 +58,18 @@ export default function App() {
 							/>
 						</PublicRoute>
 					} />
+					<Route path="/dashboard" element={
+						<ProtectedRoute>
+							<Dashboard
+								user={user}
+								maxLength={maxLength}
+								siteName={siteName}
+							/>
+						</ProtectedRoute>}
+						/>
+					<Route path="/dashboard/:nodeId" element={
+						<NodePage
+						/>} />
 				</Routes>
 			</div>
 			{import.meta.env.DEV && (
