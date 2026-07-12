@@ -54,12 +54,62 @@ export function NodesProvider({ children }) {
             });
     }, [user, authReady]);
 
+    async function handleCreateNode(title, visibility) {
+        if (!user) {
+            return;
+        }
+
+        console.log("created node: ", title);
+        console.log("created node with visibility: " + visibility);
+
+        const result = validateText(title, maxLength);
+
+        if (!result.valid) {
+            return {
+                success: false,
+                message: result.error
+            };
+        }
+
+        try {
+            const id = await firestoreService.nodes.createNode(user.uid, {
+                type: "page",
+                title: result.value,
+                isPublic: visibility
+            });
+
+            setNodes(prev => [
+                ...prev,
+                {
+                    type: "page",
+                    title: result.value,
+                    isPublic: visibility,
+                    ownerId: user.uid,
+                    id: id,
+                    children: [],
+                    createdAt: Date.now(),
+                    updatedAt: Date.now(),
+                    pinned: false,
+                    archived: false,
+                }
+            ]);
+
+            return {
+                success: true
+            };
+        } catch (error) {
+            return formatError(error, "Failed to create node", "createNode");
+        }
+    }
+
 
     return (
         <NodesContext.Provider
             value={{
                 nodes, setNodes,
                 nodesLoading, setNodesLoading,
+
+                handleCreateNode,
             }}
         >
             {children}

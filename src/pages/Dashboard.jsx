@@ -1,4 +1,16 @@
+import CreateListForm from "../components/CreateListForm/CreateListForm.jsx"
 
-export default function Dashboard(){
-    return <p>dashboard</p>
+import { maxLength } from "../constants/app";
+
+import { useNodes } from '../contexts/NodesContext.jsx';
+
+export default function Dashboard() {
+    const {
+        nodes, setNodes,
+        nodesLoading, setNodesLoading,
+
+        handleCreateNode,
+    } = useNodes();
+
+    return <CreateListForm onCreateList={handleCreateNode} maxLength={maxLength} />
 }
