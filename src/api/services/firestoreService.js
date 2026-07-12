@@ -265,7 +265,7 @@ function nestNodes(flatNodes) {
     const nested = roots.map(root => {
         return {
             ...root,
-            children: children.filter(child => child.parentId === root.id)
+            items: children.filter(child => child.parentId === root.id)
         }
     });
 
