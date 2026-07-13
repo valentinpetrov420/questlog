@@ -102,6 +102,55 @@ export function NodesProvider({ children }) {
         }
     }
 
+    async function handleCreateChildNode(text, parentId) {
+        if (!user) {
+            return;
+        }
+
+        console.log("created node: ", text);
+
+        const result = validateText(text, maxLength);
+
+        if (!result.valid) {
+            return {
+                success: false,
+                message: result.error
+            };
+        }
+
+        try {
+            const id = await firestoreService.nodes.createNode(user.uid, {
+                parentId,
+                type: "todo",
+                text: result.value,
+            });
+
+            setNodes(prev => prev.map(node => node.id === parentId ? {
+                ...node,
+                items: [...node.items, {
+                    type: "todo",
+                    text: result.value,
+                    isPublic: false,
+                    ownerId: user.uid,
+                    parentId,
+                    id: id,
+                    children: [],
+                    createdAt: Date.now(),
+                    updatedAt: Date.now(),
+                    pinned: false,
+                    archived: false,
+                }]
+            } : node
+            ));
+
+            return {
+                success: true
+            };
+        } catch (error) {
+            return formatError(error, "Failed to create node", "createChildNode");
+        }
+    }
+
 
     return (
         <NodesContext.Provider
@@ -110,6 +159,8 @@ export function NodesProvider({ children }) {
                 nodesLoading, setNodesLoading,
 
                 handleCreateNode,
+
+                handleCreateChildNode,
             }}
         >
             {children}

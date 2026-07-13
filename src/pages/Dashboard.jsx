@@ -10,7 +10,9 @@ export default function Dashboard() {
         nodes, setNodes,
         nodesLoading, setNodesLoading,
 
-        handleCreateNode,
+        handleCreateNode, 
+
+        handleCreateChildNode,
     } = useNodes();
 
     return <div id="dashboard-container">
@@ -19,6 +21,9 @@ export default function Dashboard() {
             role="sorted"
             lists={nodes}
             maxLength={maxLength}
+
+
+            onListItemAdd={handleCreateChildNode}
         />
     </div>
 }
