@@ -16,7 +16,7 @@ export default function NavBar(props) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch("././patchnotes.json")
+        fetch('/patchnotes.json')
             .then((res) => res.json())
             .then((data) => {
 
