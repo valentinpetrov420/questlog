@@ -18,7 +18,8 @@ export default function Dashboard() {
 
         handleArchiveNode,
         handleRestoreNode,
-        
+        handleEditNodeTitle,
+
         handleDeleteNode,
     } = useNodes();
 
@@ -43,6 +44,7 @@ export default function Dashboard() {
             onListItemAdd={handleCreateChildNode}
             onListArchive={handleArchiveNode}
             onListRestore={handleRestoreNode}
+            onListTitleChange={handleEditNodeTitle}
             onListDelete={handleDeleteNode}
         />
     </div>

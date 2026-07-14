@@ -151,36 +151,56 @@ export function NodesProvider({ children }) {
         }
     }
 
-    async function handleArchiveNode(nodeId){
+    async function handleArchiveNode(nodeId) {
         const confirmed = window.confirm("Archive this list?");
 
-		if (!confirmed) {
-			return;
-		}
+        if (!confirmed) {
+            return;
+        }
 
-		if (!nodeId) {
-			return {
-				success: false,
-				message: "Missing nodeId"
-			};
-		}
+        if (!nodeId) {
+            return {
+                success: false,
+                message: "Missing nodeId"
+            };
+        }
 
-		setNodes(prev =>
-			prev.map(node =>
-				node.id === nodeId
-					? { ...node, archived: true, updatedAt: Date.now() }
-					: node
-			)
-		);
+        setNodes(prev =>
+            prev.map(node =>
+                node.id === nodeId
+                    ? { ...node, archived: true, updatedAt: Date.now() }
+                    : node
+            )
+        );
 
-		firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: true })
+        firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: true })
     }
-    async function handleRestoreNode(nodeId){
+    async function handleRestoreNode(nodeId) {
         const confirmed = window.confirm("Restore this list?");
 
-		if (!confirmed) {
-			return;
-		}
+        if (!confirmed) {
+            return;
+        }
+
+        if (!nodeId) {
+            return {
+                success: false,
+                message: "Missing nodeId"
+            };
+        }
+
+        setNodes(prev =>
+            prev.map(node =>
+                node.id === nodeId
+                    ? { ...node, archived: false, updatedAt: Date.now() }
+                    : node
+            )
+        );
+
+        firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: false })
+    }
+    async function handleEditNodeTitle(nodeId, newTitle){
+        console.log("received: " + newTitle);
 
 		if (!nodeId) {
 			return {
@@ -189,46 +209,64 @@ export function NodesProvider({ children }) {
 			};
 		}
 
-		setNodes(prev =>
-			prev.map(node =>
-				node.id === nodeId
-					? { ...node, archived: false, updatedAt: Date.now() }
-					: node
-			)
-		);
+		const result = validateText(newTitle, maxLength);
 
-		firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: false })
-    }
-
-    async function handleDeleteNode(nodeId){
-        const confirmed = window.confirm("Delete this list?");
-
-		if (!confirmed) {
-			return;
-		}
-
-		if (!nodeId) {
+		if (!result.valid) {
 			return {
 				success: false,
-				message: "Missing nodeId"
+				message: result.error
 			};
 		}
 
 		try {
-			await firestoreService.nodes.deleteNode(nodeId);
+			await firestoreService.nodes.updateNode(nodeId, { title: result.value })
 
-
-            //todo: this wont work for nested nodes because 
-            // its the same function for both parents and children
-			const updatedState = nodes.filter(node => node.id !== nodeId);
-			setNodes(updatedState);
+			setNodes(prev =>
+				prev.map(node =>
+					node.id === nodeId
+						? { ...node, title: result.value, updatedAt: Date.now() }
+						: node
+				)
+			);
 
 			return {
 				success: true
 			};
 		} catch (error) {
-			return formatError(error, "Failed to delete node", "deleteNode");
+			return formatError(error, "Failed to edit title", "editNodeTitle");
 		}
+
+    }
+
+    async function handleDeleteNode(nodeId) {
+        const confirmed = window.confirm("Delete this list?");
+
+        if (!confirmed) {
+            return;
+        }
+
+        if (!nodeId) {
+            return {
+                success: false,
+                message: "Missing nodeId"
+            };
+        }
+
+        try {
+            await firestoreService.nodes.deleteNode(nodeId);
+
+
+            //todo: this wont work for nested nodes because 
+            // its the same function for both parents and children
+            const updatedState = nodes.filter(node => node.id !== nodeId);
+            setNodes(updatedState);
+
+            return {
+                success: true
+            };
+        } catch (error) {
+            return formatError(error, "Failed to delete node", "deleteNode");
+        }
     }
 
 
@@ -246,6 +284,7 @@ export function NodesProvider({ children }) {
 
                 handleArchiveNode,
                 handleRestoreNode,
+                handleEditNodeTitle,
 
                 handleDeleteNode,
             }}
