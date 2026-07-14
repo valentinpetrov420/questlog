@@ -19,11 +19,25 @@ export default function Dashboard() {
         handleArchiveNode,
         handleRestoreNode,
         handleEditNodeTitle,
+        handlePin,
 
         handleDeleteNode,
     } = useNodes();
 
     return <div id="dashboard-container">
+        <ListView
+            role="pinned"
+            lists={nodes}
+            maxLength={maxLength}
+
+
+            onListItemAdd={handleCreateChildNode}
+            onListArchive={handleArchiveNode}
+            onListRestore={handleRestoreNode}
+            onListTitleChange={handleEditNodeTitle}
+            onListDelete={handleDeleteNode}
+            onListPin={handlePin}
+        />
         <CreateListForm onCreateList={handleCreateNode} maxLength={maxLength} />
         <select id="sort-dropdown"
             value={sortMode}
@@ -46,6 +60,7 @@ export default function Dashboard() {
             onListRestore={handleRestoreNode}
             onListTitleChange={handleEditNodeTitle}
             onListDelete={handleDeleteNode}
+            onListPin={handlePin}
         />
     </div>
 }

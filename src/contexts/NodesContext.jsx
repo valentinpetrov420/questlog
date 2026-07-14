@@ -199,43 +199,74 @@ export function NodesProvider({ children }) {
 
         firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: false })
     }
-    async function handleEditNodeTitle(nodeId, newTitle){
+    async function handleEditNodeTitle(nodeId, newTitle) {
         console.log("received: " + newTitle);
 
-		if (!nodeId) {
-			return {
-				success: false,
-				message: "Missing nodeId"
-			};
-		}
+        if (!nodeId) {
+            return {
+                success: false,
+                message: "Missing nodeId"
+            };
+        }
 
-		const result = validateText(newTitle, maxLength);
+        const result = validateText(newTitle, maxLength);
 
-		if (!result.valid) {
-			return {
-				success: false,
-				message: result.error
-			};
-		}
+        if (!result.valid) {
+            return {
+                success: false,
+                message: result.error
+            };
+        }
 
-		try {
-			await firestoreService.nodes.updateNode(nodeId, { title: result.value })
+        try {
+            await firestoreService.nodes.updateNode(nodeId, { title: result.value })
 
-			setNodes(prev =>
-				prev.map(node =>
-					node.id === nodeId
-						? { ...node, title: result.value, updatedAt: Date.now() }
-						: node
-				)
-			);
+            setNodes(prev =>
+                prev.map(node =>
+                    node.id === nodeId
+                        ? { ...node, title: result.value, updatedAt: Date.now() }
+                        : node
+                )
+            );
 
-			return {
-				success: true
-			};
-		} catch (error) {
-			return formatError(error, "Failed to edit title", "editNodeTitle");
-		}
+            return {
+                success: true
+            };
+        } catch (error) {
+            return formatError(error, "Failed to edit title", "editNodeTitle");
+        }
 
+    }
+    async function handlePin(nodeId) {
+        console.log("pinned: " + nodeId);
+
+        if (!nodeId) {
+            return {
+                success: false,
+                message: "Missing nodeId"
+            };
+        }
+
+        const targetNode = nodes.find(node => node.id === nodeId);
+
+        if (!targetNode) {
+            return {
+                success: false,
+                message: "Something went wrong"
+            }
+        };
+
+        const newPinned = !targetNode.pinned;
+
+        setNodes(prev =>
+            prev.map(node =>
+                node.id === nodeId
+                    ? { ...node, pinned: newPinned, updatedAt: Date.now() }
+                    : node
+            )
+        );
+
+        firestoreService.nodes.updateNodeOptimistic(nodeId, { pinned: newPinned });
     }
 
     async function handleDeleteNode(nodeId) {
@@ -285,6 +316,7 @@ export function NodesProvider({ children }) {
                 handleArchiveNode,
                 handleRestoreNode,
                 handleEditNodeTitle,
+                handlePin,
 
                 handleDeleteNode,
             }}
