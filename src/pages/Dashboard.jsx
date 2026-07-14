@@ -10,20 +10,37 @@ export default function Dashboard() {
         nodes, setNodes,
         nodesLoading, setNodesLoading,
 
-        handleCreateNode, 
+        sortMode, setSortMode,
+
+        handleCreateNode,
 
         handleCreateChildNode,
+
+        handleArchiveNode,
+        handleRestoreNode,
     } = useNodes();
 
     return <div id="dashboard-container">
         <CreateListForm onCreateList={handleCreateNode} maxLength={maxLength} />
+        <select id="sort-dropdown"
+            value={sortMode}
+            onChange={(event) => {
+                setSortMode(event.target.value);
+            }}>
+            <option value="createdAt">Newest</option>
+            <option value="updatedAt">Last updated</option>
+            <option value="alphabetical">Alphabetical</option>
+            <option value="archived">Archived only</option>
+        </select>
         <ListView
-            role="sorted"
+            role="sorted" sortMode={sortMode}
             lists={nodes}
             maxLength={maxLength}
 
 
             onListItemAdd={handleCreateChildNode}
+            onListArchive={handleArchiveNode}
+            onListRestore={handleRestoreNode}
         />
     </div>
 }

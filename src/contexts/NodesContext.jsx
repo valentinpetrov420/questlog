@@ -151,6 +151,56 @@ export function NodesProvider({ children }) {
         }
     }
 
+    async function handleArchiveNode(nodeId){
+        const confirmed = window.confirm("Archive this list?");
+
+		if (!confirmed) {
+			return;
+		}
+
+		if (!nodeId) {
+			return {
+				success: false,
+				message: "Missing nodeId"
+			};
+		}
+
+		setNodes(prev =>
+			prev.map(node =>
+				node.id === nodeId
+					? { ...node, archived: true, updatedAt: Date.now() }
+					: node
+			)
+		);
+
+		firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: true })
+    }
+
+    async function handleRestoreNode(nodeId){
+        const confirmed = window.confirm("Restore this list?");
+
+		if (!confirmed) {
+			return;
+		}
+
+		if (!nodeId) {
+			return {
+				success: false,
+				message: "Missing nodeId"
+			};
+		}
+
+		setNodes(prev =>
+			prev.map(node =>
+				node.id === nodeId
+					? { ...node, archived: false, updatedAt: Date.now() }
+					: node
+			)
+		);
+
+		firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: false })
+    }
+
 
     return (
         <NodesContext.Provider
@@ -158,9 +208,14 @@ export function NodesProvider({ children }) {
                 nodes, setNodes,
                 nodesLoading, setNodesLoading,
 
+                sortMode, setSortMode,
+
                 handleCreateNode,
 
                 handleCreateChildNode,
+
+                handleArchiveNode,
+                handleRestoreNode,
             }}
         >
             {children}

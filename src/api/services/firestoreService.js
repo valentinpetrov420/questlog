@@ -210,6 +210,7 @@ async function deleteItem(listId, itemId) {
 }
 
 async function createNode(ownerId, { type, parentId = null, title = "", text = "", isPublic = false }) {
+    await __devDelay();
 
     const docRef = await addDoc(collection(db, "nodes"), {
         type,
@@ -227,7 +228,6 @@ async function createNode(ownerId, { type, parentId = null, title = "", text = "
 
     return docRef.id;
 }
-
 async function getNode(nodeId) {
     try {
         const docRef = doc(db, "nodes", nodeId);
@@ -257,7 +257,6 @@ async function getNode(nodeId) {
         throw error;
     }
 }
-
 function nestNodes(flatNodes) {
     const roots = flatNodes.filter(node => node.parentId === null);
     const children = flatNodes.filter(node => node.parentId !== null);
@@ -271,7 +270,6 @@ function nestNodes(flatNodes) {
 
     return nested;
 }
-
 async function getNodes(userId) {
     try {
         const q = query(
@@ -292,6 +290,25 @@ async function getNodes(userId) {
         throw error;
     }
 }
+async function updateNode(nodeId, data) {
+    await __devDelay();
+
+    const docRef = doc(db, "nodes", nodeId);
+
+    await updateDoc(docRef, {
+        ...data,
+        updatedAt: Date.now(),
+    });
+}
+async function updateNodeOptimistic(nodeId, data) {
+    const docRef = doc(db, "nodes", nodeId);
+
+    await updateDoc(docRef, {
+        ...data,
+        updatedAt: Date.now(),
+    });
+}
+
 
 const firestoreService = {
     lists: {
@@ -314,8 +331,11 @@ const firestoreService = {
 
     nodes: {
         createNode,
+
         getNode,
-        getNodes
+        getNodes,
+
+        updateNode, updateNodeOptimistic,
     }
 }
 
