@@ -309,6 +309,12 @@ async function updateNodeOptimistic(nodeId, data) {
     });
 }
 
+async function deleteNode(nodeId){
+    await __devDelay();
+
+    await deleteDoc(doc(db, "nodes", nodeId));
+}
+
 
 const firestoreService = {
     lists: {
@@ -336,6 +342,8 @@ const firestoreService = {
         getNodes,
 
         updateNode, updateNodeOptimistic,
+
+        deleteNode,
     }
 }
 

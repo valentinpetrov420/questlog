@@ -207,7 +207,7 @@ export default function List(props) {
 
             <ul>
                 {!props.isListPage ? <Link to={`/${props.id}`}>Details</Link> : ""}
-                {props.listItems.map(item => (
+                {(props.listItems ?? []).map(item => (
                     <Item isOwner={isOwner}
 
                         deletePending={deletePending}

@@ -175,7 +175,6 @@ export function NodesProvider({ children }) {
 
 		firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: true })
     }
-
     async function handleRestoreNode(nodeId){
         const confirmed = window.confirm("Restore this list?");
 
@@ -201,6 +200,37 @@ export function NodesProvider({ children }) {
 		firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: false })
     }
 
+    async function handleDeleteNode(nodeId){
+        const confirmed = window.confirm("Delete this list?");
+
+		if (!confirmed) {
+			return;
+		}
+
+		if (!nodeId) {
+			return {
+				success: false,
+				message: "Missing nodeId"
+			};
+		}
+
+		try {
+			await firestoreService.nodes.deleteNode(nodeId);
+
+
+            //todo: this wont work for nested nodes because 
+            // its the same function for both parents and children
+			const updatedState = nodes.filter(node => node.id !== nodeId);
+			setNodes(updatedState);
+
+			return {
+				success: true
+			};
+		} catch (error) {
+			return formatError(error, "Failed to delete node", "deleteNode");
+		}
+    }
+
 
     return (
         <NodesContext.Provider
@@ -216,6 +246,8 @@ export function NodesProvider({ children }) {
 
                 handleArchiveNode,
                 handleRestoreNode,
+
+                handleDeleteNode,
             }}
         >
             {children}
