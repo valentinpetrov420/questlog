@@ -42,11 +42,15 @@ export default function List(props) {
     }, [addTodoStatus]);
 
     const disabled = addItemPending || deletePending;
+
     const inputRef = useRef(null);
+    const wasDisabled = useRef(false);
+    
     useEffect(() => {
-        if (!disabled) {
+        if (wasDisabled.current && !disabled) {
             inputRef.current?.focus();
         }
+        wasDisabled.current = disabled;
     }, [disabled]);
 
     const isArchived = props.isArchived;

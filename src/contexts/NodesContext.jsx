@@ -157,6 +157,7 @@ export function NodesProvider({ children }) {
     }
 
     async function handleArchiveNode(nodeId) {
+        //todo: archived lists should be forced set to private
         const confirmed = window.confirm("Archive this list?");
 
         if (!confirmed) {
