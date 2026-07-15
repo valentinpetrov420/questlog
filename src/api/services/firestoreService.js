@@ -209,13 +209,12 @@ async function deleteItem(listId, itemId) {
     await deleteDoc(doc(db, "lists", listId, "items", itemId));
 }
 
-async function createNode(ownerId, { type, parentId = null, title = "", text = "", isPublic = false }) {
+async function createNode(ownerId, { type, parentId = null, text = "", isPublic = false }) {
     await __devDelay();
 
     const docRef = await addDoc(collection(db, "nodes"), {
         type,
         parentId,
-        title,
         text,
         completed: false,
         ownerId,
@@ -257,19 +256,6 @@ async function getNode(nodeId) {
         throw error;
     }
 }
-function nestNodes(flatNodes) {
-    const roots = flatNodes.filter(node => node.parentId === null);
-    const children = flatNodes.filter(node => node.parentId !== null);
-
-    const nested = roots.map(root => {
-        return {
-            ...root,
-            items: children.filter(child => child.parentId === root.id)
-        }
-    });
-
-    return nested;
-}
 async function getNodes(userId) {
     try {
         const q = query(
@@ -284,7 +270,7 @@ async function getNodes(userId) {
             ...doc.data()
         }));
 
-        return nestNodes(nodes);
+        return nodes;
     } catch (error) {
         console.error("Failed to fetch nodes: ", error);
         throw error;
@@ -309,9 +295,17 @@ async function updateNodeOptimistic(nodeId, data) {
     });
 }
 
-async function deleteNode(nodeId){
+async function deleteNode(nodeId, ownerId){
     await __devDelay();
-
+    
+    const childrenSnapshot = await getDocs(
+        query(collection(db, "nodes"), where("parentId", "==", nodeId), where("ownerId", "==", ownerId))
+    );
+    
+    await Promise.all(
+        childrenSnapshot.docs.map(child => deleteDoc(doc(db, "nodes", child.id)))
+    );
+    
     await deleteDoc(doc(db, "nodes", nodeId));
 }
 

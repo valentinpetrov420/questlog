@@ -96,7 +96,7 @@ export default function List(props) {
             return;
         }
 
-        setDraftTitle(props.title);
+        setDraftTitle(props.text);
         setEditing(true);
     }
     async function handleSubmitEdit(event) {
@@ -194,7 +194,7 @@ export default function List(props) {
                     </input>
                 </div>
             </form>
-                : <h2 className="list-title">Title: {isOwner ? <span onClick={handleEditTitle}>{props.title}<a>✎</a></span> : <p>{props.title}</p>} </h2>}
+                : <h2 className="list-title">Title: {isOwner ? <span onClick={handleEditTitle}>{props.text}<a>✎</a></span> : <p>{props.text}</p>} </h2>}
             {props.isListPage && isOwner ?
                 <select className="visibility-dropdown"
                     disabled={visibilityPending || deletePending}

@@ -1,15 +1,13 @@
-export function loadLists() {
-	const data = JSON.parse(localStorage.getItem("lists") || "[]");
+export default function nestNodes(flatNodes) {
+    const roots = flatNodes.filter(node => node.parentId === null);
+    const children = flatNodes.filter(node => node.parentId !== null);
 
-	return data.map(list => ({
-		...list,
-		createdAt: list.createdAt ?? Date.now(),
-		updatedAt: list.updatedAt ?? Date.now(),
-		pinned: list.pinned ?? false,
-		archived: list.archived ?? false,
-	}));
-}
+    const nested = roots.map(root => {
+        return {
+            ...root,
+            items: children.filter(child => child.parentId === root.id)
+        }
+    });
 
-export function saveLists(lists) {
-	localStorage.setItem("lists", JSON.stringify(lists));
+    return nested;
 }

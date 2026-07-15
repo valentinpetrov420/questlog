@@ -18,7 +18,7 @@ export default function ListView(props) {
                 return (
                     <List key={list.id}
                         id={list.id}
-                        title={list.title}
+                        text={list.text}
                         listItems={list.items}
                         isArchived={list.archived}
                         ownerId={list.ownerId}
@@ -61,7 +61,7 @@ export default function ListView(props) {
                 return (
                     <List key={list.id}
                         id={list.id}
-                        title={list.title}
+                        text={list.text}
                         listItems={list.items}
                         isArchived={list.archived}
                         ownerId={list.ownerId}

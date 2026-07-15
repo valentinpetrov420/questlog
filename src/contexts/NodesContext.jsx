@@ -1,17 +1,23 @@
-import { useContext, createContext, useEffect, useState } from "react";
+import { useContext, createContext, useEffect, useState, useMemo } from "react";
 
 import { siteName, maxLength } from "../constants/app.js";
 import { formatError } from '../util/errorResponse.js';
 import { validateText } from '../util/validation.js';
+import nestNodes from "../api/services/storage.js";
 
 import { useAuth } from './AuthContext.jsx';
 import firestoreService from "../api/services/firestoreService.js";
+
 
 export const NodesContext = createContext();
 
 export function NodesProvider({ children }) {
     const [nodesLoading, setNodesLoading] = useState(true);
-    const [nodes, setNodes] = useState([]);
+
+    const [flatNodes, setFlatNodes] = useState([]);
+    const nodes = useMemo(() => {
+        return nestNodes(flatNodes);
+    }, [flatNodes]);
 
     const { user, authReady } = useAuth();
 
@@ -28,7 +34,7 @@ export function NodesProvider({ children }) {
             return;
         }
         if (!user) {
-            setNodes([]);
+            setFlatNodes([]);
             setNodesLoading(false);
             return;
         }
@@ -47,22 +53,22 @@ export function NodesProvider({ children }) {
         // skeleton boxes with a pulsing animation (= pre-content)
 
         firestoreService.nodes.getNodes(user.uid).then((nodes) => {
-            setNodes(nodes);
+            setFlatNodes(nodes);
         })
             .finally(() => {
                 setNodesLoading(false);
             });
     }, [user, authReady]);
 
-    async function handleCreateNode(title, visibility) {
+    async function handleCreateNode(text, visibility) {
         if (!user) {
             return;
         }
 
-        console.log("created node: ", title);
+        console.log("created node: ", text);
         console.log("created node with visibility: " + visibility);
 
-        const result = validateText(title, maxLength);
+        const result = validateText(text, maxLength);
 
         if (!result.valid) {
             return {
@@ -74,19 +80,19 @@ export function NodesProvider({ children }) {
         try {
             const id = await firestoreService.nodes.createNode(user.uid, {
                 type: "page",
-                title: result.value,
+                text: result.value,
                 isPublic: visibility
             });
 
-            setNodes(prev => [
+            setFlatNodes(prev => [
                 ...prev,
                 {
+                    parentId: null,
                     type: "page",
-                    title: result.value,
+                    text: result.value,
                     isPublic: visibility,
                     ownerId: user.uid,
                     id: id,
-                    children: [],
                     createdAt: Date.now(),
                     updatedAt: Date.now(),
                     pinned: false,
@@ -125,23 +131,22 @@ export function NodesProvider({ children }) {
                 text: result.value,
             });
 
-            setNodes(prev => prev.map(node => node.id === parentId ? {
-                ...node,
-                items: [...node.items, {
+            setFlatNodes(prev => [
+                ...prev,
+                {   
+                    parentId,
                     type: "todo",
                     text: result.value,
                     isPublic: false,
                     ownerId: user.uid,
-                    parentId,
                     id: id,
                     children: [],
                     createdAt: Date.now(),
                     updatedAt: Date.now(),
                     pinned: false,
                     archived: false,
-                }]
-            } : node
-            ));
+                }
+            ]);
 
             return {
                 success: true
@@ -165,7 +170,7 @@ export function NodesProvider({ children }) {
             };
         }
 
-        setNodes(prev =>
+        setFlatNodes(prev =>
             prev.map(node =>
                 node.id === nodeId
                     ? { ...node, archived: true, updatedAt: Date.now() }
@@ -189,7 +194,7 @@ export function NodesProvider({ children }) {
             };
         }
 
-        setNodes(prev =>
+        setFlatNodes(prev =>
             prev.map(node =>
                 node.id === nodeId
                     ? { ...node, archived: false, updatedAt: Date.now() }
@@ -199,8 +204,8 @@ export function NodesProvider({ children }) {
 
         firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: false })
     }
-    async function handleEditNodeTitle(nodeId, newTitle) {
-        console.log("received: " + newTitle);
+    async function handleEditNodeTitle(nodeId, newText) {
+        console.log("received: " + newText);
 
         if (!nodeId) {
             return {
@@ -209,7 +214,7 @@ export function NodesProvider({ children }) {
             };
         }
 
-        const result = validateText(newTitle, maxLength);
+        const result = validateText(newText, maxLength);
 
         if (!result.valid) {
             return {
@@ -219,12 +224,12 @@ export function NodesProvider({ children }) {
         }
 
         try {
-            await firestoreService.nodes.updateNode(nodeId, { title: result.value })
+            await firestoreService.nodes.updateNode(nodeId, { text: result.value })
 
-            setNodes(prev =>
+            setFlatNodes(prev =>
                 prev.map(node =>
                     node.id === nodeId
-                        ? { ...node, title: result.value, updatedAt: Date.now() }
+                        ? { ...node, text: result.value, updatedAt: Date.now() }
                         : node
                 )
             );
@@ -258,7 +263,7 @@ export function NodesProvider({ children }) {
 
         const newPinned = !targetNode.pinned;
 
-        setNodes(prev =>
+        setFlatNodes(prev =>
             prev.map(node =>
                 node.id === nodeId
                     ? { ...node, pinned: newPinned, updatedAt: Date.now() }
@@ -284,13 +289,13 @@ export function NodesProvider({ children }) {
         }
 
         try {
-            await firestoreService.nodes.deleteNode(nodeId);
+            await firestoreService.nodes.deleteNode(nodeId, user.uid);
 
 
             //todo: this wont work for nested nodes because 
             // its the same function for both parents and children
             const updatedState = nodes.filter(node => node.id !== nodeId);
-            setNodes(updatedState);
+            setFlatNodes(updatedState);
 
             return {
                 success: true
@@ -304,7 +309,7 @@ export function NodesProvider({ children }) {
     return (
         <NodesContext.Provider
             value={{
-                nodes, setNodes,
+                nodes,
                 nodesLoading, setNodesLoading,
 
                 sortMode, setSortMode,

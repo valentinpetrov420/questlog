@@ -7,7 +7,7 @@ import { useNodes } from '../contexts/NodesContext.jsx';
 
 export default function Dashboard() {
     const {
-        nodes, setNodes,
+        nodes,
         nodesLoading, setNodesLoading,
 
         sortMode, setSortMode,
