@@ -8,20 +8,35 @@ import './ListPage.css';
 
 import firestoreService from '../api/services/firestoreService.js';
 
-export default function ListPage() {
+export default function NodePage() {
     const [node, setNode] = useState();
     const { nodeId } = useParams();
 
     const {
-        nodes, setNodes,
+        nodes, flatNodes,
         nodesLoading, setNodesLoading,
+
+        sortMode, setSortMode,
+
+        handleCreateNode,
+
+        handleCreateChildNode,
+
+        handleArchiveNode,
+        handleRestoreNode,
+        handleEditNodeText,
+        handlePin,
+
+        handleDeleteNode,
+
+        handleToggleChildNode,
     } = useNodes();
 
     useEffect(() => {
-        const nodeFromState = nodes.find(n => n.id === nodeId);
+        const nodeFromState = flatNodes.find(n => n.id === nodeId);
 
         if (nodeFromState) {
-            setNodes(nodeFromState);
+            setNode(nodeFromState);
         } else {
             setNodesLoading(true);
             firestoreService.nodes.getNode(nodeId)
@@ -32,7 +47,7 @@ export default function ListPage() {
                 .finally(() => {
                     setNodesLoading(false)
                 }
-            );
+                );
         }
 
     }, [nodeId]);
@@ -54,17 +69,24 @@ export default function ListPage() {
 
     return (
         <div id="list-page-wrapper">
-            <List
+            <List key={node.id}
 
                 isNodePage={true}
 
-                key={node.id}
                 id={node.id}
-                title={node.title}
-                listItems={node.children}
+                text={node.text}
+                listItems={node.items}
                 isArchived={node.archived}
                 ownerId={node.ownerId}
-                isPublic={node.isPublic}
+                onListItemAdd={handleCreateChildNode}
+                onListItemEdit={handleEditNodeText}
+                onListItemDelete={handleDeleteNode}
+                onListItemToggle={(itemId) => handleToggleChildNode(itemId)}
+                onListTitleChange={handleEditNodeText}
+                onListPin={(event) => handlePin(node.id)}
+                onListArchive={() => handleArchiveNode(node.id)}
+                onListRestore={() => handleRestoreNode(node.id)}
+                onListDelete={(event) => handleDeleteNode(node.id)}
                 maxLength={maxLength}
             />
         </div>

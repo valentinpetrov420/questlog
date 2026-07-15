@@ -41,15 +41,15 @@ export default function App() {
 				<Routes>
 					<Route path="/" element={
 						<ProtectedRoute>
-							<MainPage
+							<Dashboard
 								user={user}
 								maxLength={maxLength}
 								siteName={siteName}
 							/>
 						</ProtectedRoute>
 					} />
-					<Route path="/:listId" element={
-						<ListPage />
+					<Route path="/:nodeId" element={
+						<NodePage />
 					} />
 					<Route path="/login" element={
 						<PublicRoute>
@@ -58,18 +58,6 @@ export default function App() {
 							/>
 						</PublicRoute>
 					} />
-					<Route path="/dashboard" element={
-						<ProtectedRoute>
-							<Dashboard
-								user={user}
-								maxLength={maxLength}
-								siteName={siteName}
-							/>
-						</ProtectedRoute>}
-						/>
-					<Route path="/dashboard/:nodeId" element={
-						<NodePage
-						/>} />
 				</Routes>
 			</div>
 			{import.meta.env.DEV && (

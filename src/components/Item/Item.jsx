@@ -26,7 +26,7 @@ export default function Item(props) {
         setPending(true);
 
         try {
-            const response = await props.onTodoEdit(props.listId, props.id, draftTitleTodo);
+            const response = await props.onTodoEdit(props.id, draftTitleTodo);
 
             if (response.success) {
                 setError("");
@@ -52,7 +52,7 @@ export default function Item(props) {
         setPending(true);
 
         try {
-            const response = await props.onTodoDelete(props.listId, props.id);
+            const response = await props.onTodoDelete(props.id);
 
             if (response.success) {
                 setError("");

@@ -18,10 +18,12 @@ export default function Dashboard() {
 
         handleArchiveNode,
         handleRestoreNode,
-        handleEditNodeTitle,
+        handleEditNodeText,
         handlePin,
 
         handleDeleteNode,
+
+        handleToggleChildNode,
     } = useNodes();
 
     return <div id="dashboard-container">
@@ -34,9 +36,11 @@ export default function Dashboard() {
             onListItemAdd={handleCreateChildNode}
             onListArchive={handleArchiveNode}
             onListRestore={handleRestoreNode}
-            onListTitleChange={handleEditNodeTitle}
+            onListTitleChange={handleEditNodeText}
             onListDelete={handleDeleteNode}
             onListPin={handlePin}
+
+            onListItemToggle={handleToggleChildNode}
         />
         <CreateListForm onCreateList={handleCreateNode} maxLength={maxLength} />
         <select id="sort-dropdown"
@@ -58,9 +62,13 @@ export default function Dashboard() {
             onListItemAdd={handleCreateChildNode}
             onListArchive={handleArchiveNode}
             onListRestore={handleRestoreNode}
-            onListTitleChange={handleEditNodeTitle}
+            onListTitleChange={handleEditNodeText}
             onListDelete={handleDeleteNode}
             onListPin={handlePin}
+
+            onListItemToggle={handleToggleChildNode}
+            onListItemEdit={handleEditNodeText}
+            onListItemDelete={handleDeleteNode}
         />
     </div>
 }

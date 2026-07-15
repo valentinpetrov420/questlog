@@ -27,7 +27,7 @@ export default function ListView(props) {
                         onListItemAdd={props.onListItemAdd}
                         onListItemEdit={props.onListItemEdit}
                         onListItemDelete={props.onListItemDelete}
-                        onListItemToggle={(itemId) => props.onListItemToggle(list.id, itemId)}
+                        onListItemToggle={(itemId) => props.onListItemToggle(itemId)}
                         onListTitleChange={props.onListTitleChange}
                         onListPin={(event) => props.onListPin(list.id)}
                         onListArchive={() => props.onListArchive(list.id)}
@@ -69,7 +69,7 @@ export default function ListView(props) {
                         onListItemAdd={props.onListItemAdd}
                         onListItemEdit={props.onListItemEdit}
                         onListItemDelete={props.onListItemDelete}
-                        onListItemToggle={(itemId) => props.onListItemToggle(list.id, itemId)}
+                        onListItemToggle={(itemId) => props.onListItemToggle(itemId)}
                         onListTitleChange={props.onListTitleChange}
                         onListPin={(event) => props.onListPin(list.id)}
                         onListArchive={() => props.onListArchive(list.id)}

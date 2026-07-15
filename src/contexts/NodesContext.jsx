@@ -133,7 +133,7 @@ export function NodesProvider({ children }) {
 
             setFlatNodes(prev => [
                 ...prev,
-                {   
+                {
                     parentId,
                     type: "todo",
                     text: result.value,
@@ -204,7 +204,7 @@ export function NodesProvider({ children }) {
 
         firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: false })
     }
-    async function handleEditNodeTitle(nodeId, newText) {
+    async function handleEditNodeText(nodeId, newText) {
         console.log("received: " + newText);
 
         if (!nodeId) {
@@ -275,7 +275,7 @@ export function NodesProvider({ children }) {
     }
 
     async function handleDeleteNode(nodeId) {
-        const confirmed = window.confirm("Delete this list?");
+        const confirmed = window.confirm("Delete this node?");
 
         if (!confirmed) {
             return;
@@ -291,10 +291,7 @@ export function NodesProvider({ children }) {
         try {
             await firestoreService.nodes.deleteNode(nodeId, user.uid);
 
-
-            //todo: this wont work for nested nodes because 
-            // its the same function for both parents and children
-            const updatedState = nodes.filter(node => node.id !== nodeId);
+            const updatedState = flatNodes.filter(node => node.id !== nodeId);
             setFlatNodes(updatedState);
 
             return {
@@ -305,11 +302,38 @@ export function NodesProvider({ children }) {
         }
     }
 
+    function handleToggleChildNode(nodeId) {
+        console.log(nodeId);
+
+        if (!nodeId) {
+            return {
+                success: false,
+                message: "Missing nodeId"
+            };
+        }
+
+        const item = flatNodes.find(i => i.id === nodeId);
+
+        const newCompleted = !item.completed;
+        console.log("old: " + item.completed)
+        console.log("new: " + newCompleted)
+
+        setFlatNodes(prev =>
+            prev.map(node =>
+                node.id === nodeId
+                    ? { ...node, completed: newCompleted, updatedAt: Date.now() }
+                    : node
+            )
+        );
+
+        firestoreService.nodes.updateNode(nodeId, { completed: newCompleted });
+    }
+
 
     return (
         <NodesContext.Provider
             value={{
-                nodes,
+                nodes, flatNodes,
                 nodesLoading, setNodesLoading,
 
                 sortMode, setSortMode,
@@ -320,10 +344,12 @@ export function NodesProvider({ children }) {
 
                 handleArchiveNode,
                 handleRestoreNode,
-                handleEditNodeTitle,
+                handleEditNodeText,
                 handlePin,
 
                 handleDeleteNode,
+
+                handleToggleChildNode,
             }}
         >
             {children}
@@ -332,6 +358,7 @@ export function NodesProvider({ children }) {
 
 
 }
+
 
 
 export function useNodes() {

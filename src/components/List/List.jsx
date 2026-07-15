@@ -137,7 +137,7 @@ export default function List(props) {
                 setError("");
                 setTitleStatus(false);
 
-                if (props.isListPage) {
+                if (props.isNodePage) {
                     navigate("/");
                 }
 
@@ -147,6 +147,9 @@ export default function List(props) {
             }
         } finally {
             setDeletePending(false);
+            if(props.isNodePage){
+                navigate("/");
+            }
         }
     }
     async function handleVisibilityChange() {
@@ -195,7 +198,7 @@ export default function List(props) {
                 </div>
             </form>
                 : <h2 className="list-title">Title: {isOwner ? <span onClick={handleEditTitle}>{props.text}<a>✎</a></span> : <p>{props.text}</p>} </h2>}
-            {props.isListPage && isOwner ?
+            {props.isNodePage && isOwner ?
                 <select className="visibility-dropdown"
                     disabled={visibilityPending || deletePending}
                     value={props.isPublic ? "public" : "private"}
@@ -206,7 +209,7 @@ export default function List(props) {
                 : ""}
 
             <ul>
-                {!props.isListPage ? <Link to={`/${props.id}`}>Details</Link> : ""}
+                {!props.isNodePage ? <Link to={`/${props.id}`}>Details</Link> : ""}
                 {(props.listItems ?? []).map(item => (
                     <Item isOwner={isOwner}
 
