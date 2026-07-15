@@ -2,7 +2,7 @@ import { useState } from "react";
 import Item from "../Item/Item.jsx"
 import { validateText } from "../../util/validation";
 import StatusMessage from "../StatusMessage/StatusMessage.jsx";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import './List.css';
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext.jsx";
@@ -15,7 +15,9 @@ export default function List(props) {
     const [isEditing, setEditing] = useState(false);
 
     const [deletePending, setDeletePending] = useState(false);
+
     const [addItemPending, setAddItemPending] = useState(false);
+
     const [titlePending, setTitlePending] = useState(false);
     const [visibilityPending, setVisibilityPending] = useState(false);
 
@@ -39,8 +41,13 @@ export default function List(props) {
         return () => clearTimeout(timeout);
     }, [addTodoStatus]);
 
-
     const disabled = addItemPending || deletePending;
+    const inputRef = useRef(null);
+    useEffect(() => {
+        if (!disabled) {
+            inputRef.current?.focus();
+        }
+    }, [disabled]);
 
     const isArchived = props.isArchived;
     const isOwner = user?.uid === props.ownerId;
@@ -147,9 +154,6 @@ export default function List(props) {
             }
         } finally {
             setDeletePending(false);
-            if(props.isNodePage){
-                navigate("/");
-            }
         }
     }
     async function handleVisibilityChange() {
@@ -233,6 +237,7 @@ export default function List(props) {
                     <div className="input-form-wrapper">
                         <StatusMessage text={addTodoStatus ? error : ""} />
                         <input
+                            ref={inputRef}
                             disabled={disabled}
                             placeholder={disabled ? "Please wait..." : "New quest task..."}
                             value={value}
