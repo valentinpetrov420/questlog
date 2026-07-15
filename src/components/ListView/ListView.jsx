@@ -49,7 +49,7 @@ export default function ListView(props) {
                 sortedLists = [...sortedLists].sort((a, b) => b.updatedAt - a.updatedAt);
                 break;
             case "alphabetical":
-                sortedLists = [...sortedLists].sort((a, b) => a.title.localeCompare(b.title));
+                sortedLists = [...sortedLists].sort((a, b) => a.text.localeCompare(b.text));
                 break;
             case "archived":
                 sortedLists = props.lists.filter(list => list.archived);
