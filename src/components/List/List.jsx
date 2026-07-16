@@ -161,6 +161,7 @@ export default function List(props) {
         }
     }
     async function handleVisibilityChange() {
+        console.log(props.isPublic);
         if (deletePending) {
             return;
         }

@@ -90,6 +90,10 @@ export default function Item(props) {
                             return;
                         }
 
+                        if(!props.isOwner){
+                            return;
+                        }
+
                         props.onToggle(props.id)
                     }}>
                     {props.text}

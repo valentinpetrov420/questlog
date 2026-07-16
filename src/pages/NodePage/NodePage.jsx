@@ -26,6 +26,7 @@ export default function NodePage() {
         handleRestoreNode,
         handleEditNodeText,
         handlePin,
+        handleVisibilityChange,
 
         handleDeleteNode,
 
@@ -41,7 +42,6 @@ export default function NodePage() {
             setNodesLoading(true);
             firestoreService.nodes.getNode(nodeId)
                 .then((response) => {
-                    console.log(response);
                     setNode(response);
                 })
                 .finally(() => {
@@ -77,6 +77,7 @@ export default function NodePage() {
                 text={node.text}
                 listItems={node.items}
                 isArchived={node.archived}
+                isPublic={node.isPublic}
                 ownerId={node.ownerId}
                 onListItemAdd={handleCreateChildNode}
                 onListItemEdit={handleEditNodeText}
@@ -87,6 +88,7 @@ export default function NodePage() {
                 onListArchive={() => handleArchiveNode(node.id)}
                 onListRestore={() => handleRestoreNode(node.id)}
                 onListDelete={(event) => handleDeleteNode(node.id)}
+                onListVisibilityChange={handleVisibilityChange}
                 maxLength={maxLength}
             />
         </div>

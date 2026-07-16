@@ -274,6 +274,46 @@ export function NodesProvider({ children }) {
 
         firestoreService.nodes.updateNodeOptimistic(nodeId, { pinned: newPinned });
     }
+    async function handleVisibilityChange(nodeId) {
+        console.log("new visibility on node: " + nodeId);
+
+        if (!nodeId) {
+            return {
+                success: false,
+                message: "Missing nodeId"
+            };
+        }
+
+        const targetNode = flatNodes.find(node => node.id === nodeId);
+
+        if (!targetNode) {
+            return {
+                success: false,
+                message: "Something went wrong"
+            }
+        };
+
+        const newVisibility = !targetNode.isPublic;
+
+        try {
+            await firestoreService.nodes.updateNode(nodeId, { isPublic: newVisibility });
+
+            setFlatNodes(prev =>
+                prev.map(node =>
+                    node.id === nodeId
+                        ? { ...node, isPublic: newVisibility, updatedAt: Date.now() }
+                        : node
+                )
+            );
+
+            return {
+                success: true
+            };
+        } catch (error) {
+            return formatError(error, "Failed to change visibility", "handleVisibilityChange");
+        }
+
+    }
 
     async function handleDeleteNode(nodeId) {
         const confirmed = window.confirm("Delete this node?");
@@ -347,6 +387,7 @@ export function NodesProvider({ children }) {
                 handleRestoreNode,
                 handleEditNodeText,
                 handlePin,
+                handleVisibilityChange,
 
                 handleDeleteNode,
 
