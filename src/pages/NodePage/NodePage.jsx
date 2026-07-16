@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
 
-import { useNodes } from "../contexts/NodesContext.jsx";
-import { maxLength } from "../constants/app";
-import List from "../components/List/List";
+import { useNodes } from "../../contexts/NodesContext.jsx";
+import { maxLength } from "../../constants/app.js";
+import List from "../../components/List/List.jsx";
 import { use, useEffect, useState } from "react";
-import './ListPage.css';
+import './NodePage.css';
 
-import firestoreService from '../api/services/firestoreService.js';
+import firestoreService from '../../api/services/firestoreService.js';
 
 export default function NodePage() {
     const [node, setNode] = useState();

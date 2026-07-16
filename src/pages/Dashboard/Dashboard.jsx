@@ -1,9 +1,9 @@
-import CreateListForm from "../components/CreateListForm/CreateListForm.jsx"
-import ListView from '../components/ListView/ListView.jsx'
+import CreateListForm from "../../components/CreateListForm/CreateListForm.jsx"
+import ListView from '../../components/ListView/ListView.jsx'
 
-import { maxLength } from "../constants/app";
+import { maxLength } from "../../constants/app.js";
 
-import { useNodes } from '../contexts/NodesContext.jsx';
+import { useNodes } from '../../contexts/NodesContext.jsx';
 
 export default function Dashboard() {
     const {
