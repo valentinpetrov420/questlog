@@ -23,17 +23,6 @@ export default function ListView(props) {
                         isArchived={list.archived}
                         ownerId={list.ownerId}
                         highlightedTodoId={highlightedTodoId}
-                        onListItemChange={props.onListItemChange}
-                        onListItemAdd={props.onListItemAdd}
-                        onListItemEdit={props.onListItemEdit}
-                        onListItemDelete={props.onListItemDelete}
-                        onListItemToggle={(itemId) => props.onListItemToggle(itemId)}
-                        onListTitleChange={props.onListTitleChange}
-                        onListPin={(event) => props.onListPin(list.id)}
-                        onListArchive={() => props.onListArchive(list.id)}
-                        onListRestore={() => props.onListRestore(list.id)}
-                        onListDelete={(event) => props.onListDelete(list.id)}
-                        maxLength={props.maxLength}
                     />)
 
             })}
@@ -66,17 +55,6 @@ export default function ListView(props) {
                         listItems={list.items}
                         isArchived={list.archived}
                         ownerId={list.ownerId}
-                        onListItemChange={props.onListItemChange}
-                        onListItemAdd={props.onListItemAdd}
-                        onListItemEdit={props.onListItemEdit}
-                        onListItemDelete={props.onListItemDelete}
-                        onListItemToggle={(itemId) => props.onListItemToggle(itemId)}
-                        onListTitleChange={props.onListTitleChange}
-                        onListPin={(event) => props.onListPin(list.id)}
-                        onListArchive={() => props.onListArchive(list.id)}
-                        onListRestore={() => props.onListRestore(list.id)}
-                        onListDelete={(event) => props.onListDelete(list.id)}
-                        maxLength={props.maxLength}
                     />)
             })}
         </div>

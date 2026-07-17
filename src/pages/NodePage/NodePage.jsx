@@ -15,22 +15,6 @@ export default function NodePage() {
     const {
         nodes, flatNodes,
         nodesLoading, setNodesLoading,
-
-        sortMode, setSortMode,
-
-        handleCreateNode,
-
-        handleCreateChildNode,
-
-        handleArchiveNode,
-        handleRestoreNode,
-        handleEditNodeText,
-        handlePin,
-        handleVisibilityChange,
-
-        handleDeleteNode,
-
-        handleToggleChildNode,
     } = useNodes();
 
     useEffect(() => {
@@ -79,17 +63,6 @@ export default function NodePage() {
                 isArchived={node.archived}
                 isPublic={node.isPublic}
                 ownerId={node.ownerId}
-                onListItemAdd={handleCreateChildNode}
-                onListItemEdit={handleEditNodeText}
-                onListItemDelete={handleDeleteNode}
-                onListItemToggle={(itemId) => handleToggleChildNode(itemId)}
-                onListTitleChange={handleEditNodeText}
-                onListPin={(event) => handlePin(node.id)}
-                onListArchive={() => handleArchiveNode(node.id)}
-                onListRestore={() => handleRestoreNode(node.id)}
-                onListDelete={(event) => handleDeleteNode(node.id)}
-                onListVisibilityChange={handleVisibilityChange}
-                maxLength={maxLength}
             />
         </div>
     )

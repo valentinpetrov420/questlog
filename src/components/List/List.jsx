@@ -4,11 +4,27 @@ import { validateText } from "../../util/validation";
 import StatusMessage from "../StatusMessage/StatusMessage.jsx";
 import { useEffect, useRef } from "react";
 import './List.css';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 import { useAuth } from "../../contexts/AuthContext.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNodes } from "../../contexts/NodesContext.jsx";
 
 export default function List(props) {
+    const {
+        nodes,
+
+        handleCreateChildNode,
+
+        handleArchiveNode,
+        handleRestoreNode,
+        handleEditNodeText,
+        handlePin,
+        handleVisibilityChange,
+
+        handleDeleteNode,
+        
+    } = useNodes();
+
     const [value, setValue] = useState("");
 
     const [draftTitle, setDraftTitle] = useState("");
@@ -45,7 +61,7 @@ export default function List(props) {
 
     const inputRef = useRef(null);
     const wasDisabled = useRef(false);
-    
+
     useEffect(() => {
         if (wasDisabled.current && !disabled) {
             inputRef.current?.focus();
@@ -59,7 +75,7 @@ export default function List(props) {
         (<div className="list-actions">
             <button
                 disabled={deletePending}
-                onClick={() => props.onListRestore(props.id)}>🔃</button>
+                onClick={() => handleRestoreNode(props.id)}>🔃</button>
             <button
                 disabled={deletePending}
                 onClick={handleDeleteClick}>🗑️</button>
@@ -67,10 +83,12 @@ export default function List(props) {
         : (<div className="list-actions">
             <button
                 disabled={deletePending}
-                onClick={() => props.onListArchive(props.id)}>🗑️</button>
-            <button
+                onClick={() => handleArchiveNode(props.id)}>🗑️</button>
+                {!props.isNodePage ? <button
                 disabled={deletePending}
-                onClick={() => props.onListPin(props.id)}>📌</button>
+                onClick={() => handlePin(props.id)}>📌
+                </button> 
+                : ""}
         </div>);
 
     function cancelEdit() {
@@ -88,7 +106,7 @@ export default function List(props) {
         setAddItemPending(true);
 
         try {
-            const response = await props.onListItemAdd(value, props.id);
+            const response = await handleCreateChildNode(value, props.id);
 
             if (response.success) {
                 setError("");
@@ -120,7 +138,7 @@ export default function List(props) {
         setTitlePending(true);
 
         try {
-            const response = await props.onListTitleChange(props.id, draftTitle);
+            const response = await handleEditNodeText(props.id, draftTitle);
 
             if (response.success) {
                 setEditing(false);
@@ -142,7 +160,7 @@ export default function List(props) {
         setDeletePending(true);
 
         try {
-            const response = await props.onListDelete();
+            const response = await handleDeleteNode(props.id);
 
             if (response.success) {
                 setError("");
@@ -160,7 +178,7 @@ export default function List(props) {
             setDeletePending(false);
         }
     }
-    async function handleVisibilityChange() {
+    async function handleVisibility() {
         console.log(props.isPublic);
         if (deletePending) {
             return;
@@ -169,7 +187,7 @@ export default function List(props) {
         try {
             setVisibilityPending(true);
 
-            const response = await props.onListVisibilityChange(props.id);
+            const response = await handleVisibilityChange(props.id);
 
             if (response.success) {
                 setError("");
@@ -211,7 +229,7 @@ export default function List(props) {
                 <select className="visibility-dropdown"
                     disabled={visibilityPending || deletePending}
                     value={props.isPublic ? "public" : "private"}
-                    onChange={handleVisibilityChange}>
+                    onChange={handleVisibility}>
                     <option value="public">Public</option>
                     <option value="private">Private</option>
                 </select>
@@ -230,10 +248,6 @@ export default function List(props) {
                         text={item.text}
                         completed={item.completed}
                         highlightedTodoId={props.highlightedTodoId}
-                        onToggle={props.onListItemToggle}
-                        onTodoEdit={props.onListItemEdit}
-                        onTodoDelete={props.onListItemDelete}
-                        maxLength={props.maxLength}
                     />
                 ))}
             </ul>

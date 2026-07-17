@@ -3,7 +3,17 @@ import { useEffect } from "react";
 import StatusMessage from "../StatusMessage/StatusMessage.jsx";
 import './Item.css';
 
+import { useNodes } from "../../contexts/NodesContext.jsx";
+
 export default function Item(props) {
+    const {
+        handleEditNodeText,
+
+        handleDeleteNode,
+
+        handleToggleChildNode,
+    } = useNodes();
+
     const [isEditingTodo, setEditingTodo] = useState(false);
     const [draftTitleTodo, setDraftTitleTodo] = useState("");
 
@@ -26,7 +36,7 @@ export default function Item(props) {
         setPending(true);
 
         try {
-            const response = await props.onTodoEdit(props.id, draftTitleTodo);
+            const response = await handleEditNodeText(props.id, draftTitleTodo);
 
             if (response.success) {
                 setError("");
@@ -52,7 +62,7 @@ export default function Item(props) {
         setPending(true);
 
         try {
-            const response = await props.onTodoDelete(props.id);
+            const response = await handleDeleteNode(props.id);
 
             if (response.success) {
                 setError("");
@@ -90,11 +100,11 @@ export default function Item(props) {
                             return;
                         }
 
-                        if(!props.isOwner){
+                        if (!props.isOwner) {
                             return;
                         }
 
-                        props.onToggle(props.id)
+                        handleToggleChildNode(props.id);
                     }}>
                     {props.text}
                 </span>

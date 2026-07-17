@@ -8,41 +8,15 @@ import { useNodes } from '../../contexts/NodesContext.jsx';
 export default function Dashboard() {
     const {
         nodes,
-        nodesLoading, setNodesLoading,
-
         sortMode, setSortMode,
-
-        handleCreateNode,
-
-        handleCreateChildNode,
-
-        handleArchiveNode,
-        handleRestoreNode,
-        handleEditNodeText,
-        handlePin,
-
-        handleDeleteNode,
-
-        handleToggleChildNode,
     } = useNodes();
 
     return <div id="dashboard-container">
         <ListView
             role="pinned"
             lists={nodes}
-            maxLength={maxLength}
-
-
-            onListItemAdd={handleCreateChildNode}
-            onListArchive={handleArchiveNode}
-            onListRestore={handleRestoreNode}
-            onListTitleChange={handleEditNodeText}
-            onListDelete={handleDeleteNode}
-            onListPin={handlePin}
-
-            onListItemToggle={handleToggleChildNode}
         />
-        <CreateListForm onCreateList={handleCreateNode} maxLength={maxLength} />
+        <CreateListForm maxLength={maxLength} />
         <select id="sort-dropdown"
             value={sortMode}
             onChange={(event) => {
@@ -56,19 +30,6 @@ export default function Dashboard() {
         <ListView
             role="sorted" sortMode={sortMode}
             lists={nodes}
-            maxLength={maxLength}
-
-
-            onListItemAdd={handleCreateChildNode}
-            onListArchive={handleArchiveNode}
-            onListRestore={handleRestoreNode}
-            onListTitleChange={handleEditNodeText}
-            onListDelete={handleDeleteNode}
-            onListPin={handlePin}
-
-            onListItemToggle={handleToggleChildNode}
-            onListItemEdit={handleEditNodeText}
-            onListItemDelete={handleDeleteNode}
         />
     </div>
 }
