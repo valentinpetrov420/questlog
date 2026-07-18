@@ -23,6 +23,7 @@ export default function Dashboard() {
                 setSortMode(event.target.value);
             }}>
             <option value="createdAt">Newest</option>
+            <option value="order">Custom Order</option>
             <option value="updatedAt">Last updated</option>
             <option value="alphabetical">Alphabetical</option>
             <option value="archived">Archived only</option>

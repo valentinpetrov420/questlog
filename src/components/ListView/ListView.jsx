@@ -34,6 +34,9 @@ export default function ListView(props) {
             case "createdAt":
                 sortedLists = [...sortedLists].sort((a, b) => b.createdAt - a.createdAt);
                 break;
+            case "order":
+                sortedLists = [...sortedLists].sort((a, b) => b.order - a.order);
+                break;
             case "updatedAt":
                 //todo: child nodes being changed dont update parent updatedAt, only parent changes do
                 sortedLists = [...sortedLists].sort((a, b) => b.updatedAt - a.updatedAt);
