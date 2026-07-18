@@ -78,16 +78,21 @@ export function NodesProvider({ children }) {
         }
 
         try {
+            const roots = flatNodes.filter(n => n.parentId === null);
+            const order = roots.length;
+
             const id = await firestoreService.nodes.createNode(user.uid, {
                 type: "page",
                 text: result.value,
-                isPublic: visibility
+                isPublic: visibility,
+                order,
             });
 
             setFlatNodes(prev => [
                 ...prev,
                 {
                     parentId: null,
+                    order,
                     type: "page",
                     text: result.value,
                     isPublic: visibility,
@@ -125,16 +130,21 @@ export function NodesProvider({ children }) {
         }
 
         try {
+            const siblings = flatNodes.filter(n => n.parentId === parentId);
+            const order = siblings.length;
+
             const id = await firestoreService.nodes.createNode(user.uid, {
                 parentId,
                 type: "todo",
                 text: result.value,
+                order,
             });
 
             setFlatNodes(prev => [
                 ...prev,
                 {
                     parentId,
+                    order,
                     type: "todo",
                     text: result.value,
                     isPublic: false,

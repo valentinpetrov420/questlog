@@ -4,7 +4,13 @@ import StatusMessage from "../StatusMessage/StatusMessage.jsx";
 import { useEffect } from "react";
 import "./CreateListForm.css";
 
+import { useNodes } from "../../contexts/NodesContext.jsx";
+
 export default function CreateListForm(props) {
+    const {
+        handleCreateNode,
+    } = useNodes();
+
     const [title, setTitle] = useState("");
     const [draftVisibility, setDraftVisibility] = useState("private");
 
@@ -33,7 +39,7 @@ export default function CreateListForm(props) {
         const isPublic = draftVisibility === "public";
 
         try {
-            const response = await props.onCreateList(title, isPublic);
+            const response = await handleCreateNode(title, isPublic);
 
             if (response.success) {
                 setError("");

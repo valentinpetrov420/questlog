@@ -18,13 +18,14 @@ import { db } from "../firebase";
 import { __devDelay } from "../../dev/networkStress";
 
 
-async function createNode(ownerId, { type, parentId = null, text = "", isPublic = false }) {
+async function createNode(ownerId, { type, parentId = null, text = "", isPublic = false, order = null }) {
     await __devDelay();
 
     const docRef = await addDoc(collection(db, "nodes"), {
         type,
         parentId,
         text,
+        order,
         completed: false,
         ownerId,
         isPublic,
