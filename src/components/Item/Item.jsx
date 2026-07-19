@@ -5,7 +5,17 @@ import './Item.css';
 
 import { useNodes } from "../../contexts/NodesContext.jsx";
 
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
 export default function Item(props) {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: props.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
+
     const {
         handleEditNodeText,
 
@@ -75,9 +85,10 @@ export default function Item(props) {
     }
 
 
-    return <li>
+    return <li ref={setNodeRef} style={style} {...attributes}>
         <StatusMessage text={error} />
         <div className={isEditingTodo ? "input-form-wrapper" : "todo-wrapper"}>
+            <span className="drag-button" {...listeners} style={{ cursor: 'grab' }}>⠿</span>
             {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
                 <input autoFocus
                     disabled={disabled}

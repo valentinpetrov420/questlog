@@ -384,7 +384,7 @@ export function NodesProvider({ children }) {
     return (
         <NodesContext.Provider
             value={{
-                nodes, flatNodes,
+                nodes, flatNodes, setFlatNodes,
                 nodesLoading, setNodesLoading,
 
                 sortMode, setSortMode,

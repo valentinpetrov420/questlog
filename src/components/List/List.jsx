@@ -5,13 +5,20 @@ import StatusMessage from "../StatusMessage/StatusMessage.jsx";
 import { useEffect, useRef } from "react";
 import './List.css';
 import { Link, useNavigate } from "react-router-dom";
+import firestoreService from "../../api/services/firestoreService.js";
 
 import { useAuth } from "../../contexts/AuthContext.jsx";
 import { useNodes } from "../../contexts/NodesContext.jsx";
 
+import { DndContext } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { arrayMove } from '@dnd-kit/sortable';
+
 export default function List(props) {
     const {
-        nodes,
+        nodes, setFlatNodes,
+
+        setSortMode,
 
         handleCreateChildNode,
 
@@ -22,7 +29,7 @@ export default function List(props) {
         handleVisibilityChange,
 
         handleDeleteNode,
-        
+
     } = useNodes();
 
     const [value, setValue] = useState("");
@@ -84,10 +91,10 @@ export default function List(props) {
             <button
                 disabled={deletePending}
                 onClick={() => handleArchiveNode(props.id)}>🗑️</button>
-                {!props.isNodePage ? <button
+            {!props.isNodePage ? <button
                 disabled={deletePending}
                 onClick={() => handlePin(props.id)}>📌
-                </button> 
+            </button>
                 : ""}
         </div>);
 
@@ -200,6 +207,28 @@ export default function List(props) {
             setVisibilityPending(false);
         }
     }
+    function handleDragEnd(event) {
+        console.log(event);
+
+        const oldIndex = props.listItems.findIndex(item => item.id === event.active.id);
+        const newIndex = props.listItems.findIndex(item => item.id === event.over?.id);
+
+        const reordered = arrayMove(props.listItems, oldIndex, newIndex);
+
+        reordered.forEach((item, index) => {
+            firestoreService.nodes.updateNodeOptimistic(item.id, { order: index });
+        });
+
+        const reorderedWithOrder = reordered.map((item, index) => ({
+            ...item,
+            order: index
+        }));
+
+        setFlatNodes(prev => {
+            const otherNodes = prev.filter(node => !reorderedWithOrder.find(reorderedNode => reorderedNode.id === node.id));
+            return [...otherNodes, ...reorderedWithOrder];
+        });
+    }
 
     return (
         <div className="list-component">
@@ -234,23 +263,29 @@ export default function List(props) {
                     <option value="private">Private</option>
                 </select>
                 : ""}
+            <DndContext onDragEnd={handleDragEnd}>
+                <SortableContext
+                    items={props.listItems.map(i => i.id)}
+                    strategy={verticalListSortingStrategy}
+                >
+                    <ul>
+                        {!props.isNodePage ? <Link to={`/${props.id}`}>Details</Link> : ""}
+                        {(props.listItems ?? []).map(item => (
+                            <Item isOwner={isOwner}
 
-            <ul>
-                {!props.isNodePage ? <Link to={`/${props.id}`}>Details</Link> : ""}
-                {(props.listItems ?? []).map(item => (
-                    <Item isOwner={isOwner}
+                                deletePending={deletePending}
 
-                        deletePending={deletePending}
-
-                        key={item.id}
-                        listId={props.id}
-                        id={item.id}
-                        text={item.text}
-                        completed={item.completed}
-                        highlightedTodoId={props.highlightedTodoId}
-                    />
-                ))}
-            </ul>
+                                key={item.id}
+                                listId={props.id}
+                                id={item.id}
+                                text={item.text}
+                                completed={item.completed}
+                                highlightedTodoId={props.highlightedTodoId}
+                            />
+                        ))}
+                    </ul>
+                </SortableContext>
+            </DndContext>
             {isOwner ?
                 <form className="list-form" onSubmit={handleSubmit}>
                     <div className="input-form-wrapper">
