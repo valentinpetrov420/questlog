@@ -1,7 +1,20 @@
 import List from "../List/List";
 import './ListView.css';
 
+import firestoreService from "../../api/services/firestoreService";
+import { useNodes } from "../../contexts/NodesContext";
+
+import { DndContext } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { arrayMove } from '@dnd-kit/sortable';
+
 export default function ListView(props) {
+    const {
+        setFlatNodes, 
+
+        setSortMode,
+    } = useNodes();
+
     if (props.role === "pinned") {
         const pinnedLists = props.lists.filter(list => list.pinned && !list.archived);
 
@@ -18,6 +31,7 @@ export default function ListView(props) {
                 return (
                     <List key={list.id}
                         id={list.id}
+                        pinned={list.pinned}
                         text={list.text}
                         listItems={list.items}
                         isArchived={list.archived}
@@ -49,17 +63,51 @@ export default function ListView(props) {
                 break;
         }
 
-        return <div className="list-view">
-            {sortedLists.map(list => {
-                return (
-                    <List key={list.id}
-                        id={list.id}
-                        text={list.text}
-                        listItems={list.items}
-                        isArchived={list.archived}
-                        ownerId={list.ownerId}
-                    />)
-            })}
-        </div>
+        function handleDragEnd(event) {
+            console.log(event);
+
+            const oldIndex = sortedLists.findIndex(list => list.id === event.active.id);
+            const newIndex = sortedLists.findIndex(list => list.id === event.over?.id);
+
+            const reordered = arrayMove(sortedLists, oldIndex, newIndex);
+
+            reordered.forEach((list, index) => {
+                firestoreService.nodes.updateNodeOptimistic(list.id, { order: index });
+            });
+
+            const reorderedWithOrder = reordered.map((list, index) => ({
+                ...list,
+                order: index
+            }));
+
+            setFlatNodes(prev => {
+                const otherNodes = prev.filter(node => !reorderedWithOrder.find(reorderedNode => reorderedNode.id === node.id));
+                return [...otherNodes, ...reorderedWithOrder];
+            });
+
+            setSortMode("order");
+        }
+
+
+        return <DndContext onDragEnd={handleDragEnd}>
+            <SortableContext
+                items={sortedLists.map(l => l.id)}
+                strategy={verticalListSortingStrategy}
+            >
+                <div className="list-view">
+                    {sortedLists.map(list => {
+                        return (
+                            <List key={list.id}
+                                id={list.id}
+                                text={list.text}
+                                pinned={list.pinned}
+                                listItems={list.items}
+                                isArchived={list.archived}
+                                ownerId={list.ownerId}
+                            />)
+                    })}
+                </div>
+            </SortableContext>
+        </DndContext>
     }
 }

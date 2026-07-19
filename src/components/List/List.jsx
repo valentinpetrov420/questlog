@@ -14,7 +14,17 @@ import { DndContext } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { arrayMove } from '@dnd-kit/sortable';
 
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
 export default function List(props) {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: props.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
+
     const {
         nodes, setFlatNodes,
 
@@ -83,6 +93,7 @@ export default function List(props) {
             <button
                 disabled={deletePending}
                 onClick={() => handleRestoreNode(props.id)}>🔃</button>
+                {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners} style={{ cursor: 'grab' }}>⠿</span> : ""}
             <button
                 disabled={deletePending}
                 onClick={handleDeleteClick}>🗑️</button>
@@ -91,6 +102,7 @@ export default function List(props) {
             <button
                 disabled={deletePending}
                 onClick={() => handleArchiveNode(props.id)}>🗑️</button>
+                {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners} style={{ cursor: 'grab' }}>⠿</span> : ""}
             {!props.isNodePage ? <button
                 disabled={deletePending}
                 onClick={() => handlePin(props.id)}>📌
@@ -231,7 +243,7 @@ export default function List(props) {
     }
 
     return (
-        <div className="list-component">
+        <div className="list-component" ref={setNodeRef} style={style} {...attributes}>
             {isOwner ? actions : ""}
             <StatusMessage text={titleStatus ? error : ""} />
             {isEditing ? <form className="edit-list-title" onSubmit={handleSubmitEdit}>
