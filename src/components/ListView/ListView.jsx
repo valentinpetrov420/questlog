@@ -7,10 +7,12 @@ import { useNodes } from "../../contexts/NodesContext";
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { arrayMove } from '@dnd-kit/sortable';
+import { rectSortingStrategy } from '@dnd-kit/sortable';
+import { restrictToParentElement } from '@dnd-kit/modifiers';
 
 export default function ListView(props) {
     const {
-        setFlatNodes, 
+        setFlatNodes,
 
         setSortMode,
     } = useNodes();
@@ -89,10 +91,13 @@ export default function ListView(props) {
         }
 
 
-        return <DndContext onDragEnd={handleDragEnd}>
+        return <DndContext
+            modifiers={[restrictToParentElement]}
+            onDragEnd={handleDragEnd} >
+
             <SortableContext
                 items={sortedLists.map(l => l.id)}
-                strategy={verticalListSortingStrategy}
+                strategy={rectSortingStrategy}
             >
                 <div className="list-view">
                     {sortedLists.map(list => {
