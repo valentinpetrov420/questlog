@@ -66,15 +66,19 @@ export default function ListView(props) {
         }
 
         function handleDragEnd(event) {
-            console.log(event);
-
             const oldIndex = sortedLists.findIndex(list => list.id === event.active.id);
             const newIndex = sortedLists.findIndex(list => list.id === event.over?.id);
 
             const reordered = arrayMove(sortedLists, oldIndex, newIndex);
 
+            const hasChanged = reordered.some((item, index) => item.id !== sortedLists[index]?.id);
+
+            if (!hasChanged) {
+                return;
+            }
+
             reordered.forEach((list, index) => {
-                firestoreService.nodes.updateNodeOptimistic(list.id, { order: index });
+                firestoreService.nodes.updateNodeOptimistic(list.id, { order: index, updatedAt: Date.now() });
             });
 
             const reorderedWithOrder = reordered.map((list, index) => ({

@@ -93,7 +93,7 @@ export default function List(props) {
             <button
                 disabled={deletePending}
                 onClick={() => handleRestoreNode(props.id)}>🔃</button>
-                {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners} style={{ cursor: 'grab' }}>⠿</span> : ""}
+            {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners} style={{ cursor: 'grab' }}>⠿</span> : ""}
             <button
                 disabled={deletePending}
                 onClick={handleDeleteClick}>🗑️</button>
@@ -102,7 +102,7 @@ export default function List(props) {
             <button
                 disabled={deletePending}
                 onClick={() => handleArchiveNode(props.id)}>🗑️</button>
-                {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners} style={{ cursor: 'grab' }}>⠿</span> : ""}
+            {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners} style={{ cursor: 'grab' }}>⠿</span> : ""}
             {!props.isNodePage ? <button
                 disabled={deletePending}
                 onClick={() => handlePin(props.id)}>📌
@@ -220,15 +220,19 @@ export default function List(props) {
         }
     }
     function handleDragEnd(event) {
-        console.log(event);
-
         const oldIndex = props.listItems.findIndex(item => item.id === event.active.id);
         const newIndex = props.listItems.findIndex(item => item.id === event.over?.id);
 
         const reordered = arrayMove(props.listItems, oldIndex, newIndex);
 
+        const hasChanged = reordered.some((item, index) => item.id !== props.listItems[index]?.id);
+
+        if (!hasChanged) {
+            return;
+        }
+
         reordered.forEach((item, index) => {
-            firestoreService.nodes.updateNodeOptimistic(item.id, { order: index });
+            firestoreService.nodes.updateNodeOptimistic(item.id, { order: index, updatedAt: Date.now() });
         });
 
         const reorderedWithOrder = reordered.map((item, index) => ({
