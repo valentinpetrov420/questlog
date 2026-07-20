@@ -1,11 +1,13 @@
+import { maxLength } from "../../constants/app";
+
 export function normalizeText(text){
-    if (text === undefined){
+    if (text === undefined || text === null){
         return "";
     }
     return text.trim();
 }
 
-export function validateText(text, maxLength){
+export function validateText(text){
     const cleaned = normalizeText(text);
 
     if (!cleaned){

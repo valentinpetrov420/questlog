@@ -2,7 +2,7 @@ import { useContext, createContext, useEffect, useState, useMemo } from "react";
 
 import { siteName, maxLength } from "../constants/app.js";
 import { formatError } from '../util/errorResponse.js';
-import { validateText } from '../util/validation.js';
+import { validateText } from '../util/validation/validation.js';
 import nestNodes from "../api/services/storage.js";
 
 import { useAuth } from './AuthContext.jsx';
@@ -65,10 +65,7 @@ export function NodesProvider({ children }) {
             return;
         }
 
-        console.log("created node: ", text);
-        console.log("created node with visibility: " + visibility);
-
-        const result = validateText(text, maxLength);
+        const result = validateText(text);
 
         if (!result.valid) {
             return {
@@ -105,6 +102,9 @@ export function NodesProvider({ children }) {
                 }
             ]);
 
+            console.log("created node: ", text);
+            console.log("created node with visibility: " + visibility);
+
             return {
                 success: true
             };
@@ -120,7 +120,7 @@ export function NodesProvider({ children }) {
 
         console.log("created node: ", text);
 
-        const result = validateText(text, maxLength);
+        const result = validateText(text);
 
         if (!result.valid) {
             return {
@@ -167,7 +167,6 @@ export function NodesProvider({ children }) {
     }
 
     async function handleArchiveNode(nodeId) {
-        //todo: archived lists should be forced set to private
         const confirmed = window.confirm("Archive this list?");
 
         if (!confirmed) {
@@ -225,7 +224,7 @@ export function NodesProvider({ children }) {
             };
         }
 
-        const result = validateText(newText, maxLength);
+        const result = validateText(newText);
 
         if (!result.valid) {
             return {
@@ -410,8 +409,6 @@ export function NodesProvider({ children }) {
 
 
 }
-
-
 
 export function useNodes() {
     return useContext(NodesContext);

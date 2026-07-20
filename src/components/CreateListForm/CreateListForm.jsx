@@ -1,5 +1,4 @@
 import { useState, useTransition } from "react"
-import { validateText } from "../../util/validation.js";
 import StatusMessage from "../StatusMessage/StatusMessage.jsx";
 import { useEffect } from "react";
 import "./CreateListForm.css";
