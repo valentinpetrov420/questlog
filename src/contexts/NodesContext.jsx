@@ -1,7 +1,7 @@
 import { useContext, createContext, useEffect, useState, useMemo } from "react";
 
 import { siteName, maxLength } from "../constants/app.js";
-import { formatError } from '../util/errorResponse.js';
+import { formatError } from '../util/errorResponse/errorResponse.js';
 import { validateText } from '../util/validation/validation.js';
 import nestNodes from "../api/services/storage.js";
 
@@ -319,7 +319,7 @@ export function NodesProvider({ children }) {
                 success: true
             };
         } catch (error) {
-            return formatError(error, "Failed to change visibility", "handleVisibilityChange");
+            return formatError(error, "Failed to change visibility", "VisibilityChange");
         }
 
     }
