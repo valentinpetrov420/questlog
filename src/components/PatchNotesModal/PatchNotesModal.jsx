@@ -40,7 +40,7 @@ export default function PatchNotesModal({ open, onClose, patchnotes, }) {
                 <div>
                     <h3>{date}</h3>
                     <ul>
-                        {grouped[date].map((e, i) => {
+                        {grouped[date].slice().reverse().map((e, i) => {
                             return <li key={i}>
                                 {e.message.split("\n").map((line, index) => (
                                     <div key={index}>{line}</div>
