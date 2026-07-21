@@ -7,7 +7,7 @@ import { useNodes } from "../../contexts/NodesContext.jsx";
 
 export default function CreateListForm(props) {
     const {
-        handleCreateNode,
+        handleCreateNode, setSortMode,
     } = useNodes();
 
     const [title, setTitle] = useState("");
@@ -44,6 +44,7 @@ export default function CreateListForm(props) {
                 setError("");
                 setStatus(false);
                 setTitle("");
+                setSortMode("createdAt");
             } else {
                 setError(response.message);
                 setStatus(true);

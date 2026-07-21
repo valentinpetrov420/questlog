@@ -16,6 +16,9 @@ Built as a daily-iterated React project with Firebase as the backend.
 - Ownership gating — actions hidden from non-owners.
 - Dark/light theme with persistence.
 - Responsive layout for desktop and mobile devices.
+- Drag-and-drop reordering for lists and list items.
+- Unit Tests for utility functions.
+- Skeleton loading states replacing plain text loading.
 - Reusable input validation system:
     - Empty input validation.
     - Maximum length validation.
@@ -23,6 +26,7 @@ Built as a daily-iterated React project with Firebase as the backend.
 - Pinned lists with automatic next-task highlighting.
 - Dynamic list sorting:
     - Recently created.
+    - Custom order.
     - Recently updated.
     - Alphabetical
     - Archived
@@ -36,7 +40,7 @@ Built as a daily-iterated React project with Firebase as the backend.
 git clone https://github.com/valentinpetrov420/questlog.git
 cd questlog
 npm install
-npm generate:changelog
+npm run generate:changelog
 npm run dev
 ```
 
@@ -46,7 +50,6 @@ npm run dev
 
 - Expand network error handling to all CRUD operations.
 - Simulated network failure in DevPanel (latency exists, failure does not).
-- Skeleton loading states replacing plain text loading.
 - Better offline and reconnection handling.
 - Streaks of completed tasks.
 - Untouched nodes for a few days prompt a suggestion to break tasks down.
@@ -66,7 +69,6 @@ npm run dev
 
 - Nested page nodes (any task can become a page).
 - Search and filtering.
-- Drag-and-drop reordering.
 - Multiple node types beyond todo (heading, note, image, code block).
 
 ## DevPanel
