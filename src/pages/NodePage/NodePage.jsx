@@ -7,6 +7,7 @@ import { use, useEffect, useState } from "react";
 import './NodePage.css';
 
 import firestoreService from '../../api/services/firestoreService.js';
+import SkeletonPage from "../SkeletonPage/SkeletonPage.jsx";
 
 export default function NodePage() {
     const [node, setNode] = useState();
@@ -44,7 +45,7 @@ export default function NodePage() {
     }, [nodes]);
 
     if (nodesLoading) {
-        return <p>Loading...</p>
+        return <SkeletonPage type ="nodepage"/>
     };
 
     if (!node) {
