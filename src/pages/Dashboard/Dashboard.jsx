@@ -4,12 +4,19 @@ import ListView from '../../components/ListView/ListView.jsx'
 import { maxLength } from "../../constants/app.js";
 
 import { useNodes } from '../../contexts/NodesContext.jsx';
+import SkeletonPage from "../SkeletonPage/SkeletonPage.jsx";
 
 export default function Dashboard() {
     const {
         nodes,
+        nodesLoading,
+
         sortMode, setSortMode,
     } = useNodes();
+
+    if (nodesLoading) {
+        return <SkeletonPage type={"dashboard"}/>
+    }
 
     return <div id="dashboard-container">
         <ListView

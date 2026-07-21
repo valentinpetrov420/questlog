@@ -1,0 +1,15 @@
+@keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.2; }
+}
+
+.skeleton-box {
+    background: var(--text);
+    height: 1rem;
+    width: 50%;
+    margin-bottom: 1rem;
+
+    animation: pulse 1.5s ease-in-out infinite;
+    color: transparent;
+    border-radius: 4px;
+}
