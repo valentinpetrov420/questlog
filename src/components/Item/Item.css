@@ -100,3 +100,16 @@
 		}
 	}
 }
+
+.item-popover-wrapper {
+	position: relative;
+	.item-popover {
+		position: absolute;
+		right: 0;
+		top: 100%;
+		background: var(--bg);
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		z-index: 10;
+	}
+}

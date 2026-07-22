@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import StatusMessage from "../StatusMessage/StatusMessage.jsx";
 import './Item.css';
 
@@ -35,6 +34,23 @@ export default function Item(props) {
 
     const highlightedTodoId = props.highlightedTodoId;
 
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    const popoverRef = useRef(null);
+
+    useEffect(() => {
+        if (!menuOpen) return;
+
+        function handleClickOutside(event) {
+            if (popoverRef.current && !popoverRef.current.contains(event.target)) {
+                setMenuOpen(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [menuOpen]);
+
     function cancelEdit() {
         setEditingTodo(false);
         setDraftTitleTodo(props.text);
@@ -61,7 +77,7 @@ export default function Item(props) {
         }
     }
     function handleEditTodo() {
-        if (!props.isOwner){
+        if (!props.isOwner) {
             return;
         }
         setEditingTodo(true);
@@ -72,7 +88,7 @@ export default function Item(props) {
             return;
         }
 
-        if (!props.isOwner){
+        if (!props.isOwner) {
             return;
         }
 
@@ -109,7 +125,7 @@ export default function Item(props) {
                     value={draftTitleTodo}
                     onChange={(event) => setDraftTitleTodo(event.target.value)}
                     onBlur={() => {
-                    cancelEdit();
+                        cancelEdit();
                     }}
                     onKeyDown={(event) => {
                         if (event.key === "Escape") {
@@ -137,11 +153,14 @@ export default function Item(props) {
             }
 
             {!isEditingTodo && props.isOwner ? <div className="todo-actions">
-                <button
-                    disabled={disabled}
-                    onClick={handleDeleteClick}>
-                    🗑️
-                </button>
+                <div className="item-popover-wrapper" ref={popoverRef}>
+                    <button onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
+                    {menuOpen && (
+                        <div className="item-popover">
+                            <button onClick={handleDeleteClick}>Delete</button>
+                        </div>
+                    )}
+                </div>
             </div> :
                 <div></div>
             }
