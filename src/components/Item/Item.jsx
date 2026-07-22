@@ -106,16 +106,22 @@ export default function Item(props) {
             setPending(false);
         }
     }
+    async function handleToggleClick() {
+        if (!props.isOwner){
+            return;
+        }
+        handleToggleChildNode(props.id);
+    }
 
     return <li ref={setNodeRef} style={style} {...attributes}>
         <StatusMessage text={error} />
         <div className={isEditingTodo ? "edit-form-wrapper" : "todo-wrapper"}>
-            <span className="drag-button" {...listeners}>⠿</span>
+            {props.isOwner ? <span className="drag-button" {...listeners}>⠿</span> : ""}
             <input
                 className="item-checkbox"
                 type="checkbox"
                 checked={props.completed}
-                onChange={() => handleToggleChildNode(props.id)}
+                onChange={handleToggleClick}
                 disabled={disabled}
             />
             {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>

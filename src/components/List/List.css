@@ -15,11 +15,43 @@
 	.form-error {
 		margin-left: 1rem;
 	}
-	
+
 	ul {
 		a {
 			color: var(--text);
 			margin-left: 1rem;
+		}
+	}
+
+
+	.list-popover-wrapper {
+		position: relative;
+
+		.list-popover {
+			position: absolute;
+			display: flex;
+			flex-direction: column;
+			left: 0;
+			top: 100%;
+			background: var(--bg);
+			border: 1px solid var(--border-color);
+			border-radius: 6px;
+			z-index: 10;
+		}
+
+		button {
+			color: var(--text);
+			cursor: pointer;
+			background: transparent;
+			border: 1px solid transparent;
+			border-radius: 6px;
+			opacity: 1;
+			margin: 0.5rem;
+
+			&:disabled {
+				opacity: 0.6;
+				cursor: not-allowed;
+			}
 		}
 	}
 }
@@ -30,25 +62,29 @@
 	margin: 1rem;
 
 	button {
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 1.2rem;
+		color: var(--text);
+		background: transparent;
+		border: 1px solid transparent;
+		border-radius: 6px;
+		opacity: 0.3;
 
 		&:disabled {
 			opacity: 0.6;
 			cursor: not-allowed;
-		}	
+		}
 	}
 }
 
 .list-title {
+	display: flex;
+	flex-direction: row;
 	padding: 1rem;
 	padding-top: 0;
 
 	span {
 		font-style: italic;
 		cursor: pointer;
+		line-height: 1.5;
 	}
 
 	a {
@@ -63,13 +99,31 @@
 	}
 }
 
-.edit-list-title {
+.list-title,
+.list-title-edit {
 	display: flex;
+	align-items: center;
+	gap: 0.5rem;
 }
 
-.list-title-edit {
-	padding-left: 1rem;
-	padding-right: 1rem;
+.edit-list-title {
+	display: flex;
+	padding: 1rem;
+	padding-top: 0;
+
+	input {
+		box-sizing: border-box;
+		background: transparent;
+		border: none;
+		padding: 0;
+		margin: 0;
+		font-size: inherit;
+		font-family: inherit;
+		color: inherit;
+		width: 100%;
+		outline: none;
+		line-height: 1.5;
+	}
 }
 
 .list-form {

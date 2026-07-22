@@ -1,7 +1,6 @@
-import { useState } from "react";
 import Item from "../Item/Item.jsx"
 import StatusMessage from "../StatusMessage/StatusMessage.jsx";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import './List.css';
 import { Link, useNavigate } from "react-router-dom";
 import firestoreService from "../../api/services/firestoreService.js";
@@ -85,29 +84,26 @@ export default function List(props) {
         wasDisabled.current = disabled;
     }, [disabled]);
 
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    const popoverRef = useRef(null);
+
+    useEffect(() => {
+        if (!menuOpen) return;
+
+        function handleClickOutside(event) {
+            if (popoverRef.current && !popoverRef.current.contains(event.target)) {
+                setMenuOpen(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [menuOpen]);
+
     const isArchived = props.isArchived;
+    const isPublic = props.isPublic;
     const isOwner = user?.uid === props.ownerId;
-    const actions = isArchived ?
-        (<div className="list-actions">
-            <button
-                disabled={deletePending}
-                onClick={() => handleRestoreNode(props.id)}>🔃</button>
-            {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners} style={{ cursor: 'grab' }}>⠿</span> : ""}
-            <button
-                disabled={deletePending}
-                onClick={handleDeleteClick}>🗑️</button>
-        </div>)
-        : (<div className="list-actions">
-            <button
-                disabled={deletePending}
-                onClick={() => handleArchiveNode(props.id)}>🗑️</button>
-            {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners} style={{ cursor: 'grab' }}>⠿</span> : ""}
-            {!props.isNodePage ? <button
-                disabled={deletePending}
-                onClick={() => handlePin(props.id)}>📌
-            </button>
-                : ""}
-        </div>);
 
     function cancelEdit() {
         setEditing(false);
@@ -196,6 +192,26 @@ export default function List(props) {
             setDeletePending(false);
         }
     }
+    function handleCopyLink(){
+        navigator.clipboard.writeText(window.location.href); 
+        
+        setMenuOpen(false);
+    }
+    function handleRestoreClick(){
+        handleRestoreNode(props.id);
+
+        setMenuOpen(false);
+    }
+    function handleArchiveClick(){
+        handleArchiveNode(props.id);
+
+        setMenuOpen(false);
+    }
+    function handlePinClick(){
+        handlePin(props.id);
+
+        setMenuOpen(false);
+    }
     async function handleVisibility() {
         console.log(props.isPublic);
         if (deletePending) {
@@ -210,6 +226,7 @@ export default function List(props) {
             if (response.success) {
                 setError("");
                 setTitleStatus(false);
+                setMenuOpen(false);
             } else {
                 setError(response.message);
                 setTitleStatus(true);
@@ -247,37 +264,42 @@ export default function List(props) {
 
     return (
         <div className="list-component" ref={setNodeRef} style={style} {...attributes}>
-            {isOwner ? actions : ""}
+            {isOwner ? <div className="list-popover-wrapper" ref={popoverRef}>
+                <button onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
+                {menuOpen && (
+                    <div className="list-popover">
+                        {isOwner && !props.isArchived ? <button onClick={handleArchiveClick}>Archive</button> : ""}
+                        {isOwner && props.isArchived ? <button onClick={handleRestoreClick}>Restore</button> : ""}
+                        {isOwner ? !props.isNodePage && <button onClick={handlePinClick}>Pin</button> : ""}
+                        {isOwner ? props.isNodePage && <button onClick={handleVisibility}>{isPublic ? "Change to Private" : "Change to Public"}</button> : ""}
+                        {isOwner ? <button onClick={handleDeleteClick}>Delete</button> : ""}
+                        {props.isNodePage ? <button onClick={handleCopyLink}>Copy link</button> : ""}
+                    </div>
+                )}
+            </div> : ""}
             <StatusMessage text={titleStatus ? error : ""} />
             {isEditing ? <form className="edit-list-title" onSubmit={handleSubmitEdit}>
-                <h2 className="list-title-edit">Title:</h2>
-                <div className="input-form-wrapper">
-                    <input autoFocus
-                        disabled={titlePending}
-                        value={draftTitle}
-                        onChange={(event) => setDraftTitle(event.target.value)}
-                        onBlur={() => {
-                            cancelEdit();
-                        }}
-                        onKeyDown={(event) => {
-                            if (event.key === "Escape") {
+                <h2 className="list-title-edit">
+                    <span className="title-label">Title:</span>
+                    <div className="input-form-wrapper">
+                        <input autoFocus
+                            disabled={titlePending}
+                            value={draftTitle}
+                            onChange={(event) => setDraftTitle(event.target.value)}
+                            onBlur={() => {
                                 cancelEdit();
-                            }
-                        }}>
+                            }}
+                            onKeyDown={(event) => {
+                                if (event.key === "Escape") {
+                                    cancelEdit();
+                                }
+                            }}>
 
-                    </input>
-                </div>
+                        </input>
+                    </div>
+                </h2>
             </form>
                 : <h2 className="list-title">Title: {isOwner ? <span onClick={handleEditTitle}>{props.text}<a>✎</a></span> : <p>{props.text}</p>} </h2>}
-            {props.isNodePage && isOwner ?
-                <select className="visibility-dropdown"
-                    disabled={visibilityPending || deletePending}
-                    value={props.isPublic ? "public" : "private"}
-                    onChange={handleVisibility}>
-                    <option value="public">Public</option>
-                    <option value="private">Private</option>
-                </select>
-                : ""}
             <DndContext onDragEnd={handleDragEnd}>
                 <SortableContext
                     items={props.listItems.map(i => i.id)}

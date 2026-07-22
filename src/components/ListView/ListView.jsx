@@ -111,6 +111,7 @@ export default function ListView(props) {
                                 pinned={list.pinned}
                                 listItems={list.items}
                                 isArchived={list.archived}
+                                isPublic={list.isPublic}
                                 ownerId={list.ownerId}
                             />)
                     })}
