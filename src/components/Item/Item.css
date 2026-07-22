@@ -1,13 +1,10 @@
 .todo-wrapper {
 	margin: 1rem;
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	margin-top: 0;
 	margin-bottom: 0;
-
-	.todo-wrapper {
-		padding-bottom: 1rem;
-	}
+	padding-bottom: 1rem;
 
 	.todo-item-text {
 		margin: 1rem;
@@ -16,6 +13,8 @@
 		overflow-wrap: break-word;
 		word-break: break-word;
 		margin-top: 0;
+		margin-bottom: 0;
+		line-height: 1.5;
 	}
 
 	.todo-actions {
@@ -45,6 +44,15 @@
 	}
 }
 
+.drag-button {
+	cursor: grab;
+	margin-top: 0.2rem;
+}
+
+.item-checkbox {
+	margin-top: 0.2rem;
+}
+
 .todo-item-text.completed {
 	text-decoration: line-through;
 	text-decoration-thickness: 1px;
@@ -64,11 +72,31 @@
 	}
 }
 
-@media (max-width: 500px) {
-	.todo-wrapper {
-		.todo-item-text {
+.edit-form-wrapper {
+	display: flex;
+	align-items: center;
+	margin: 1rem;
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-bottom: 1rem;
+
+	.edit-todo-form {
+		margin-left: 1rem;
+
+		input {
+			box-sizing: border-box;
+			background: transparent;
+			border: none;
+			border-bottom: 1px solid var(--border-color);
+			padding: 0;
 			margin: 0;
-			margin-bottom: 1rem;
+			font-size: inherit;
+			font-family: inherit;
+			color: inherit;
+			width: 100%;
+			outline: none;
+			line-height: 1.5;
+			vertical-align: middle;
 		}
 	}
 }

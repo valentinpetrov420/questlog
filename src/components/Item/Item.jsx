@@ -61,11 +61,18 @@ export default function Item(props) {
         }
     }
     function handleEditTodo() {
+        if (!props.isOwner){
+            return;
+        }
         setEditingTodo(true);
         setDraftTitleTodo(props.text);
     }
     async function handleDeleteClick() {
         if (disabled) {
+            return;
+        }
+
+        if (!props.isOwner){
             return;
         }
 
@@ -84,18 +91,25 @@ export default function Item(props) {
         }
     }
 
-
     return <li ref={setNodeRef} style={style} {...attributes}>
         <StatusMessage text={error} />
-        <div className={isEditingTodo ? "input-form-wrapper" : "todo-wrapper"}>
-            <span className="drag-button" {...listeners} style={{ cursor: 'grab' }}>⠿</span>
+        <div className={isEditingTodo ? "edit-form-wrapper" : "todo-wrapper"}>
+            <span className="drag-button" {...listeners}>⠿</span>
+            <input
+                className="item-checkbox"
+                type="checkbox"
+                checked={props.completed}
+                onChange={() => handleToggleChildNode(props.id)}
+                disabled={disabled}
+            />
             {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
-                <input autoFocus
+                <input className="edit-item-input"
+                    autoFocus
                     disabled={disabled}
                     value={draftTitleTodo}
                     onChange={(event) => setDraftTitleTodo(event.target.value)}
                     onBlur={() => {
-                        cancelEdit();
+                    cancelEdit();
                     }}
                     onKeyDown={(event) => {
                         if (event.key === "Escape") {
@@ -104,6 +118,7 @@ export default function Item(props) {
                     }}></input>
             </form>
                 :
+
                 <span className={`todo-item-text ${props.highlightedTodoId === props.id ? "highlighted" : ""}
                 ${props.completed ? "completed" : ""}`}
                     onClick={() => {
@@ -115,25 +130,13 @@ export default function Item(props) {
                             return;
                         }
 
-                        handleToggleChildNode(props.id);
+                        handleEditTodo();
                     }}>
                     {props.text}
                 </span>
             }
 
             {!isEditingTodo && props.isOwner ? <div className="todo-actions">
-                <button
-                    disabled={disabled}
-                    onMouseDown={(event) => {
-                        if (disabled) {
-                            return;
-                        }
-
-                        event.preventDefault();
-                        handleEditTodo();
-                    }}>
-                    ✎
-                </button>
                 <button
                     disabled={disabled}
                     onClick={handleDeleteClick}>

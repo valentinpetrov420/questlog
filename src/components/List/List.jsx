@@ -294,6 +294,7 @@ export default function List(props) {
                                 listId={props.id}
                                 id={item.id}
                                 text={item.text}
+                                isOwner={isOwner}
                                 completed={item.completed}
                                 highlightedTodoId={props.highlightedTodoId}
                             />
