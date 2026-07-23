@@ -7,15 +7,15 @@ describe("nestNodes", () => {
     });
 
     test("returns a root node with empty items when it has no children", () => {
-        const flatNodes = [{ id: "1", parentId: null, order: 0, type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false }];
+        const flatNodes = [{ id: "1", parentId: null, order: 0, type: "todo" as const, isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false }];
         const result = nestNodes(flatNodes);
         expect(result).toEqual([{ id: "1", parentId: null, order: 0, items: [], type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false }]);
     });
 
     test("nests a child under its matching root", () => {
         const flatNodes = [
-            { id: "1", parentId: null, order: 0, type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
-            { id: "2", parentId: "1", order: 0, type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
+            { id: "1", parentId: null, order: 0, type: "todo" as const, isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
+            { id: "2", parentId: "1", order: 0, type: "todo" as const, isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
         ];
 
         const result = nestNodes(flatNodes);
@@ -24,8 +24,8 @@ describe("nestNodes", () => {
 
     test("parentless children are left out", () => {
         const flatNodes = [
-            { id: "1", parentId: null, order: 0, type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
-            { id: "2", parentId: "45", order: 0, type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
+            { id: "1", parentId: null, order: 0, type: "todo" as const, isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
+            { id: "2", parentId: "45", order: 0, type: "todo" as const, isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
         ];
 
         const result = nestNodes(flatNodes);
@@ -34,8 +34,8 @@ describe("nestNodes", () => {
 
     test("returns a separate entry for each root node", () => {
         const flatNodes = [
-            { id: "1", parentId: null, order: 0, type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
-            { id: "45", parentId: null, order: 1, type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
+            { id: "1", parentId: null, order: 0, type: "todo" as const, isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
+            { id: "45", parentId: null, order: 1, type: "todo" as const, isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
         ];
 
         const result = nestNodes(flatNodes);
@@ -44,10 +44,10 @@ describe("nestNodes", () => {
 
     test("assigns children to the correct parent, not a sibling root", () => {
         const flatNodes = [
-            { id: "1", parentId: null, order: 0, type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
-            { id: "2", parentId: "1", order: 0, type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
-            { id: "45", parentId: null, order: 1, type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
-            { id: "67", parentId: "45", order: 0, type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
+            { id: "1", parentId: null, order: 0, type: "todo" as const, isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
+            { id: "2", parentId: "1", order: 0, type: "todo" as const, isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
+            { id: "45", parentId: null, order: 1, type: "todo" as const, isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
+            { id: "67", parentId: "45", order: 0, type: "todo" as const, isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
         ];
 
         const result = nestNodes(flatNodes);
@@ -57,9 +57,9 @@ describe("nestNodes", () => {
 
     test("sorts children by order within a parent", () => {
         const flatNodes = [
-            { id: "1", parentId: null, order: 0, type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
-            { id: "2", parentId: "1", order: 1, type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
-            { id: "42069", parentId: "1", order: 0, type: "todo", isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
+            { id: "1", parentId: null, order: 0, type: "todo" as const, isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
+            { id: "2", parentId: "1", order: 1, type: "todo" as const, isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
+            { id: "42069", parentId: "1", order: 0, type: "todo" as const, isPublic: false, text: "1", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: false, completed: false },
         ];
         
         const result = nestNodes(flatNodes);
