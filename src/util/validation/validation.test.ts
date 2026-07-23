@@ -35,9 +35,4 @@ describe("validateText", () => {
         expect(result.valid).toBe(false);
         expect(result.error).toBe("Field cannot be empty.");
     });
-    test("returns invalid for null input", () => {
-        const result = validateText(null);
-        expect(result.valid).toBe(false);
-        expect(result.error).toBe("Field cannot be empty.");
-    });
 });

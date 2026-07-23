@@ -5,7 +5,7 @@ import './List.css';
 import { Link, useNavigate } from "react-router-dom";
 import firestoreService from "../../api/services/firestoreService.js";
 
-import { useAuth } from "../../contexts/AuthContext.jsx";
+import { useAuth } from "../../contexts/AuthContext.js";
 import { useNodes } from "../../contexts/NodesContext.jsx";
 
 import { DndContext } from "@dnd-kit/core";
@@ -120,7 +120,7 @@ export default function List(props) {
         setAddItemPending(true);
 
         try {
-            const response = await handleCreateChildNode(value, props.id);
+            const response = await handleCreateChildNode(value, props.id, "todo");
 
             if (response.success) {
                 setError("");

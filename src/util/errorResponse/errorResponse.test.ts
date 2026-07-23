@@ -1,6 +1,6 @@
-import { describe, test, expect, vi } from 'vitest';
+import { describe, test, expect } from 'vitest';
 import { FirebaseError } from 'firebase/app';
-import { formatError } from '../errorResponse/errorResponse';
+import { formatError } from './errorResponse';
 
 describe("formatError", () => {
     test("returns error code and fallback message for a FirebaseError", () => {

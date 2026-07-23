@@ -1,4 +1,6 @@
-export default function nestNodes(flatNodes) {
+import { Node } from "../../types/Node";
+
+export default function nestNodes(flatNodes: Node[]) {
     const roots = flatNodes
         .filter(node => node.parentId === null)
         .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));

@@ -1,6 +1,6 @@
 import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider } from './contexts/ThemeContext.jsx'
-import { AuthProvider } from './contexts/AuthContext.jsx'
+import { AuthProvider } from './contexts/AuthContext.js'
 import { NodesProvider } from './contexts/NodesContext.jsx'
 
 import { StrictMode } from 'react'

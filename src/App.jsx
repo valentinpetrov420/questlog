@@ -17,7 +17,7 @@ import NodePage from './pages/NodePage/NodePage.jsx';
 import DevPanel from './dev/DevPanel.jsx';
 
 import { useTheme } from './contexts/ThemeContext.jsx';
-import { useAuth } from './contexts/AuthContext.jsx';
+import { useAuth } from './contexts/AuthContext.js';
 
 import ProtectedRoute from './contexts/ProtectedRoute.jsx';
 import PublicRoute from './contexts/PublicRoute.jsx';

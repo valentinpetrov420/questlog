@@ -15,10 +15,19 @@ import {
 
 import { db } from "../firebase";
 
-import { __devDelay } from "../../dev/networkStress";
+import { __devDelay } from "../../dev/networkStress.ts";
 
+import { Node } from "../../types/Node.ts";
 
-async function createNode(ownerId, { type, parentId = null, text = "", isPublic = false, order = null }) {
+type CreateNodeData = {
+    type?: string;
+    parentId?: string | null;
+    text?: string;
+    isPublic?: boolean;
+    order?: number;
+};
+
+async function createNode(ownerId: string, { type = "page", parentId = null, text = "", isPublic = false, order = 0 }: CreateNodeData) {
     await __devDelay();
 
     const docRef = await addDoc(collection(db, "nodes"), {
@@ -37,7 +46,7 @@ async function createNode(ownerId, { type, parentId = null, text = "", isPublic 
 
     return docRef.id;
 }
-async function getNode(nodeId) {
+async function getNode(nodeId: string) {
     try {
         const docRef = doc(db, "nodes", nodeId);
         const snapshot = await getDoc(docRef);
@@ -66,7 +75,7 @@ async function getNode(nodeId) {
         throw error;
     }
 }
-async function getNodes(userId) {
+async function getNodes(userId: string): Promise<Node[]> {
     try {
         const q = query(
             collection(db, "nodes"),
@@ -75,18 +84,17 @@ async function getNodes(userId) {
 
         const snapshot = await getDocs(q);
 
-        const nodes = snapshot.docs.map(doc => ({
+        return snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
-        }));
+        })) as Node[];
 
-        return nodes;
     } catch (error) {
         console.error("Failed to fetch nodes: ", error);
         throw error;
     }
 }
-async function updateNode(nodeId, data) {
+async function updateNode(nodeId: string, data: object) {
     await __devDelay();
 
     const docRef = doc(db, "nodes", nodeId);
@@ -96,7 +104,7 @@ async function updateNode(nodeId, data) {
         updatedAt: Date.now(),
     });
 }
-async function updateNodeOptimistic(nodeId, data) {
+async function updateNodeOptimistic(nodeId: string, data: object) {
     const docRef = doc(db, "nodes", nodeId);
 
     await updateDoc(docRef, {
@@ -105,7 +113,7 @@ async function updateNodeOptimistic(nodeId, data) {
     });
 }
 
-async function deleteNode(nodeId, ownerId){
+async function deleteNode(nodeId: string, ownerId: string){
     await __devDelay();
     
     const childrenSnapshot = await getDocs(

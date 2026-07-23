@@ -1,20 +1,46 @@
-import { useContext, createContext, useEffect, useState, useMemo } from "react";
+import { useContext, createContext, useEffect, useState, useMemo, ReactNode } from "react";
 
-import { siteName, maxLength } from "../constants/app.js";
+import { type Node } from '../types/Node.ts';
+
 import { formatError } from '../util/errorResponse/errorResponse.js';
 import { validateText } from '../util/validation/validation.js';
-import nestNodes from "../api/services/storage.js";
+import nestNodes from "../api/services/storage.ts";
 
-import { useAuth } from './AuthContext.jsx';
-import firestoreService from "../api/services/firestoreService.js";
+import { useAuth } from './AuthContext.tsx';
+import firestoreService from "../api/services/firestoreService.ts";
 
+type NodesContextValue = {
+    nodes: Node[];
+    flatNodes: Node[];
+    setFlatNodes: React.Dispatch<React.SetStateAction<Node[]>>;
 
-export const NodesContext = createContext();
+    nodesLoading: boolean;
+    setNodesLoading: React.Dispatch<React.SetStateAction<boolean>>;
 
-export function NodesProvider({ children }) {
+    sortMode: string;
+    setSortMode: React.Dispatch<React.SetStateAction<string>>;
+
+    handleCreateNode: Function;
+    handleCreateChildNode: Function;
+    handleArchiveNode: Function;
+    handleRestoreNode: Function;
+    handleEditNodeText: Function;
+    handlePin: Function;
+    handleVisibilityChange: Function;
+    handleDeleteNode: Function;
+    handleToggleChildNode: Function;
+};
+
+type NodesProviderProps = {
+    children: ReactNode;
+};
+
+export const NodesContext = createContext<NodesContextValue | null>(null);
+
+export function NodesProvider({ children }: NodesProviderProps) {
     const [nodesLoading, setNodesLoading] = useState(true);
 
-    const [flatNodes, setFlatNodes] = useState([]);
+    const [flatNodes, setFlatNodes] = useState<Node[]>([]);
     const nodes = useMemo(() => {
         return nestNodes(flatNodes);
     }, [flatNodes]);
@@ -52,7 +78,7 @@ export function NodesProvider({ children }) {
         // i saw that tiktok does this too, blank unstyled white Please wait page (= pre-theme) =>
         // skeleton boxes with a pulsing animation (= pre-content)
 
-        firestoreService.nodes.getNodes(user.uid).then((nodes) => {
+        firestoreService.nodes.getNodes(user.uid).then((nodes: Node[]) => {
             setFlatNodes(nodes);
         })
             .finally(() => {
@@ -60,7 +86,7 @@ export function NodesProvider({ children }) {
             });
     }, [user, authReady]);
 
-    async function handleCreateNode(text, visibility) {
+    async function handleCreateNode(text: string, visibility: boolean) {
         if (!user) {
             return;
         }
@@ -88,17 +114,18 @@ export function NodesProvider({ children }) {
             setFlatNodes(prev => [
                 ...prev,
                 {
-                    parentId: null,
-                    order,
+                    id,
                     type: "page",
                     text: result.value,
-                    isPublic: visibility,
+                    parentId: null,
                     ownerId: user.uid,
-                    id: id,
-                    createdAt: Date.now(),
-                    updatedAt: Date.now(),
+                    isPublic: visibility,
                     pinned: false,
                     archived: false,
+                    completed: false,
+                    order,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now(),
                 }
             ]);
 
@@ -113,12 +140,10 @@ export function NodesProvider({ children }) {
         }
     }
 
-    async function handleCreateChildNode(text, parentId) {
+    async function handleCreateChildNode(text: string, parentId: string, type: Node["type"]) {
         if (!user) {
             return;
         }
-
-        console.log("created node: ", text);
 
         const result = validateText(text);
 
@@ -135,28 +160,32 @@ export function NodesProvider({ children }) {
 
             const id = await firestoreService.nodes.createNode(user.uid, {
                 parentId,
-                type: "todo",
+                type,
                 text: result.value,
                 order,
             });
+
 
             setFlatNodes(prev => [
                 ...prev,
                 {
                     parentId,
                     order,
-                    type: "todo",
+                    type,
                     text: result.value,
                     isPublic: false,
                     ownerId: user.uid,
+                    completed: false,
                     id: id,
-                    children: [],
+                    items: [],
                     createdAt: Date.now(),
                     updatedAt: Date.now(),
                     pinned: false,
                     archived: false,
                 }
             ]);
+
+            console.log("created node: ", text);
 
             return {
                 success: true
@@ -166,7 +195,7 @@ export function NodesProvider({ children }) {
         }
     }
 
-    async function handleArchiveNode(nodeId) {
+    async function handleArchiveNode(nodeId: string) {
         const confirmed = window.confirm("Archive this list?");
 
         if (!confirmed) {
@@ -190,7 +219,7 @@ export function NodesProvider({ children }) {
 
         firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: true })
     }
-    async function handleRestoreNode(nodeId) {
+    async function handleRestoreNode(nodeId: string) {
         const confirmed = window.confirm("Restore this list?");
 
         if (!confirmed) {
@@ -214,7 +243,7 @@ export function NodesProvider({ children }) {
 
         firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: false })
     }
-    async function handleEditNodeText(nodeId, newText) {
+    async function handleEditNodeText(nodeId: string, newText: string) {
         console.log("received: " + newText);
 
         if (!nodeId) {
@@ -252,7 +281,7 @@ export function NodesProvider({ children }) {
         }
 
     }
-    async function handlePin(nodeId) {
+    async function handlePin(nodeId: string) {
         console.log("pinned: " + nodeId);
 
         if (!nodeId) {
@@ -283,7 +312,7 @@ export function NodesProvider({ children }) {
 
         firestoreService.nodes.updateNodeOptimistic(nodeId, { pinned: newPinned });
     }
-    async function handleVisibilityChange(nodeId) {
+    async function handleVisibilityChange(nodeId: string) {
         console.log("new visibility on node: " + nodeId);
 
         if (!nodeId) {
@@ -324,7 +353,7 @@ export function NodesProvider({ children }) {
 
     }
 
-    async function handleDeleteNode(nodeId) {
+    async function handleDeleteNode(nodeId: string) {
         const confirmed = window.confirm("Delete this node?");
 
         if (!confirmed) {
@@ -339,6 +368,10 @@ export function NodesProvider({ children }) {
         }
 
         try {
+            if (!user) {
+                return formatError("", "Failed to delete node", "deleteNode");
+            }
+
             await firestoreService.nodes.deleteNode(nodeId, user.uid);
 
             const updatedState = flatNodes.filter(node => node.id !== nodeId);
@@ -352,7 +385,7 @@ export function NodesProvider({ children }) {
         }
     }
 
-    function handleToggleChildNode(nodeId) {
+    function handleToggleChildNode(nodeId: string) {
         console.log(nodeId);
 
         if (!nodeId) {
@@ -363,6 +396,10 @@ export function NodesProvider({ children }) {
         }
 
         const item = flatNodes.find(i => i.id === nodeId);
+
+        if (!item) {
+            return;
+        }
 
         const newCompleted = !item.completed;
         console.log("old: " + item.completed)
@@ -411,5 +448,11 @@ export function NodesProvider({ children }) {
 }
 
 export function useNodes() {
-    return useContext(NodesContext);
+    const context = useContext(NodesContext);
+
+    if (!context) {
+        throw new Error("useNodes must be used inside NodesProvider");
+    }
+
+    return context;
 }
