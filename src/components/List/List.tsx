@@ -1,22 +1,37 @@
-import Item from "../Item/Item.jsx"
-import StatusMessage from "../StatusMessage/StatusMessage.jsx";
+import Item from "../Item/Item.js"
+import { Node } from "../../types/Node.js";
+import StatusMessage from "../StatusMessage/StatusMessage.js";
 import { useEffect, useRef, useState } from "react";
 import './List.css';
 import { Link, useNavigate } from "react-router-dom";
 import firestoreService from "../../api/services/firestoreService.js";
 
 import { useAuth } from "../../contexts/AuthContext.js";
-import { useNodes } from "../../contexts/NodesContext.jsx";
+import { useNodes } from "../../contexts/NodesContext.js";
 
-import { DndContext } from "@dnd-kit/core";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { arrayMove } from '@dnd-kit/sortable';
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-export default function List(props) {
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: props.id });
+type ListProps = {
+    isNodePage: boolean,
+
+    key: string
+    id: string,
+    text: string,
+    pinned: boolean,
+    listItems?: Node[],
+    isArchived: boolean,
+    isPublic: boolean,
+    ownerId: string,
+    highlightedTodoId?: string | null,
+}
+
+export default function List(props: ListProps) {
+    const { attributes, setNodeRef, transform, transition, listeners } = useSortable({ id: props.id });
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -24,9 +39,7 @@ export default function List(props) {
     };
 
     const {
-        nodes, setFlatNodes,
-
-        setSortMode,
+        setFlatNodes,
 
         handleCreateChildNode,
 
@@ -52,8 +65,8 @@ export default function List(props) {
     const [titlePending, setTitlePending] = useState(false);
     const [visibilityPending, setVisibilityPending] = useState(false);
 
-    const [addTodoStatus, setAddTodoStatus] = useState(null);
-    const [titleStatus, setTitleStatus] = useState(null);
+    const [addTodoStatus, setAddTodoStatus] = useState<boolean | null>(null);
+    const [titleStatus, setTitleStatus] = useState<boolean | null>(null);
 
     const [error, setError] = useState("");
 
@@ -74,7 +87,7 @@ export default function List(props) {
 
     const disabled = addItemPending || deletePending;
 
-    const inputRef = useRef(null);
+    const inputRef = useRef<HTMLInputElement>(null);
     const wasDisabled = useRef(false);
 
     useEffect(() => {
@@ -86,13 +99,13 @@ export default function List(props) {
 
     const [menuOpen, setMenuOpen] = useState(false);
 
-    const popoverRef = useRef(null);
+    const popoverRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!menuOpen) return;
 
-        function handleClickOutside(event) {
-            if (popoverRef.current && !popoverRef.current.contains(event.target)) {
+        function handleClickOutside(event: MouseEvent) {
+            if (popoverRef.current && !popoverRef.current.contains(event.target as Element)) {
                 setMenuOpen(false);
             }
         }
@@ -107,11 +120,11 @@ export default function List(props) {
 
     function cancelEdit() {
         setEditing(false);
-        setDraftTitle(props.title);
+        setDraftTitle(props.text);
         setTitleStatus(null);
     }
-    async function handleSubmit(e) {
-        e.preventDefault();
+    async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
+        event.preventDefault();
 
         if (deletePending) {
             return;
@@ -142,7 +155,7 @@ export default function List(props) {
         setDraftTitle(props.text);
         setEditing(true);
     }
-    async function handleSubmitEdit(event) {
+    async function handleSubmitEdit(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
 
         if (deletePending) {
@@ -192,22 +205,22 @@ export default function List(props) {
             setDeletePending(false);
         }
     }
-    function handleCopyLink(){
-        navigator.clipboard.writeText(window.location.href); 
-        
+    function handleCopyLink() {
+        navigator.clipboard.writeText(window.location.href);
+
         setMenuOpen(false);
     }
-    function handleRestoreClick(){
+    function handleRestoreClick() {
         handleRestoreNode(props.id);
 
         setMenuOpen(false);
     }
-    function handleArchiveClick(){
+    function handleArchiveClick() {
         handleArchiveNode(props.id);
 
         setMenuOpen(false);
     }
-    function handlePinClick(){
+    function handlePinClick() {
         handlePin(props.id);
 
         setMenuOpen(false);
@@ -235,13 +248,20 @@ export default function List(props) {
             setVisibilityPending(false);
         }
     }
-    function handleDragEnd(event) {
+    function handleDragEnd(event: DragEndEvent) {
+        if (!props.listItems) {
+            return;
+        }
         const oldIndex = props.listItems.findIndex(item => item.id === event.active.id);
         const newIndex = props.listItems.findIndex(item => item.id === event.over?.id);
 
         const reordered = arrayMove(props.listItems, oldIndex, newIndex);
 
-        const hasChanged = reordered.some((item, index) => item.id !== props.listItems[index]?.id);
+        const hasChanged = reordered.some((item, index) => {
+            if (props.listItems) {
+                return item.id !== props.listItems[index]?.id
+            }
+        });
 
         if (!hasChanged) {
             return;
@@ -264,18 +284,24 @@ export default function List(props) {
 
     return (
         <div className="list-component" ref={setNodeRef} style={style} {...attributes}>
-            {isOwner ? <div className="list-popover-wrapper" ref={popoverRef}>
-                <button onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
-                {menuOpen && (
-                    <div className="list-popover">
-                        {isOwner && !props.isArchived ? <button onClick={handleArchiveClick}>Archive</button> : ""}
-                        {isOwner && props.isArchived ? <button onClick={handleRestoreClick}>Restore</button> : ""}
-                        {isOwner ? !props.isNodePage && <button onClick={handlePinClick}>Pin</button> : ""}
-                        {isOwner ? props.isNodePage && <button onClick={handleVisibility}>{isPublic ? "Change to Private" : "Change to Public"}</button> : ""}
-                        {isOwner ? <button onClick={handleDeleteClick}>Delete</button> : ""}
-                        {props.isNodePage ? <button onClick={handleCopyLink}>Copy link</button> : ""}
-                    </div>
-                )}
+            {isOwner ? <div className="list-actions">
+                <div className="list-popover-wrapper" ref={popoverRef}>
+                    <button
+                        disabled={visibilityPending}
+                        onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
+                    {menuOpen && (
+                        <div className="list-popover">
+                            {isOwner && !isArchived ? <button onClick={handleArchiveClick}>Archive</button> : ""}
+                            {isOwner && isArchived ? <button onClick={handleRestoreClick}>Restore</button> : ""}
+                            {isOwner ? !props.isNodePage && <button onClick={handlePinClick}>Pin</button> : ""}
+                            {isOwner ? props.isNodePage && <button onClick={handleVisibility}>{isPublic ? "Change to Private" : "Change to Public"}</button> : ""}
+                            {isOwner ? <button onClick={handleDeleteClick}>Delete</button> : ""}
+                            {props.isNodePage ? <button onClick={handleCopyLink}>Copy link</button> : ""}
+                        </div>
+                    )}
+                </div>
+                {!props.isNodePage ? <span className="drag-button" {...listeners}>⠿</span> : ""}
+                <div className="fake-actions-space"></div>
             </div> : ""}
             <StatusMessage text={titleStatus ? error : ""} />
             {isEditing ? <form className="edit-list-title" onSubmit={handleSubmitEdit}>
@@ -302,7 +328,7 @@ export default function List(props) {
                 : <h2 className="list-title">Title: {isOwner ? <span onClick={handleEditTitle}>{props.text}<a>✎</a></span> : <p>{props.text}</p>} </h2>}
             <DndContext onDragEnd={handleDragEnd}>
                 <SortableContext
-                    items={props.listItems.map(i => i.id)}
+                    items={(props.listItems ?? []).map(i => i.id)}
                     strategy={verticalListSortingStrategy}
                 >
                     <ul>
@@ -313,12 +339,10 @@ export default function List(props) {
                                 deletePending={deletePending}
 
                                 key={item.id}
-                                listId={props.id}
                                 id={item.id}
                                 text={item.text}
-                                isOwner={isOwner}
                                 completed={item.completed}
-                                highlightedTodoId={props.highlightedTodoId}
+                                highlightedTodoId={props.highlightedTodoId ?? null}
                             />
                         ))}
                     </ul>

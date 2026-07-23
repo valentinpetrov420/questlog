@@ -1,12 +1,27 @@
 import './PatchNotesModal.css';
 
-export default function PatchNotesModal({ open, onClose, patchnotes, }) {
-    function getSofiaDate(timestamp) {
+type PatchNote = {
+    date: Date,
+    message: string,
+}
+
+type PatchNotesModalProps = {
+    open: boolean,
+    onClose: () => void,
+    patchnotes: PatchNote[]
+}
+
+type GroupedPatchNotes = {
+    [date: string]: PatchNote[]
+}
+
+export default function PatchNotesModal(props: PatchNotesModalProps) {
+    function getSofiaDate(timestamp: Date) {
         const date = new Date(timestamp);
         return date.toLocaleDateString("en-CA", { timeZone: "Europe/Sofia" });
     }
 
-    function groupByDate(entries) {
+    function groupByDate(entries: PatchNote[]): GroupedPatchNotes {
         return entries.reduce((grouped, entry) => {
             const date = getSofiaDate(entry.date);
 
@@ -21,21 +36,21 @@ export default function PatchNotesModal({ open, onClose, patchnotes, }) {
             grouped[date].push(entry);
 
             return grouped;
-        }, {});
+        }, {} as GroupedPatchNotes);
     }
 
-    const grouped = groupByDate(patchnotes);
+    const grouped = groupByDate(props.patchnotes);
     const sortedDates = Object.keys(grouped).sort((a, b) =>
         b.localeCompare(a)
     );
 
-    if (!open) {
+    if (!props.open) {
         return null;
     }
 
     return (
         <div className="patchnotes-modal">
-            <button onClick={onClose}>Close</button>
+            <button onClick={props.onClose}>Close</button>
             {sortedDates.map((date) => (
                 <div>
                     <h3>{date}</h3>

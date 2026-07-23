@@ -1,13 +1,22 @@
 import { useRef, useState, useEffect } from "react";
-import StatusMessage from "../StatusMessage/StatusMessage.jsx";
+import StatusMessage from "../StatusMessage/StatusMessage.js";
 import './Item.css';
 
-import { useNodes } from "../../contexts/NodesContext.jsx";
+import { useNodes } from "../../contexts/NodesContext.js";
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-export default function Item(props) {
+type ItemProps = {
+    id: string;
+    text: string;
+    completed: boolean;
+    isOwner: boolean;
+    deletePending: boolean;
+    highlightedTodoId: string | null;
+}
+
+export default function Item(props: ItemProps) {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: props.id });
 
     const style = {
@@ -36,13 +45,13 @@ export default function Item(props) {
 
     const [menuOpen, setMenuOpen] = useState(false);
 
-    const popoverRef = useRef(null);
+    const popoverRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!menuOpen) return;
 
-        function handleClickOutside(event) {
-            if (popoverRef.current && !popoverRef.current.contains(event.target)) {
+        function handleClickOutside(event: MouseEvent) {
+            if (popoverRef.current && !popoverRef.current.contains(event.target as Element)) {
                 setMenuOpen(false);
             }
         }
@@ -56,7 +65,7 @@ export default function Item(props) {
         setDraftTitleTodo(props.text);
         setError("");
     }
-    async function handleSubmitEditTodo(event) {
+    async function handleSubmitEditTodo(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
 
         setPending(true);
@@ -77,6 +86,10 @@ export default function Item(props) {
         }
     }
     function handleEditTodo() {
+        if (disabled) {
+            return;
+        }
+
         if (!props.isOwner) {
             return;
         }
@@ -107,7 +120,7 @@ export default function Item(props) {
         }
     }
     async function handleToggleClick() {
-        if (!props.isOwner){
+        if (!props.isOwner) {
             return;
         }
         handleToggleChildNode(props.id);
@@ -141,19 +154,9 @@ export default function Item(props) {
             </form>
                 :
 
-                <span className={`todo-item-text ${props.highlightedTodoId === props.id ? "highlighted" : ""}
+                <span className={`todo-item-text ${highlightedTodoId === props.id ? "highlighted" : ""}
                 ${props.completed ? "completed" : ""}`}
-                    onClick={() => {
-                        if (disabled) {
-                            return;
-                        }
-
-                        if (!props.isOwner) {
-                            return;
-                        }
-
-                        handleEditTodo();
-                    }}>
+                    onClick={handleEditTodo}>
                     {props.text}
                 </span>
             }

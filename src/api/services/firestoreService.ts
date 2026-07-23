@@ -48,6 +48,7 @@ async function createNode(ownerId: string, { type = "page", parentId = null, tex
 }
 async function getNode(nodeId: string) {
     try {
+        console.log("fetching node:", nodeId);
         const docRef = doc(db, "nodes", nodeId);
         const snapshot = await getDoc(docRef);
 

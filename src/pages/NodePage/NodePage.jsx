@@ -45,7 +45,7 @@ export default function NodePage() {
     }, [nodes]);
 
     if (nodesLoading) {
-        return <SkeletonPage type ="nodepage"/>
+        return <SkeletonPage type="nodepage" />
     };
 
     if (!node) {

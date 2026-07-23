@@ -1,13 +1,27 @@
 import { useState, useEffect } from "react";
 import './NavBar.css';
-import PatchNotesModal from "../PatchNotesModal/PatchNotesModal";
+import PatchNotesModal from "../PatchNotesModal/PatchNotesModal.js";
 
 import { useTheme } from '../../contexts/ThemeContext';
 
 import { useNavigate } from "react-router-dom";
+import { User } from "firebase/auth";
 
-export default function NavBar(props) {
-    const [patchnotes, setPatchnotes] = useState([]);
+type NavBarProps = {
+    siteName: string,
+    user: User,
+    logout: () => void,
+    loginWithGoogle: () => void
+}
+
+
+type PatchNote = {
+    date: Date,
+    message: string,
+}
+
+export default function NavBar(props: NavBarProps) {
+    const [patchnotes, setPatchnotes] = useState<PatchNote[]>([]);
     const [patchnotesOpen, setPatchnotesOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -25,8 +39,7 @@ export default function NavBar(props) {
             }).catch((err) => console.error("Failed to load patchnotes: ", err));
     }, []);
 
-    function handleGoHome(){
-
+    function handleGoHome() {
         if (!props.user) {
             return;
         }
@@ -34,11 +47,11 @@ export default function NavBar(props) {
         navigate("/");
     }
     function togglePatchnotes() {
-        if (patchnotesOpen) {
-            setPatchnotesOpen(false);
-        } else if (!patchnotesOpen) {
-            setPatchnotesOpen(true);
-        }
+        setPatchnotesOpen(prev => !prev);
+    }
+
+    function closePatchnotes() {
+        setPatchnotesOpen(false);
     }
 
     async function handleLogout() {
@@ -60,7 +73,9 @@ export default function NavBar(props) {
                     <div id="user-info">
                         <div id="user-nav-wrapper">
                             <div className='user-photo-container'>
-                                <img src={props.user.photoURL} alt="pfp"></img>
+                                {props.user.photoURL && (
+                                    <img src={props.user.photoURL} alt="pfp" />
+                                )}
                             </div>
                             <p className='user-name'>
                                 {props.user.displayName}
@@ -79,7 +94,7 @@ export default function NavBar(props) {
         </div>
         <PatchNotesModal
             open={patchnotesOpen}
-            onClose={() => setPatchnotesOpen(false)}
+            onClose={closePatchnotes}
             patchnotes={patchnotes}
         />
     </nav>

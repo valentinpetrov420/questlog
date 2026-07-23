@@ -23,7 +23,7 @@ export default function Dashboard() {
             role="pinned"
             lists={nodes}
         />
-        <CreateListForm maxLength={maxLength} />
+        <CreateListForm/>
         <select id="sort-dropdown"
             value={sortMode}
             onChange={(event) => {
@@ -36,7 +36,8 @@ export default function Dashboard() {
             <option value="archived">Archived only</option>
         </select>
         <ListView
-            role="sorted" sortMode={sortMode}
+            role="sorted" 
+            sortMode={sortMode}
             lists={nodes}
         />
     </div>

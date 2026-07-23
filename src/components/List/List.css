@@ -37,6 +37,7 @@
 			border: 1px solid var(--border-color);
 			border-radius: 6px;
 			z-index: 10;
+			width: 10rem;
 		}
 
 		button {
@@ -72,6 +73,14 @@
 			opacity: 0.6;
 			cursor: not-allowed;
 		}
+	}
+
+	.drag-button{
+		margin-top: 0.5rem;
+	}
+
+	.fake-actions-space{
+		width: 15%;
 	}
 }
 
@@ -165,5 +174,9 @@
 @media (max-width: 340px) {
 	.list-component {
 		margin: 0.5rem;
+	}
+
+	.fake-actions-space{
+		width: 0%;
 	}
 }

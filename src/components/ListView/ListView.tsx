@@ -1,16 +1,24 @@
 import List from "../List/List";
 import './ListView.css';
 
+import { Node } from "../../types/Node";
+
 import firestoreService from "../../api/services/firestoreService";
 import { useNodes } from "../../contexts/NodesContext";
 
-import { DndContext } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { SortableContext } from '@dnd-kit/sortable';
 import { arrayMove } from '@dnd-kit/sortable';
 import { rectSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 
-export default function ListView(props) {
+type ListViewProps = {
+    role: "sorted" | "pinned",
+    lists: Node[],
+    sortMode: string,
+}
+
+export default function ListView(props: ListViewProps) {
     const {
         setFlatNodes,
 
@@ -20,7 +28,7 @@ export default function ListView(props) {
     if (props.role === "pinned") {
         const pinnedLists = props.lists.filter(list => list.pinned && !list.archived);
 
-        const allPinnedTodos = pinnedLists.flatMap(list => list.items)
+        const allPinnedTodos = pinnedLists.flatMap(list => list.items ?? [])
         const firstUncompleted = allPinnedTodos.find(item => !item.completed)
 
         let highlightedTodoId = null;
@@ -33,9 +41,11 @@ export default function ListView(props) {
                 return (
                     <List key={list.id}
                         id={list.id}
+                        isPublic={list.isPublic}
                         pinned={list.pinned}
                         text={list.text}
-                        listItems={list.items}
+                        isNodePage={false}
+                        listItems={list.items ?? []}
                         isArchived={list.archived}
                         ownerId={list.ownerId}
                         highlightedTodoId={highlightedTodoId}
@@ -64,7 +74,7 @@ export default function ListView(props) {
                 break;
         }
 
-        function handleDragEnd(event) {
+        function handleDragEnd(event: DragEndEvent) {
             const oldIndex = sortedLists.findIndex(list => list.id === event.active.id);
             const newIndex = sortedLists.findIndex(list => list.id === event.over?.id);
 
@@ -108,8 +118,9 @@ export default function ListView(props) {
                             <List key={list.id}
                                 id={list.id}
                                 text={list.text}
+                                isNodePage={false}
                                 pinned={list.pinned}
-                                listItems={list.items}
+                                listItems={list.items ?? []}
                                 isArchived={list.archived}
                                 isPublic={list.isPublic}
                                 ownerId={list.ownerId}

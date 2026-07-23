@@ -1,11 +1,11 @@
-import { useState, useTransition } from "react"
-import StatusMessage from "../StatusMessage/StatusMessage.jsx";
+import { useState} from "react"
+import StatusMessage from "../StatusMessage/StatusMessage.js";
 import { useEffect } from "react";
 import "./CreateListForm.css";
 
-import { useNodes } from "../../contexts/NodesContext.jsx";
+import { useNodes } from "../../contexts/NodesContext.js";
 
-export default function CreateListForm(props) {
+export default function CreateListForm() {
     const {
         handleCreateNode, setSortMode,
     } = useNodes();
@@ -16,7 +16,7 @@ export default function CreateListForm(props) {
     const [pending, setPending] = useState(false);
 
     const [error, setError] = useState("");
-    const [status, setStatus] = useState(null);
+    const [status, setStatus] = useState<boolean | null>(null);;
 
     useEffect(() => {
         if (!status) {
@@ -30,7 +30,7 @@ export default function CreateListForm(props) {
         return () => clearTimeout(timeout);
     }, [status]);
 
-    async function handleSubmit(event) {
+    async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
 
         setPending(true);
