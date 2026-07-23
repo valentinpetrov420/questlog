@@ -1,26 +1,24 @@
-import { useEffect, useState } from 'react'
-
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 
 import './App.css'
 
 //import { loadLists, saveLists } from './api/services/storage.js';
 
-import { siteName, maxLength } from "./constants/app.js";
+import { siteName } from "./constants/app.js";
 
-import NavBar from './components/NavBar/NavBar.jsx';
-import LoginPage from './pages/LoginPage/LoginPage.jsx';
+import NavBar from './components/NavBar/NavBar.js';
+import LoginPage from './pages/LoginPage/LoginPage.js';
 
-import Dashboard from './pages/Dashboard/Dashboard.jsx';
-import NodePage from './pages/NodePage/NodePage.jsx';
+import Dashboard from './pages/Dashboard/Dashboard.js';
+import NodePage from './pages/NodePage/NodePage.js';
 
-import DevPanel from './dev/DevPanel.jsx';
+import DevPanel from './dev/DevPanel.js';
 
 import { useTheme } from './contexts/ThemeContext.js';
 import { useAuth } from './contexts/AuthContext.js';
 
-import ProtectedRoute from './contexts/ProtectedRoute.jsx';
-import PublicRoute from './contexts/PublicRoute.jsx';
+import ProtectedRoute from './contexts/ProtectedRoute.js';
+import PublicRoute from './contexts/PublicRoute.js';
 
 
 export default function App() {
@@ -40,11 +38,7 @@ export default function App() {
 				<Routes>
 					<Route path="/" element={
 						<ProtectedRoute>
-							<Dashboard
-								user={user}
-								maxLength={maxLength}
-								siteName={siteName}
-							/>
+							<Dashboard/>
 						</ProtectedRoute>
 					} />
 					<Route path="/:nodeId" element={

@@ -9,7 +9,7 @@ import { User } from "firebase/auth";
 
 type NavBarProps = {
     siteName: string,
-    user: User,
+    user: User | null,
     logout: () => void,
     loginWithGoogle: () => void
 }

@@ -6,28 +6,35 @@ import { useNodes } from "../contexts/NodesContext";
 
 import { networkStress } from "./networkStress";
 
-export default function DevPanel(props) {
+type DevPanelProps = {
+    userId?: string,
+}
+
+export default function DevPanel(props: DevPanelProps) {
     const { nodes } = useNodes();
 
     return <div className="devPanel">
 
-        <button 
+        <button
             onClick={async () => {
-                console.log(await firestoreService.nodes.createNode(props.userId, {
-                    type: "todo", 
-                    parentId: "K45SQVA1sKFE1zzwXMoz",
-                    title: "",
-                    text: "test todo 2",
-                    isPublic: false,
-                }));
+                if (props.userId) {
+
+
+                    console.log(await firestoreService.nodes.createNode(props.userId, {
+                        type: "todo",
+                        parentId: "K45SQVA1sKFE1zzwXMoz",
+                        text: "test todo 2",
+                        isPublic: false,
+                    }));
+                }
             }}>
-                createNode()
+            createNode()
         </button>
-        <button 
+        <button
             onClick={async () => {
                 console.log(nodes);
             }}>
-                getNodes()
+            getNodes()
         </button>
         <select
             onChange={(event) => {
