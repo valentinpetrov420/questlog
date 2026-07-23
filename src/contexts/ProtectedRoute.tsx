@@ -1,7 +1,11 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
-export default function PublicRoute({ children }) {
+type RouteProps = {
+    children: React.ReactNode;
+}
+
+export default function ProtectedRoute({ children }: RouteProps) {
     const { user, authReady } = useAuth();
 
     if (!authReady) {
@@ -9,10 +13,10 @@ export default function PublicRoute({ children }) {
     }
 
     if (user) {
+        return children;
+    } else {
         return (
-            <Navigate to="/" replace />
+            <Navigate to="/login" replace />
         );
     }
-
-    return children;
 }

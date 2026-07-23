@@ -20,6 +20,8 @@ type NodesContextValue = {
     sortMode: string;
     setSortMode: React.Dispatch<React.SetStateAction<string>>;
 
+
+    //todo: these are functions, yes, but what do they have as args and returns?
     handleCreateNode: Function;
     handleCreateChildNode: Function;
     handleArchiveNode: Function;
