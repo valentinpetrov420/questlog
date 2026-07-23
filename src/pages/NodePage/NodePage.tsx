@@ -1,16 +1,16 @@
 import { useParams } from "react-router-dom";
+import { Node } from "../../types/Node.js";
 
-import { useNodes } from "../../contexts/NodesContext.jsx";
-import { maxLength } from "../../constants/app.js";
-import List from "../../components/List/List.jsx";
-import { use, useEffect, useState } from "react";
+import { useNodes } from "../../contexts/NodesContext.js";
+import List from "../../components/List/List.js";
+import { useEffect, useState } from "react";
 import './NodePage.css';
 
 import firestoreService from '../../api/services/firestoreService.js';
-import SkeletonPage from "../SkeletonPage/SkeletonPage.jsx";
+import SkeletonPage from "../SkeletonPage/SkeletonPage.js";
 
 export default function NodePage() {
-    const [node, setNode] = useState();
+    const [node, setNode] = useState<Node | null>(null);
     const { nodeId } = useParams();
 
     const {
@@ -20,6 +20,9 @@ export default function NodePage() {
 
     useEffect(() => {
         const nodeFromState = flatNodes.find(n => n.id === nodeId);
+        if (!nodeId) {
+            return;
+        }
 
         if (nodeFromState) {
             setNode(nodeFromState);
@@ -27,6 +30,10 @@ export default function NodePage() {
             setNodesLoading(true);
             firestoreService.nodes.getNode(nodeId)
                 .then((response) => {
+                    if (!response) {
+                        setNode(null);
+                        return;
+                    }
                     setNode(response);
                 })
                 .finally(() => {
@@ -61,6 +68,7 @@ export default function NodePage() {
                 id={node.id}
                 text={node.text}
                 listItems={node.items}
+                pinned={node.pinned}
                 isArchived={node.archived}
                 isPublic={node.isPublic}
                 ownerId={node.ownerId}

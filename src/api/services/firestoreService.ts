@@ -46,7 +46,7 @@ async function createNode(ownerId: string, { type = "page", parentId = null, tex
 
     return docRef.id;
 }
-async function getNode(nodeId: string) {
+async function getNode(nodeId: string): Promise<Node | null> {
     try {
         console.log("fetching node:", nodeId);
         const docRef = doc(db, "nodes", nodeId);
@@ -70,7 +70,7 @@ async function getNode(nodeId: string) {
             ...snapshot.data(),
             isPublic: snapshot.data().isPublic ?? false,
             items
-        }
+        } as Node
     } catch (error) {
         console.error("Failed to fetch node: ", error);
         throw error;

@@ -1,10 +1,8 @@
-import CreateListForm from "../../components/CreateListForm/CreateListForm.jsx"
-import ListView from '../../components/ListView/ListView.jsx'
+import CreateListForm from "../../components/CreateListForm/CreateListForm.js"
+import ListView from '../../components/ListView/ListView.js'
 
-import { maxLength } from "../../constants/app.js";
-
-import { useNodes } from '../../contexts/NodesContext.jsx';
-import SkeletonPage from "../SkeletonPage/SkeletonPage.jsx";
+import { useNodes } from '../../contexts/NodesContext.js';
+import SkeletonPage from "../SkeletonPage/SkeletonPage.js";
 
 export default function Dashboard() {
     const {

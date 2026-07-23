@@ -15,7 +15,7 @@ import { restrictToParentElement } from '@dnd-kit/modifiers';
 type ListViewProps = {
     role: "sorted" | "pinned",
     lists: Node[],
-    sortMode: string,
+    sortMode?: string,
 }
 
 export default function ListView(props: ListViewProps) {

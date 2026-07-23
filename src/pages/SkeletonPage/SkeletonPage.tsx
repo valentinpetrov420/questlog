@@ -1,7 +1,11 @@
 import './SkeletonPage.css'
 import '../NodePage/NodePage.css';
 
-export default function SkeletonPage(props) {
+type SkeletonPageProps = {
+    type: "dashboard" | "nodepage",
+}
+
+export default function SkeletonPage(props: SkeletonPageProps) {
 
     switch (props.type) {
         case "dashboard":

@@ -300,7 +300,7 @@ export default function List(props: ListProps) {
                         </div>
                     )}
                 </div>
-                {!props.isNodePage ? <span className="drag-button" {...listeners}>⠿</span> : ""}
+                {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners}>⠿</span> : ""}
                 <div className="fake-actions-space"></div>
             </div> : ""}
             <StatusMessage text={titleStatus ? error : ""} />

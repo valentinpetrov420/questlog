@@ -1,6 +1,10 @@
 import { useNavigate } from "react-router-dom";
 
-export default function LoginPage(props){
+type LoginPageProps = {
+    loginWithGoogle: () => void,
+}
+
+export default function LoginPage(props: LoginPageProps){
     const navigate = useNavigate();
 
     async function handleLogin(){
