@@ -60,10 +60,12 @@ async function getNode(nodeId: string): Promise<Node | null> {
             query(collection(db, "nodes"), where("parentId", "==", nodeId))
         );
 
-        const items = childrenSnapshot.docs.map(doc => ({
+        const items = childrenSnapshot.docs
+        .map(doc => ({
             id: doc.id,
             ...doc.data()
-        }));
+        } as Node ))
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));;
 
         return {
             id: snapshot.id,
@@ -114,17 +116,17 @@ async function updateNodeOptimistic(nodeId: string, data: object) {
     });
 }
 
-async function deleteNode(nodeId: string, ownerId: string){
+async function deleteNode(nodeId: string, ownerId: string) {
     await __devDelay();
-    
+
     const childrenSnapshot = await getDocs(
         query(collection(db, "nodes"), where("parentId", "==", nodeId), where("ownerId", "==", ownerId))
     );
-    
+
     await Promise.all(
         childrenSnapshot.docs.map(child => deleteDoc(doc(db, "nodes", child.id)))
     );
-    
+
     await deleteDoc(doc(db, "nodes", nodeId));
 }
 
