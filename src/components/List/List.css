@@ -75,11 +75,11 @@
 		}
 	}
 
-	.drag-button{
+	.drag-button {
 		margin-top: 0.5rem;
 	}
 
-	.fake-actions-space{
+	.fake-actions-space {
 		width: 15%;
 	}
 }
@@ -137,15 +137,53 @@
 
 .list-form {
 	display: flex;
+	justify-content: space-around;
+
+	.item-options-popover-wrapper {
+		height: 50%;
+		align-self: center;
+		position: relative;
+
+		.item-create-options, button {
+
+			color: var(--text);
+			background: transparent;
+			border: 1px solid transparent;
+			border-radius: 6px;
+			opacity: 0.8;
+			margin: 0.5rem;
+
+			&:disabled {
+				opacity: 0.4;
+				cursor: not-allowed;
+			}
+
+		}
+
+		.item-options-popover {
+			position: absolute;
+			display: flex;
+			flex-direction: column;
+			left: 0;
+			top: 100%;
+			background: var(--bg);
+			border: 1px solid var(--border-color);
+			border-radius: 6px;
+			z-index: 10;
+			width: 10rem;
+		}
+	}
+
+	input {
+		margin: 0.5rem;
+		padding: 0.5rem;
+		border-radius: 0.4rem;
+		width: 80%;
+	}
+
 }
 
-.list-form input {
-	margin: 0.5rem;
-	padding: 0.5rem;
-	border-radius: 0.4rem;
-}
-
-.input-form-wrapper {
+.list-form .input-form-wrapper {
 	margin-left: 1rem;
 }
 
@@ -172,11 +210,15 @@
 }
 
 @media (max-width: 340px) {
+	.item-create-options {
+		margin: 0 !important;
+	}
+
 	.list-component {
 		margin: 0.5rem;
 	}
 
-	.fake-actions-space{
+	.fake-actions-space {
 		width: 0%;
 	}
 }

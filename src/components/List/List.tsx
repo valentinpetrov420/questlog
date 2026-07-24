@@ -115,6 +115,23 @@ export default function List(props: ListProps) {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [menuOpen]);
 
+    const [itemMenuOpen, setItemMenuOpen] = useState(false);
+
+    const itemPopoverRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!itemMenuOpen) return;
+
+        function handleClickOutside(event: MouseEvent) {
+            if (itemPopoverRef.current && !itemPopoverRef.current.contains(event.target as Element)) {
+                setItemMenuOpen(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [itemMenuOpen]);
+
     const isArchived = props.isArchived;
     const isPublic = props.isPublic;
     const isOwner = user?.uid === props.ownerId;
@@ -230,6 +247,31 @@ export default function List(props: ListProps) {
 
         setMenuOpen(false);
     }
+    async function handleCreateSeparatorClick(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault();
+
+        if (deletePending) {
+            return;
+        }
+
+        setAddItemPending(true);
+
+        try {
+            const error = await handleCreateChildNode("separator", props.id, "separator");
+
+            if (error) {
+                setError(error.message);
+                setAddTodoStatus(true);
+                return;
+            }
+
+            setError("");
+            setAddTodoStatus(false);
+            setValue("");
+        } finally {
+            setAddItemPending(false);
+        }
+    }
     async function handleVisibility() {
         console.log(props.isPublic);
         if (deletePending) {
@@ -340,6 +382,7 @@ export default function List(props: ListProps) {
 
                                 deletePending={deletePending}
 
+                                type={item.type}
                                 key={item.id}
                                 id={item.id}
                                 text={item.text}
@@ -352,6 +395,18 @@ export default function List(props: ListProps) {
             </DndContext>
             {isOwner ?
                 <form className="list-form" onSubmit={handleSubmit}>
+                    <div className="item-options-popover-wrapper" ref={itemPopoverRef}>
+                        <button
+                            className="item-create-options"
+                            disabled={disabled}
+                            type="button"
+                            onClick={() => setItemMenuOpen(!itemMenuOpen)}>+</button>
+                        {itemMenuOpen && (
+                            <div className="item-options-popover">
+                                {isOwner ? <button disabled={disabled} onClick={handleCreateSeparatorClick}>Add Separator</button> : ""}
+                            </div>
+                        )}
+                    </div>
                     <div className="input-form-wrapper">
                         <StatusMessage text={addTodoStatus ? error : ""} />
                         <input

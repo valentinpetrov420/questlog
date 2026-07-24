@@ -11,6 +11,7 @@ type ItemProps = {
     id: string;
     text: string;
     completed: boolean;
+    type: "todo" | "page" | "separator";
     isOwner: boolean;
     deletePending: boolean;
     highlightedTodoId: string | null;
@@ -129,6 +130,15 @@ export default function Item(props: ItemProps) {
         }
         handleToggleChildNode(props.id);
     }
+
+    if (props.type === "separator") {
+    return <li ref={setNodeRef} style={style} {...attributes}>
+        <div className="todo-wrapper">
+            {props.isOwner && <span className="drag-button" {...listeners}>⠿</span>}
+            <hr className="separator" />
+        </div>
+    </li>
+}
 
     return <li ref={setNodeRef} style={style} {...attributes}>
         <StatusMessage text={error} />
