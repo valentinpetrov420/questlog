@@ -9,6 +9,12 @@ import nestNodes from "../api/services/storage.ts";
 import { useAuth } from './AuthContext.tsx';
 import firestoreService from "../api/services/firestoreService.ts";
 
+type ActionResult = {
+    success: boolean,
+    message?: string,
+    code?: string,
+}
+
 type NodesContextValue = {
     nodes: Node[];
     flatNodes: Node[];
@@ -21,16 +27,20 @@ type NodesContextValue = {
     setSortMode: React.Dispatch<React.SetStateAction<string>>;
 
 
-    //todo: these are functions, yes, but what do they have as args and returns?
-    handleCreateNode: Function;
-    handleCreateChildNode: Function;
-    handleArchiveNode: Function;
-    handleRestoreNode: Function;
-    handleEditNodeText: Function;
-    handlePin: Function;
-    handleVisibilityChange: Function;
-    handleDeleteNode: Function;
-    handleToggleChildNode: Function;
+    handleCreateNode: (text: string, visibility: boolean) => Promise<ActionResult>;
+    handleCreateChildNode: (text: string, parentId: string, type: Node["type"]) => Promise<ActionResult>;
+    //todo: handle failures of optimistic updates somehow, like a rollback,
+    // because they return a result payload with a message; do something with it
+
+    //!window.confirm results are always silently undefined thru no fault of the code
+    // optimistic updates also return undefined on success
+    handleArchiveNode: (nodeId: string) => Promise<ActionResult | undefined>;
+    handleRestoreNode: (nodeId: string) => Promise<ActionResult | undefined>;
+    handleEditNodeText: (nodeId: string, newText: string) => Promise<ActionResult>;
+    handlePin: (nodeId: string) => Promise<ActionResult | undefined>;
+    handleVisibilityChange: (nodeId: string) => Promise<ActionResult>;
+    handleDeleteNode: (nodeId: string) => Promise<ActionResult | undefined>;
+    handleToggleChildNode: (nodeId: string) => Promise<ActionResult | undefined>;
 };
 
 type NodesProviderProps = {
@@ -90,7 +100,10 @@ export function NodesProvider({ children }: NodesProviderProps) {
 
     async function handleCreateNode(text: string, visibility: boolean) {
         if (!user) {
-            return;
+            return {
+                success: false,
+                message: "authentication error"
+            };
         }
 
         const result = validateText(text);
@@ -144,7 +157,10 @@ export function NodesProvider({ children }: NodesProviderProps) {
 
     async function handleCreateChildNode(text: string, parentId: string, type: Node["type"]) {
         if (!user) {
-            return;
+            return {
+                success: false,
+                message: "authentication error"
+            };
         }
 
         const result = validateText(text);
@@ -193,7 +209,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
                 success: true
             };
         } catch (error) {
-            return formatError(error, "Failed to create node", "createChildNode");
+            return formatError(error, "Failed to create node", "createChildNode") as ActionResult;
         }
     }
 
@@ -387,7 +403,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
         }
     }
 
-    function handleToggleChildNode(nodeId: string) {
+    async function handleToggleChildNode(nodeId: string) {
         console.log(nodeId);
 
         if (!nodeId) {
@@ -400,7 +416,10 @@ export function NodesProvider({ children }: NodesProviderProps) {
         const item = flatNodes.find(i => i.id === nodeId);
 
         if (!item) {
-            return;
+            return {
+                success: false,
+                message: "Missing nodeId"
+            };
         }
 
         const newCompleted = !item.completed;
@@ -415,7 +434,11 @@ export function NodesProvider({ children }: NodesProviderProps) {
             )
         );
 
-        firestoreService.nodes.updateNode(nodeId, { completed: newCompleted });
+        firestoreService.nodes.updateNodeOptimistic(nodeId, {
+            completed: newCompleted
+        });
+
+        return;
     }
 
 
