@@ -132,13 +132,26 @@ export default function Item(props: ItemProps) {
     }
 
     if (props.type === "separator") {
-    return <li ref={setNodeRef} style={style} {...attributes}>
-        <div className="todo-wrapper">
-            {props.isOwner && <span className="drag-button" {...listeners}>⠿</span>}
-            <hr className="separator" />
-        </div>
-    </li>
-}
+        return <li ref={setNodeRef} style={style} {...attributes}>
+            <div className="todo-wrapper">
+                {props.isOwner && <span className="drag-button" {...listeners}>⠿</span>}
+                <hr className="separator" />
+                {!isEditingTodo && props.isOwner ? <div className="todo-actions">
+                    <div className="item-popover-wrapper" ref={popoverRef}>
+                        <button disabled={disabled}
+                            onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
+                        {menuOpen && (
+                            <div className="item-popover">
+                                <button onClick={handleDeleteClick}>Delete</button>
+                            </div>
+                        )}
+                    </div>
+                </div> :
+                    <div></div>
+                }
+            </div>
+        </li>
+    }
 
     return <li ref={setNodeRef} style={style} {...attributes}>
         <StatusMessage text={error} />
@@ -178,7 +191,7 @@ export default function Item(props: ItemProps) {
             {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                 <div className="item-popover-wrapper" ref={popoverRef}>
                     <button disabled={disabled}
-                    onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
+                        onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
                     {menuOpen && (
                         <div className="item-popover">
                             <button onClick={handleDeleteClick}>Delete</button>
