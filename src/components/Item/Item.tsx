@@ -71,16 +71,17 @@ export default function Item(props: ItemProps) {
         setPending(true);
 
         try {
-            const response = await handleEditNodeText(props.id, draftTitleTodo);
+            const error = await handleEditNodeText(props.id, draftTitleTodo);
 
-            if (response.success) {
-                setError("");
-                setEditingTodo(false);
-                setDraftTitleTodo("");
-            } else {
-                setError(response.message);
+            if (error) {
+                setError(error.message);
                 setEditingTodo(true);
+                return;
             }
+
+            setError("");
+            setEditingTodo(false);
+            setDraftTitleTodo("");
         } finally {
             setPending(false);
         }
@@ -97,6 +98,8 @@ export default function Item(props: ItemProps) {
         setDraftTitleTodo(props.text);
     }
     async function handleDeleteClick() {
+        setMenuOpen(false);
+
         if (disabled) {
             return;
         }
@@ -108,13 +111,14 @@ export default function Item(props: ItemProps) {
         setPending(true);
 
         try {
-            const response = await handleDeleteNode(props.id);
+            const error = await handleDeleteNode(props.id);
 
-            if (response.success) {
-                setError("");
-            } else {
-                setError(response.message);
+            if (error) {
+                setError(error.message);
+                return;
+
             }
+            setError("");
         } finally {
             setPending(false);
         }
@@ -163,7 +167,8 @@ export default function Item(props: ItemProps) {
 
             {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                 <div className="item-popover-wrapper" ref={popoverRef}>
-                    <button onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
+                    <button disabled={disabled}
+                    onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
                     {menuOpen && (
                         <div className="item-popover">
                             <button onClick={handleDeleteClick}>Delete</button>

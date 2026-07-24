@@ -1,4 +1,4 @@
-import { useState} from "react"
+import { useState } from "react"
 import StatusMessage from "../StatusMessage/StatusMessage.js";
 import { useEffect } from "react";
 import "./CreateListForm.css";
@@ -38,17 +38,18 @@ export default function CreateListForm() {
         const isPublic = draftVisibility === "public";
 
         try {
-            const response = await handleCreateNode(title, isPublic);
+            const error = await handleCreateNode(title, isPublic);
 
-            if (response.success) {
-                setError("");
-                setStatus(false);
-                setTitle("");
-                setSortMode("createdAt");
-            } else {
-                setError(response.message);
+            if (error) {
+                setError(error.message);
                 setStatus(true);
+                return;
             }
+
+            setError("");
+            setStatus(false);
+            setTitle("");
+            setSortMode("createdAt");
         } finally {
             setPending(false);
         }

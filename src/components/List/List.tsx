@@ -133,16 +133,17 @@ export default function List(props: ListProps) {
         setAddItemPending(true);
 
         try {
-            const response = await handleCreateChildNode(value, props.id, "todo");
+            const error = await handleCreateChildNode(value, props.id, "todo");
 
-            if (response.success) {
-                setError("");
-                setAddTodoStatus(false);
-                setValue("");
-            } else {
-                setError(response.message);
+            if (error) {
+                setError(error.message);
                 setAddTodoStatus(true);
+                return;
             }
+
+            setError("");
+            setAddTodoStatus(false);
+            setValue("");
         } finally {
             setAddItemPending(false);
         }
@@ -165,16 +166,17 @@ export default function List(props: ListProps) {
         setTitlePending(true);
 
         try {
-            const response = await handleEditNodeText(props.id, draftTitle);
+            const error = await handleEditNodeText(props.id, draftTitle);
 
-            if (response.success) {
-                setEditing(false);
-                setError("");
-                setTitleStatus(false);
-            } else {
-                setError(response.message);
+            if (error) {
+                setError(error.message);
                 setTitleStatus(true);
+                return;
             }
+
+            setEditing(false);
+            setError("");
+            setTitleStatus(false);
         } finally {
             setTitlePending(false);
         }
@@ -187,20 +189,21 @@ export default function List(props: ListProps) {
         setDeletePending(true);
 
         try {
-            const response = await handleDeleteNode(props.id);
+            const error = await handleDeleteNode(props.id);
 
-            if (response.success) {
-                setError("");
-                setTitleStatus(false);
-
-                if (props.isNodePage) {
-                    navigate("/");
-                }
-
-            } else {
-                setError(response.message);
+            if (error) {
+                setError(error.message);
                 setTitleStatus(true);
+
             }
+
+            setError("");
+            setTitleStatus(false);
+
+            if (props.isNodePage) {
+                navigate("/");
+            }
+
         } finally {
             setDeletePending(false);
         }
@@ -234,16 +237,16 @@ export default function List(props: ListProps) {
         try {
             setVisibilityPending(true);
 
-            const response = await handleVisibilityChange(props.id);
+            const error = await handleVisibilityChange(props.id);
 
-            if (response.success) {
-                setError("");
-                setTitleStatus(false);
-                setMenuOpen(false);
-            } else {
-                setError(response.message);
+            if (error) {
+                setError(error.message);
                 setTitleStatus(true);
+                return;
             }
+            setError("");
+            setTitleStatus(false);
+            setMenuOpen(false);
         } finally {
             setVisibilityPending(false);
         }

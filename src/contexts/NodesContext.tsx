@@ -9,9 +9,8 @@ import nestNodes from "../api/services/storage.ts";
 import { useAuth } from './AuthContext.tsx';
 import firestoreService from "../api/services/firestoreService.ts";
 
-type ActionResult = {
-    success: boolean,
-    message?: string,
+type ActionError = {
+    message: string,
     code?: string,
 }
 
@@ -27,20 +26,20 @@ type NodesContextValue = {
     setSortMode: React.Dispatch<React.SetStateAction<string>>;
 
 
-    handleCreateNode: (text: string, visibility: boolean) => Promise<ActionResult>;
-    handleCreateChildNode: (text: string, parentId: string, type: Node["type"]) => Promise<ActionResult>;
+    handleCreateNode: (text: string, visibility: boolean) => Promise<ActionError | undefined>;
+    handleCreateChildNode: (text: string, parentId: string, type: Node["type"]) => Promise<ActionError | undefined> ;
     //todo: handle failures of optimistic updates somehow, like a rollback,
     // because they return a result payload with a message; do something with it
 
     //!window.confirm results are always silently undefined thru no fault of the code
-    // optimistic updates also return undefined on success
-    handleArchiveNode: (nodeId: string) => Promise<ActionResult | undefined>;
-    handleRestoreNode: (nodeId: string) => Promise<ActionResult | undefined>;
-    handleEditNodeText: (nodeId: string, newText: string) => Promise<ActionResult>;
-    handlePin: (nodeId: string) => Promise<ActionResult | undefined>;
-    handleVisibilityChange: (nodeId: string) => Promise<ActionResult>;
-    handleDeleteNode: (nodeId: string) => Promise<ActionResult | undefined>;
-    handleToggleChildNode: (nodeId: string) => Promise<ActionResult | undefined>;
+    // success also = undefined
+    handleArchiveNode: (nodeId: string) => Promise<ActionError | undefined>;
+    handleRestoreNode: (nodeId: string) => Promise<ActionError | undefined>;
+    handleEditNodeText: (nodeId: string, newText: string) => Promise<ActionError | undefined>;
+    handlePin: (nodeId: string) => Promise<ActionError | undefined>;
+    handleVisibilityChange: (nodeId: string) => Promise<ActionError | undefined>;
+    handleDeleteNode: (nodeId: string) => Promise<ActionError | undefined>;
+    handleToggleChildNode: (nodeId: string) => Promise<ActionError | undefined>;
 };
 
 type NodesProviderProps = {
@@ -147,9 +146,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
             console.log("created node: ", text);
             console.log("created node with visibility: " + visibility);
 
-            return {
-                success: true
-            };
+            return undefined;
         } catch (error) {
             return formatError(error, "Failed to create node", "createNode");
         }
@@ -205,11 +202,9 @@ export function NodesProvider({ children }: NodesProviderProps) {
 
             console.log("created node: ", text);
 
-            return {
-                success: true
-            };
+            return undefined;
         } catch (error) {
-            return formatError(error, "Failed to create node", "createChildNode") as ActionResult;
+            return formatError(error, "Failed to create node", "createChildNode") as ActionError;
         }
     }
 
@@ -291,9 +286,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
                 )
             );
 
-            return {
-                success: true
-            };
+            return undefined;
         } catch (error) {
             return formatError(error, "Failed to edit title", "editNodeTitle");
         }
@@ -362,9 +355,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
                 )
             );
 
-            return {
-                success: true
-            };
+            return undefined
         } catch (error) {
             return formatError(error, "Failed to change visibility", "VisibilityChange");
         }
@@ -395,9 +386,8 @@ export function NodesProvider({ children }: NodesProviderProps) {
             const updatedState = flatNodes.filter(node => node.id !== nodeId);
             setFlatNodes(updatedState);
 
-            return {
-                success: true
-            };
+            return undefined;
+
         } catch (error) {
             return formatError(error, "Failed to delete node", "deleteNode");
         }
@@ -438,7 +428,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
             completed: newCompleted
         });
 
-        return;
+        return undefined;
     }
 
 
