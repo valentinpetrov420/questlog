@@ -63,7 +63,8 @@ export default function List(props: ListProps) {
     const [addItemPending, setAddItemPending] = useState(false);
 
     const [titlePending, setTitlePending] = useState(false);
-    const [visibilityPending, setVisibilityPending] = useState(false);
+
+    const [visbilityPending, setVisibilityPending] = useState(false);
 
     const [addTodoStatus, setAddTodoStatus] = useState<boolean | null>(null);
     const [titleStatus, setTitleStatus] = useState<boolean | null>(null);
@@ -186,6 +187,7 @@ export default function List(props: ListProps) {
             return;
         }
 
+        setMenuOpen(false);
         setDeletePending(true);
 
         try {
@@ -234,22 +236,19 @@ export default function List(props: ListProps) {
             return;
         }
 
-        try {
-            setVisibilityPending(true);
+        setVisibilityPending(true);
+        setMenuOpen(false);
+        const error = await handleVisibilityChange(props.id);
 
-            const error = await handleVisibilityChange(props.id);
-
-            if (error) {
-                setError(error.message);
-                setTitleStatus(true);
-                return;
-            }
-            setError("");
-            setTitleStatus(false);
-            setMenuOpen(false);
-        } finally {
-            setVisibilityPending(false);
+        if (error) {
+            setError(error.message);
+            setTitleStatus(true);
+            return;
         }
+        setError("");
+        setTitleStatus(false);
+        setVisibilityPending(false);
+
     }
     function handleDragEnd(event: DragEndEvent) {
         if (!props.listItems) {
@@ -290,14 +289,14 @@ export default function List(props: ListProps) {
             {isOwner ? <div className="list-actions">
                 <div className="list-popover-wrapper" ref={popoverRef}>
                     <button
-                        disabled={visibilityPending}
+                        disabled={disabled}
                         onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
                     {menuOpen && (
                         <div className="list-popover">
                             {isOwner && !isArchived ? <button onClick={handleArchiveClick}>Archive</button> : ""}
                             {isOwner && isArchived ? <button onClick={handleRestoreClick}>Restore</button> : ""}
                             {isOwner ? !props.isNodePage && <button onClick={handlePinClick}>Pin</button> : ""}
-                            {isOwner ? props.isNodePage && <button onClick={handleVisibility}>{isPublic ? "Change to Private" : "Change to Public"}</button> : ""}
+                            {isOwner ? props.isNodePage && <button disabled={visbilityPending} onClick={handleVisibility}>{isPublic ? "Change to Private" : "Change to Public"}</button> : ""}
                             {isOwner ? <button onClick={handleDeleteClick}>Delete</button> : ""}
                             {props.isNodePage ? <button onClick={handleCopyLink}>Copy link</button> : ""}
                         </div>
