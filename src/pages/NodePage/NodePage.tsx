@@ -19,15 +19,24 @@ export default function NodePage() {
     } = useNodes();
 
     useEffect(() => {
-        const nodeFromState = flatNodes.find(n => n.id === nodeId);
         if (!nodeId) {
             return;
         }
+        const nodeFromState = flatNodes.find(n => n.id === nodeId);
 
         if (nodeFromState) {
-            setNode(nodeFromState);
+            setNode({
+                ...nodeFromState,
+                items: flatNodes
+                    .filter(child => child.parentId === nodeId)
+                    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+            });
+            return;
+
         } else {
+
             setNodesLoading(true);
+
             firestoreService.nodes.getNode(nodeId)
                 .then((response) => {
                     if (!response) {
@@ -42,14 +51,17 @@ export default function NodePage() {
                 );
         }
 
-    }, [nodeId]);
+    }, [nodeId, flatNodes]);
 
     useEffect(() => {
+        if (nodeId) {
+            return;
+        }
         const updated = nodes.find(n => n.id === nodeId);
         if (updated) {
             setNode(updated);
         }
-    }, [nodes]);
+    }, [nodes, nodeId]);
 
     if (nodesLoading) {
         return <SkeletonPage type="nodepage" />

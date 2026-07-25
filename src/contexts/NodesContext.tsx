@@ -27,7 +27,7 @@ type NodesContextValue = {
 
 
     handleCreateNode: (text: string, visibility: boolean) => Promise<ActionError | undefined>;
-    handleCreateChildNode: (text: string, parentId: string, type: Node["type"]) => Promise<ActionError | undefined> ;
+    handleCreateChildNode: (text: string, parentId: string, type: Node["type"]) => Promise<ActionError | undefined>;
     //todo: handle failures of optimistic updates somehow, like a rollback,
     // because they return a result payload with a message; do something with it
 
@@ -40,6 +40,7 @@ type NodesContextValue = {
     handleVisibilityChange: (nodeId: string) => Promise<ActionError | undefined>;
     handleDeleteNode: (nodeId: string) => Promise<ActionError | undefined>;
     handleToggleChildNode: (nodeId: string) => Promise<ActionError | undefined>;
+    handlePromoteTodo: (nodeId: string) => Promise<ActionError | undefined>;
 };
 
 type NodesProviderProps = {
@@ -355,7 +356,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
                 )
             );
 
-            return undefined
+            return undefined;
         } catch (error) {
             return formatError(error, "Failed to change visibility", "VisibilityChange");
         }
@@ -431,6 +432,31 @@ export function NodesProvider({ children }: NodesProviderProps) {
         return undefined;
     }
 
+    async function handlePromoteTodo(nodeId: string) {
+        if (!nodeId) {
+            return {
+                success: false,
+                message: "Missing nodeId"
+            };
+        }
+
+        try {
+            await firestoreService.nodes.updateNode(nodeId, { type: "page" })
+
+            setFlatNodes(prev =>
+                prev.map(node =>
+                    node.id === nodeId
+                        ? { ...node, type: "page", updatedAt: Date.now() }
+                        : node
+                )
+            );
+
+            return undefined;
+        } catch (error) {
+            return formatError(error, "Failed to promote todo", "PromoteTodo");
+        }
+    }
+
 
     return (
         <NodesContext.Provider
@@ -453,6 +479,8 @@ export function NodesProvider({ children }: NodesProviderProps) {
                 handleDeleteNode,
 
                 handleToggleChildNode,
+
+                handlePromoteTodo,
             }}
         >
             {children}

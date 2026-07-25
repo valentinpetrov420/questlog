@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import StatusMessage from "../StatusMessage/StatusMessage.js";
 import './Item.css';
 
@@ -31,6 +32,8 @@ export default function Item(props: ItemProps) {
         handleDeleteNode,
 
         handleToggleChildNode,
+
+        handlePromoteTodo,
     } = useNodes();
 
     const [isEditingTodo, setEditingTodo] = useState(false);
@@ -130,6 +133,45 @@ export default function Item(props: ItemProps) {
         }
         handleToggleChildNode(props.id);
     }
+    async function handlePromoteToPageClick() {
+        if (!props.isOwner) {
+            return;
+        }
+
+        setPending(true);
+        setMenuOpen(false);
+
+        const error = await handlePromoteTodo(props.id);
+
+        if (error){
+            setError(error.message);
+            return;
+        }
+        setError("");
+        setPending(false);
+    }
+
+     if (props.type === "page") {
+        return <li ref={setNodeRef} style={style} {...attributes}>
+            <div className="todo-wrapper">
+                {props.isOwner && <span className="drag-button" {...listeners}>⠿</span>}
+                <Link to={`/${props.id}`}>{props.text}</Link>
+                {!isEditingTodo && props.isOwner ? <div className="todo-actions">
+                    <div className="item-popover-wrapper" ref={popoverRef}>
+                        <button disabled={disabled}
+                            onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
+                        {menuOpen && (
+                            <div className="item-popover">
+                                <button onClick={handleDeleteClick}>Delete</button>
+                            </div>
+                        )}
+                    </div>
+                </div> :
+                    <div></div>
+                }
+            </div>
+        </li>
+    }
 
     if (props.type === "separator") {
         return <li ref={setNodeRef} style={style} {...attributes}>
@@ -195,6 +237,7 @@ export default function Item(props: ItemProps) {
                     {menuOpen && (
                         <div className="item-popover">
                             <button onClick={handleDeleteClick}>Delete</button>
+                            <button onClick={handlePromoteToPageClick}>Promote to Page</button>
                         </div>
                     )}
                 </div>
