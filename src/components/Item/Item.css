@@ -44,11 +44,19 @@
 	}
 }
 
-.separator {
+.todo-wrapper.page {
+		margin-top: 1rem;
+}
+
+.todo-wrapper.separator {
+		margin-top: 1rem;
+}
+
+.separator-hr {
     border-top: 1px solid var(--bg);
     margin-top: 0.5rem;
 	margin-bottom: 0.5rem;
-    width: 85%;
+    width: 75%;
 	height: 15%;
 }
 

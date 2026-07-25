@@ -153,9 +153,9 @@ export default function Item(props: ItemProps) {
 
      if (props.type === "page") {
         return <li ref={setNodeRef} style={style} {...attributes}>
-            <div className="todo-wrapper">
+            <div className="todo-wrapper page">
                 {props.isOwner && <span className="drag-button" {...listeners}>⠿</span>}
-                <Link to={`/${props.id}`}>{props.text}</Link>
+                <Link className="todo-item-text" to={`/${props.id}`}>{props.text}</Link>
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                     <div className="item-popover-wrapper" ref={popoverRef}>
                         <button disabled={disabled}
@@ -175,9 +175,9 @@ export default function Item(props: ItemProps) {
 
     if (props.type === "separator") {
         return <li ref={setNodeRef} style={style} {...attributes}>
-            <div className="todo-wrapper">
+            <div className="todo-wrapper separator">
                 {props.isOwner && <span className="drag-button" {...listeners}>⠿</span>}
-                <hr className="separator" />
+                <hr className="separator-hr" />
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                     <div className="item-popover-wrapper" ref={popoverRef}>
                         <button disabled={disabled}
