@@ -12,7 +12,7 @@ type ItemProps = {
     id: string;
     text: string;
     completed: boolean;
-    type: "todo" | "page" | "separator";
+    type: "todo" | "page" | "separator" | "heading";
     isOwner: boolean;
     deletePending: boolean;
     highlightedTodoId: string | null;
@@ -143,7 +143,7 @@ export default function Item(props: ItemProps) {
 
         const error = await handlePromoteTodo(props.id);
 
-        if (error){
+        if (error) {
             setError(error.message);
             return;
         }
@@ -151,7 +151,49 @@ export default function Item(props: ItemProps) {
         setPending(false);
     }
 
-     if (props.type === "page") {
+    if (props.type === "heading") {
+        return <li ref={setNodeRef} style={style} {...attributes}>
+            <StatusMessage text={error} />
+            <div className={isEditingTodo ? "edit-form-wrapper" : "todo-wrapper heading"}>
+                {props.isOwner ? <span className="drag-button" {...listeners}>⠿</span> : ""}
+                {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
+                    <input className="edit-item-input heading"
+                        autoFocus
+                        disabled={disabled}
+                        value={draftTitleTodo}
+                        onChange={(event) => setDraftTitleTodo(event.target.value)}
+                        onBlur={() => {
+                            cancelEdit();
+                        }}
+                        onKeyDown={(event) => {
+                            if (event.key === "Escape") {
+                                cancelEdit();
+                            }
+                        }}></input>
+                </form>
+                    :
+
+                    <h3 onClick={handleEditTodo}>{props.text}</h3>
+                }
+
+                {!isEditingTodo && props.isOwner ? <div className="todo-actions">
+                    <div className="item-popover-wrapper" ref={popoverRef}>
+                        <button disabled={disabled}
+                            onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
+                        {menuOpen && (
+                            <div className="item-popover">
+                                <button onClick={handleDeleteClick}>Delete</button>
+                            </div>
+                        )}
+                    </div>
+                </div> :
+                    <div></div>
+                }
+            </div>
+        </li>
+    }
+
+    if (props.type === "page") {
         return <li ref={setNodeRef} style={style} {...attributes}>
             <div className="todo-wrapper page">
                 {props.isOwner && <span className="drag-button" {...listeners}>⠿</span>}

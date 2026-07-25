@@ -45,18 +45,34 @@
 }
 
 .todo-wrapper.page {
-		margin-top: 1rem;
+	margin-top: 1rem;
 }
 
 .todo-wrapper.separator {
-		margin-top: 1rem;
+	margin-top: 1rem;
+}
+
+.todo-wrapper.heading {
+	h3 {
+		flex: 1;
+		margin-left: 1rem;
+		font-size: large;
+		line-height: 2;
+	}
+}
+
+.edit-item-input.heading {
+	font-size: large !important;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+	line-height: 2 !important;
 }
 
 .separator-hr {
-    border-top: 1px solid var(--bg);
-    margin-top: 0.5rem;
+	border-top: 1px solid var(--bg);
+	margin-top: 0.5rem;
 	margin-bottom: 0.5rem;
-    width: 75%;
+	width: 75%;
 	height: 15%;
 }
 
@@ -119,6 +135,7 @@
 
 .item-popover-wrapper {
 	position: relative;
+
 	.item-popover {
 		position: absolute;
 		right: 0;

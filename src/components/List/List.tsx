@@ -272,6 +272,31 @@ export default function List(props: ListProps) {
             setAddItemPending(false);
         }
     }
+    async function handleCreateHeadingClick(event: React.MouseEvent<HTMLButtonElement>){
+        event.preventDefault();
+
+        if (deletePending) {
+            return;
+        }
+
+        setAddItemPending(true);
+
+        try {
+            const error = await handleCreateChildNode("New Heading", props.id, "heading");
+
+            if (error) {
+                setError(error.message);
+                setAddTodoStatus(true);
+                return;
+            }
+
+            setError("");
+            setAddTodoStatus(false);
+            setValue("");
+        } finally {
+            setAddItemPending(false);
+        }
+    }
     async function handleVisibility() {
         console.log(props.isPublic);
         if (deletePending) {
@@ -404,6 +429,7 @@ export default function List(props: ListProps) {
                         {itemMenuOpen && (
                             <div className="item-options-popover">
                                 {isOwner ? <button disabled={disabled} onClick={handleCreateSeparatorClick}>Add Separator</button> : ""}
+                                {isOwner ? <button disabled={disabled} onClick={handleCreateHeadingClick}>Add Heading</button> : ""}
                             </div>
                         )}
                     </div>
