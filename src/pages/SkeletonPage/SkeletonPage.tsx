@@ -332,7 +332,7 @@ export default function SkeletonPage(props: SkeletonPageProps) {
             break;
 
         case "nodepage":
-            return <div id="list-page-wrapper">
+            return <div className="list-page-wrapper">
                 <div className="list-component">
 
                     <p className="form-error"></p>

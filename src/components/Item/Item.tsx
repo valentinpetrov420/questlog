@@ -151,6 +151,7 @@ export default function Item(props: ItemProps) {
         setPending(false);
     }
 
+    //todo: popover code duplication can be fixed if i reduce it to a component
     if (props.type === "heading") {
         return <li ref={setNodeRef} style={style} {...attributes}>
             <StatusMessage text={error} />

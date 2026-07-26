@@ -76,20 +76,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
             setNodesLoading(false);
             return;
         }
-
-        //todo: page mount is instant but loading lists is not
-        // communicate loading state to the user =>
-        // possibly [loadingState, setLoadingState] architecture with try {} finally {}
-        // also loading is indistinguishable from no lists when the user is new as they both render as []
-
-        // i think it is better to separate authReady gate from lists loading 
-        // authReady (its in context now, dw about it) = nothing to valid to render yet, blank (dark mode themed) page
-        // lists loading = skeleton shell
-        // goal is user perceived progress, not actual speed
-
-        // i saw that tiktok does this too, blank unstyled white Please wait page (= pre-theme) =>
-        // skeleton boxes with a pulsing animation (= pre-content)
-
+        
         firestoreService.nodes.getNodes(user.uid).then((nodes: Node[]) => {
             setFlatNodes(nodes);
         })

@@ -1,4 +1,4 @@
-#list-page-wrapper {
+.list-page-wrapper {
     width: 50%;
     position: absolute;
     left: 25%;
@@ -12,10 +12,33 @@
     }
 }
 
+.breadcrumb-tree {
+    display: flex;
+    gap: 1rem;  
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    margin-left: 1rem;
+
+    li {
+        display: flex;
+        gap: 0.5rem;
+
+        a {
+            color: var(--text);
+            text-decoration: none;
+        }
+    }
+}
+
+
 
 @media (max-width: 780px) {
-    #list-page-wrapper {
+    .list-page-wrapper {
         width: 100%;
         left: 0;
+    }
+
+    .breadcrumb-tree{
+        margin: 0
     }
 }

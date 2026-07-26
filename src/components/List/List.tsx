@@ -275,6 +275,9 @@ export default function List(props: ListProps) {
     async function handleCreateHeadingClick(event: React.MouseEvent<HTMLButtonElement>){
         event.preventDefault();
 
+        //todo: newly created headings aren't autofocused, possibly might need id from the firestore request
+        // passed down from context
+        
         if (deletePending) {
             return;
         }
