@@ -64,11 +64,10 @@ export default function Item(props: ItemProps) {
     }, [props.autoFocus, props.text]);
 
     useEffect(() => {
-        if (isEditingTodo && props.autoFocus) {
+        if (isEditingTodo) {
             inputRef.current?.focus();
-            props.onAutoFocus?.();
         }
-    }, [isEditingTodo, props.autoFocus]);
+    }, [isEditingTodo]);
 
     const popoverRef = useRef<HTMLDivElement>(null);
 
