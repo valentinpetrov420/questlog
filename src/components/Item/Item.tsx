@@ -12,6 +12,10 @@ type ItemProps = {
     id: string;
     text: string;
     completed: boolean;
+
+    autoFocus: boolean;
+    onAutoFocus?: () => void;
+
     type: "todo" | "page" | "separator" | "heading";
     isOwner: boolean;
     deletePending: boolean;
@@ -49,6 +53,23 @@ export default function Item(props: ItemProps) {
 
     const [menuOpen, setMenuOpen] = useState(false);
 
+    const inputRef = useRef<HTMLInputElement>(null);
+    const ignoreNextBlur = useRef(false);
+
+    useEffect(() => {
+        if (props.autoFocus) {
+            setEditingTodo(true);
+            setDraftTitleTodo(props.text);
+        }
+    }, [props.autoFocus, props.text]);
+
+    useEffect(() => {
+        if (isEditingTodo && props.autoFocus) {
+            inputRef.current?.focus();
+            props.onAutoFocus?.();
+        }
+    }, [isEditingTodo, props.autoFocus]);
+
     const popoverRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -63,6 +84,16 @@ export default function Item(props: ItemProps) {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [menuOpen]);
+
+    console.log(
+        "Item",
+        props.id,
+        props.text,
+        "editing:",
+        isEditingTodo,
+        "autoFocus:",
+        props.autoFocus
+    );
 
     function cancelEdit() {
         setEditingTodo(false);
@@ -159,11 +190,15 @@ export default function Item(props: ItemProps) {
                 {props.isOwner ? <span className="drag-button" {...listeners}>⠿</span> : ""}
                 {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
                     <input className="edit-item-input heading"
-                        autoFocus
+                        ref={inputRef}
                         disabled={disabled}
                         value={draftTitleTodo}
                         onChange={(event) => setDraftTitleTodo(event.target.value)}
                         onBlur={() => {
+                            if (ignoreNextBlur.current) {
+                                ignoreNextBlur.current = false;
+                                return;
+                            }
                             cancelEdit();
                         }}
                         onKeyDown={(event) => {

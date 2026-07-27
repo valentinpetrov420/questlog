@@ -71,6 +71,8 @@ export default function List(props: ListProps) {
 
     const [error, setError] = useState("");
 
+    const [newNodeId, setNewNodeId] = useState<string | null>(null);
+
     const { user } = useAuth();
     const navigate = useNavigate();
 
@@ -88,15 +90,17 @@ export default function List(props: ListProps) {
 
     const disabled = addItemPending || deletePending;
 
+    const [shouldFocusNewTodo, setShouldFocusNewTodo] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const wasDisabled = useRef(false);
 
     useEffect(() => {
-        if (wasDisabled.current && !disabled) {
+        if (wasDisabled.current && !disabled && shouldFocusNewTodo) {
             inputRef.current?.focus();
+            setShouldFocusNewTodo(false);
         }
         wasDisabled.current = disabled;
-    }, [disabled]);
+    }, [disabled, shouldFocusNewTodo]);
 
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -151,10 +155,12 @@ export default function List(props: ListProps) {
         setAddItemPending(true);
 
         try {
-            const error = await handleCreateChildNode(value, props.id, "todo");
+            setShouldFocusNewTodo(true);
 
-            if (error) {
-                setError(error.message);
+            const result = await handleCreateChildNode(value, props.id, "todo");
+
+            if (result.error) {
+                setError(result.error.message);
                 setAddTodoStatus(true);
                 return;
             }
@@ -257,10 +263,10 @@ export default function List(props: ListProps) {
         setAddItemPending(true);
 
         try {
-            const error = await handleCreateChildNode("separator", props.id, "separator");
+            const result = await handleCreateChildNode("separator", props.id, "separator");
 
-            if (error) {
-                setError(error.message);
+            if (result.error) {
+                setError(result.error.message);
                 setAddTodoStatus(true);
                 return;
             }
@@ -272,12 +278,12 @@ export default function List(props: ListProps) {
             setAddItemPending(false);
         }
     }
-    async function handleCreateHeadingClick(event: React.MouseEvent<HTMLButtonElement>){
+    async function handleCreateHeadingClick(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
 
         //todo: newly created headings aren't autofocused, possibly might need id from the firestore request
         // passed down from context
-        
+
         if (deletePending) {
             return;
         }
@@ -285,13 +291,19 @@ export default function List(props: ListProps) {
         setAddItemPending(true);
 
         try {
-            const error = await handleCreateChildNode("New Heading", props.id, "heading");
+            const result = await handleCreateChildNode("New Heading", props.id, "heading");
 
-            if (error) {
-                setError(error.message);
+            if (result.error) {
+                setError(result.error.message);
                 setAddTodoStatus(true);
                 return;
             }
+
+            if (result.id) {
+                setNewNodeId(result.id);
+            }
+
+            setItemMenuOpen(false);
 
             setError("");
             setAddTodoStatus(false);
@@ -380,7 +392,7 @@ export default function List(props: ListProps) {
                 <h2 className="list-title-edit">
                     <span className="title-label">Title:</span>
                     <div className="input-form-wrapper">
-                        <input autoFocus
+                        <input
                             disabled={titlePending}
                             value={draftTitle}
                             onChange={(event) => setDraftTitle(event.target.value)}
@@ -410,6 +422,9 @@ export default function List(props: ListProps) {
 
                                 deletePending={deletePending}
 
+                                autoFocus={item.id === newNodeId}
+                                onAutoFocus={() => setNewNodeId(null)}
+                                
                                 type={item.type}
                                 key={item.id}
                                 id={item.id}

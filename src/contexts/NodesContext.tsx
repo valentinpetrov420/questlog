@@ -14,6 +14,11 @@ type ActionError = {
     code?: string,
 }
 
+type CreateNodeResult = {
+    error?: ActionError;
+    id?: string;
+};
+
 type NodesContextValue = {
     nodes: Node[];
     flatNodes: Node[];
@@ -25,9 +30,8 @@ type NodesContextValue = {
     sortMode: string;
     setSortMode: React.Dispatch<React.SetStateAction<string>>;
 
-
     handleCreateNode: (text: string, visibility: boolean) => Promise<ActionError | undefined>;
-    handleCreateChildNode: (text: string, parentId: string, type: Node["type"]) => Promise<ActionError | undefined>;
+    handleCreateChildNode: (text: string, parentId: string, type: Node["type"]) => Promise<CreateNodeResult>;
     //todo: handle failures of optimistic updates somehow, like a rollback,
     // because they return a result payload with a message; do something with it
 
@@ -76,7 +80,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
             setNodesLoading(false);
             return;
         }
-        
+
         firestoreService.nodes.getNodes(user.uid).then((nodes: Node[]) => {
             setFlatNodes(nodes);
         })
@@ -143,8 +147,9 @@ export function NodesProvider({ children }: NodesProviderProps) {
     async function handleCreateChildNode(text: string, parentId: string, type: Node["type"]) {
         if (!user) {
             return {
-                success: false,
-                message: "authentication error"
+                error: {
+                    message: "authentication error"
+                }
             };
         }
 
@@ -152,8 +157,9 @@ export function NodesProvider({ children }: NodesProviderProps) {
 
         if (!result.valid) {
             return {
-                success: false,
-                message: result.error
+                error: {
+                    message: result.error
+                }
             };
         }
 
@@ -190,9 +196,11 @@ export function NodesProvider({ children }: NodesProviderProps) {
 
             console.log("created node: ", text);
 
-            return undefined;
+            return { id };
         } catch (error) {
-            return formatError(error, "Failed to create node", "createChildNode") as ActionError;
+            return {
+                error: formatError(error, "Failed to create node", "createChildNode")
+            }
         }
     }
 
