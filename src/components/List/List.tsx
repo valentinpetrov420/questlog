@@ -393,6 +393,7 @@ export default function List(props: ListProps) {
                     <span className="title-label">Title:</span>
                     <div className="input-form-wrapper">
                         <input
+                            autoFocus
                             disabled={titlePending}
                             value={draftTitle}
                             onChange={(event) => setDraftTitle(event.target.value)}
@@ -423,8 +424,7 @@ export default function List(props: ListProps) {
                                 deletePending={deletePending}
 
                                 autoFocus={item.id === newNodeId}
-                                onAutoFocus={() => setNewNodeId(null)}
-                                
+
                                 type={item.type}
                                 key={item.id}
                                 id={item.id}
