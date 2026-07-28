@@ -13,6 +13,9 @@ Built as a daily-iterated React project with Firebase as the backend.
 - Flat node collection with parentId relationships, hydrated client-side.
 - Network error handling for list creation, edits and deletion.
 - Shareable public node URLs, visibility toggle per node.
+- Multiple node types beyond todo (heading, separator, others in the future).
+- Breadcrumb navigation for nested nodes.
+- Any task node promotable to a page with its own /:nodeId.
 - Ownership gating — actions hidden from non-owners.
 - Dark/light theme with persistence.
 - Responsive layout for desktop and mobile devices.
@@ -62,14 +65,10 @@ npm run dev
 ## Navigation
 
 - Sidebar replacing dashboard grid when nested pages land.
-- Breadcrumb navigation for nested nodes.
-- Any task node promotable to a page with its own /:nodeId.
 
 ## Features
 
-- Nested page nodes (any task can become a page).
 - Search and filtering.
-- Multiple node types beyond todo (heading, note, image, code block).
 
 ## DevPanel
 
