@@ -1,0 +1,13 @@
+.sidebar-wrapper {
+    background-color: var(--header-bg);
+    border-right: 1px black solid;
+    flex-shrink: 1;
+    width: 15rem;
+    z-index: 15;
+}
+
+@media (max-width: 600px) {
+    .sidebar-wrapper {
+        display: none;
+    }
+}

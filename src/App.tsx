@@ -4,9 +4,6 @@ import './App.css'
 
 //import { loadLists, saveLists } from './api/services/storage.js';
 
-import { siteName } from "./constants/app.js";
-
-import NavBar from './components/NavBar/NavBar.js';
 import LoginPage from './pages/LoginPage/LoginPage.js';
 
 import Dashboard from './pages/Dashboard/Dashboard.js';
@@ -19,31 +16,18 @@ import { useAuth } from './contexts/AuthContext.js';
 
 import ProtectedRoute from './contexts/ProtectedRoute.js';
 import PublicRoute from './contexts/PublicRoute.js';
+import AppLayout from './AppLayout.js';
 
 
 export default function App() {
-	const { user, logout, loginWithGoogle } = useAuth();
+	const { loginWithGoogle, user } = useAuth();
 	const { theme } = useTheme();
 
 	return (
 		<div id="app" data-theme={theme}>
 			<div id="page-container">
-				<header id="top-header">
-					<NavBar siteName={siteName}
-						user={user}
-						logout={logout}
-						loginWithGoogle={loginWithGoogle}
-					/>
-				</header>
+
 				<Routes>
-					<Route path="/" element={
-						<ProtectedRoute>
-							<Dashboard/>
-						</ProtectedRoute>
-					} />
-					<Route path="/:nodeId" element={
-						<NodePage />
-					} />
 					<Route path="/login" element={
 						<PublicRoute>
 							<LoginPage
@@ -51,6 +35,18 @@ export default function App() {
 							/>
 						</PublicRoute>
 					} />
+					<Route element={<AppLayout />}>
+						<Route path="/" element={
+							<ProtectedRoute>
+								<Dashboard />
+							</ProtectedRoute>
+						} />
+						<Route path="/:nodeId" element={
+							<NodePage />
+						} />
+					</Route>
+
+
 				</Routes>
 			</div>
 			{import.meta.env.DEV && (

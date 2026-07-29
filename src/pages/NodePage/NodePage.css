@@ -1,20 +1,20 @@
 .list-page-wrapper {
-    width: 50%;
-    position: absolute;
-    left: 25%;
-
     .list-component {
+        width: 65%;
+        margin: auto;
+
         .list-title {
             p {
                 display: inline;
             }
         }
+
     }
 }
 
 .breadcrumb-tree {
     display: flex;
-    gap: 1rem;  
+    gap: 1rem;
     flex-wrap: wrap;
     margin-top: 1rem;
     margin-left: 1rem;
@@ -35,10 +35,15 @@
 @media (max-width: 780px) {
     .list-page-wrapper {
         width: 100%;
-        left: 0;
+
+        .list-component {
+            width: 95%;;
+            margin: 0.5rem;
+
+        }
     }
 
-    .breadcrumb-tree{
+    .breadcrumb-tree {
         margin: 0
     }
 }
