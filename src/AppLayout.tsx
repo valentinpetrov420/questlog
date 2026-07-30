@@ -23,11 +23,11 @@ export default function AppLayout() {
             </header>
 
             <div className="layout">
-                <SideBar />
-
-                <main className="page-container">
+                <SideBar 
+                    user={user}/>
+                <div className="content">
                     <Outlet />
-                </main>
+                </div>
             </div>
         </>
     );

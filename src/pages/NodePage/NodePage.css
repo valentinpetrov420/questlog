@@ -1,14 +1,18 @@
-.list-page-wrapper {
-    .list-component {
-        width: 65%;
-        margin: auto;
+.list-page-container {
+    width: 100%;
 
-        .list-title {
-            p {
-                display: inline;
+    .list-page-wrapper {
+        .list-component {
+            width: 65%;
+            margin: auto;
+
+            .list-title {
+                p {
+                    display: inline;
+                }
             }
-        }
 
+        }
     }
 }
 
@@ -37,7 +41,8 @@
         width: 100%;
 
         .list-component {
-            width: 95%;;
+            width: 95%;
+            ;
             margin: 0.5rem;
 
         }

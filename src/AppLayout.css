@@ -1,9 +1,24 @@
 .layout {
     display: flex;
-    min-height: calc(100vh - 3rem);
+    flex: 1;
+    min-height: 0;
+    margin-bottom: 3rem;
 }
 
-.page-container {
-    flex: 1;
-    min-width: 0;
+.content {
+    margin-left: 15rem;
+    width: 100%;
+    overflow-y: visible;
+}
+
+#page-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 600px) {
+    .content {
+        margin-left: 0;
+    }
 }

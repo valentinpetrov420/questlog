@@ -7,6 +7,9 @@ type SkeletonPageProps = {
 
 export default function SkeletonPage(props: SkeletonPageProps) {
 
+    //todo: a lot of repeated elements as a result of copypasting a real html tree and then stripping text/values
+    // can be fixed with array loops
+
     switch (props.type) {
         case "dashboard":
             return (
@@ -332,72 +335,89 @@ export default function SkeletonPage(props: SkeletonPageProps) {
             break;
 
         case "nodepage":
-            return <div className="list-page-wrapper">
-                <div className="list-component">
+            return (
+                <div className="list-page-container">
+                    <div>
+                        <ul className="breadcrumb-tree">
+                            <li>
+                                <p className="crumb-symbol">➜</p>
+                                <div className="skeleton-box"></div>
+                            </li>
+                            <li>
+                                <p className="crumb-symbol">➜</p>
+                                <div className="skeleton-box"></div>
+                            </li>
+                            <li>
+                                <p className="crumb-symbol">➜</p>
+                                <div className="skeleton-box"></div>
+                            </li>
+                        </ul>
+                    </div>
 
-                    <p className="form-error"></p>
+                    <div className="list-page-wrapper">
+                        <div className="list-component">
 
-                    <h2 className="list-title">
-                        <div className="skeleton-box"></div>
-                    </h2>
-                    <ul>
-                        <li>
                             <p className="form-error"></p>
 
-                            <div className="todo-wrapper">
-                                <span className="drag-button"></span>
-
-
+                            <h2 className="list-title">
                                 <div className="skeleton-box"></div>
-                            </div>
-                        </li>
+                            </h2>
 
-                        <li>
-                            <p className="form-error"></p>
+                            <ul>
+                                <li>
+                                    <p className="form-error"></p>
 
-                            <div className="todo-wrapper">
+                                    <div className="todo-wrapper">
+                                        <span className="drag-button"></span>
+                                        <div className="skeleton-box"></div>
+                                        <div className="todo-actions"></div>
+                                    </div>
+                                </li>
 
-                                <div className="skeleton-box"></div>
+                                <li>
+                                    <p className="form-error"></p>
 
-                            </div>
-                        </li>
+                                    <div className="todo-wrapper">
+                                        <span className="drag-button"></span>
+                                        <div className="skeleton-box"></div>
+                                        <div className="todo-actions"></div>
+                                    </div>
+                                </li>
 
-                        <li>
-                            <p className="form-error"></p>
+                                <li>
+                                    <p className="form-error"></p>
 
-                            <div className="todo-wrapper">
+                                    <div className="todo-wrapper">
+                                        <span className="drag-button"></span>
+                                        <div className="skeleton-box"></div>
+                                        <div className="todo-actions"></div>
+                                    </div>
+                                </li>
 
+                                <li>
+                                    <p className="form-error"></p>
 
-                                <div className="skeleton-box"></div>
+                                    <div className="todo-wrapper">
+                                        <span className="drag-button"></span>
+                                        <div className="skeleton-box"></div>
+                                        <div className="todo-actions"></div>
+                                    </div>
+                                </li>
 
-                            </div>
-                        </li>
+                                <li>
+                                    <p className="form-error"></p>
 
-                        <li>
-                            <p className="form-error"></p>
-
-                            <div className="todo-wrapper">
-
-
-                                <div className="skeleton-box"></div>
-                            </div>
-                        </li>
-
-                        <li>
-                            <p className="form-error"></p>
-
-                            <div className="todo-wrapper">
-
-
-                                <div className="skeleton-box"></div>
-
-                            </div>
-                        </li>
-                    </ul>
+                                    <div className="todo-wrapper">
+                                        <span className="drag-button"></span>
+                                        <div className="skeleton-box"></div>
+                                        <div className="todo-actions"></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            break;
+            );
     }
 
 }

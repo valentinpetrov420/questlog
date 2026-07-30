@@ -144,7 +144,8 @@
 		align-self: center;
 		position: relative;
 
-		.item-create-options, button {
+		.item-create-options,
+		button {
 
 			color: var(--text);
 			background: transparent;
@@ -215,6 +216,7 @@
 	}
 
 	.list-component {
+		width: 95%;
 		margin: 0.5rem;
 	}
 

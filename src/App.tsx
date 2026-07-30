@@ -25,7 +25,7 @@ export default function App() {
 
 	return (
 		<div id="app" data-theme={theme}>
-			<div id="page-container">
+			<main className="page-container">
 
 				<Routes>
 					<Route path="/login" element={
@@ -48,7 +48,7 @@ export default function App() {
 
 
 				</Routes>
-			</div>
+			</main>
 			{import.meta.env.DEV && (
 				<DevPanel userId={user?.uid} />
 			)}
