@@ -1,12 +1,19 @@
 .top-header {
-	z-index: 1000;
+	display: none;
+	z-index: 10001;
 	position: sticky;
 	top: 0;
 	background-color: var(--header-bg);
 
-	.nav-links {
-		display: flex;
-		gap: 1rem;
+	.wrapped-nav-button {
+		align-self: flex-start;
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		color: inherit;
+		font: inherit;
+		margin: 1rem;
 	}
 
 	.nav-menu-toggle {
@@ -15,82 +22,20 @@
 		border: none;
 		color: var(--text);
 	}
+}
 
-	.wrapped-nav-button {
-		background: none;
-		border: none;
-		cursor: pointer;
-		color: inherit;
-	}
 
-	nav {
-		display: flex;
-		padding-inline: 1rem;
-		flex-direction: row;
-		justify-content: space-between;
-		border-bottom: black 1px solid;
-
-		h1 {
-			align-self: center;
-		}
-
-		.nav-links {
+@media (max-width: 600px) {
+	.top-header {
+		display: block;
+		nav {
 			display: flex;
 			justify-content: space-between;
-			height: 3rem;
-			width: 70%;
-		}
 
-		.closed {
-			width: 100%;
-			display: flex;
-			justify-content: space-between;
-		}
-	}
-
-	#user-info {
-		display: flex;
-		gap: 1rem;
-
-		#user-nav-wrapper {
-			display: flex;
-			justify-content: center;
-
-			.user-photo-container {
-				display: block;
-				height: 2rem;
-				width: 2rem;
-				align-self: center;
-
-				img {
-					height: inherit;
-					width: inherit;
-				}
-			}
-
-			.user-name {
-				align-content: center;
+			.nav-menu-toggle {
+				display: block !important;
+				margin: 1rem;
 			}
 		}
 	}
-}
-
-#patchnotes-toggle {
-	align-self: center;
-	background: none;
-	border: none;
-	padding: 0;
-	cursor: pointer;
-	color: inherit;
-	font: inherit;
-}
-
-#dark-mode-toggle {
-	align-self: center;
-	background: none;
-	border: none;
-	padding: 0;
-	cursor: pointer;
-	color: inherit;
-	font: inherit;
 }

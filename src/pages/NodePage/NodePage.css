@@ -41,8 +41,7 @@
         width: 100%;
 
         .list-component {
-            width: 95%;
-            ;
+            width: 95% !important;
             margin: 0.5rem;
 
         }

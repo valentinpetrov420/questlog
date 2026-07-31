@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import { useState } from "react";
 import { useAuth } from "./contexts/AuthContext";
 
 import NavBar from "./components/NavBar/NavBar";
@@ -10,6 +11,7 @@ import './AppLayout.css';
 
 export default function AppLayout() {
     const { user, logout, loginWithGoogle } = useAuth();
+    const [menuOpen, setMenuOpen] = useState(false);
 
     return (
         <>
@@ -17,14 +19,17 @@ export default function AppLayout() {
                 <NavBar
                     siteName={siteName}
                     user={user}
-                    logout={logout}
-                    loginWithGoogle={loginWithGoogle}
+                    menuOpen={menuOpen}
+                    toggleMenu={() => setMenuOpen(prev => !prev)}
                 />
             </header>
 
             <div className="layout">
-                <SideBar 
-                    user={user}/>
+                <SideBar
+                    menuOpen={menuOpen}
+                    user={user}
+                    logout={logout}
+                    loginWithGoogle={loginWithGoogle} />
                 <div className="content">
                     <Outlet />
                 </div>
