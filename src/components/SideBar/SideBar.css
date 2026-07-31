@@ -1,6 +1,5 @@
 .sidebar-wrapper {
     width: 15rem;
-    overflow-y: auto;
     height: 100vh;
     position: fixed;
     display: flex;
@@ -58,6 +57,7 @@
             overflow-y: auto;
             overflow-x: hidden;
             min-height: 25rem;
+            max-height: 25rem;
             margin-top: 1rem;
         }
     }
