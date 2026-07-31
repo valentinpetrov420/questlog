@@ -5,7 +5,7 @@
     position: fixed;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: space-between;
     border-right: 1px solid black;
     background-color: var(--bg);
     z-index: 10000;
@@ -57,7 +57,7 @@
         .sidebar-lists-container {
             overflow-y: auto;
             overflow-x: hidden;
-            max-height: 25rem;
+            min-height: 25rem;
             margin-top: 1rem;
         }
     }
