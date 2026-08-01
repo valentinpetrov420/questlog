@@ -1,5 +1,5 @@
 import { useNavigate, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { User } from "firebase/auth";
 
@@ -22,11 +22,12 @@ type PatchNote = {
 }
 
 export default function SideBar(props: SideBarProps) {
-
     const [patchnotes, setPatchnotes] = useState<PatchNote[]>([]);
     const [patchnotesOpen, setPatchnotesOpen] = useState(false);
 
     const { toggleDarkMode } = useTheme();
+
+    const [searchValue, setSearchValue] = useState("");
 
     const {
         flatNodes,
@@ -60,6 +61,12 @@ export default function SideBar(props: SideBarProps) {
         setPatchnotesOpen(false);
     }
 
+    const inputRef = useRef<HTMLInputElement>(null);
+    function cancelSearch() {
+        setSearchValue("");
+        inputRef.current?.blur();
+    }
+
     async function handleLogout() {
         await props.logout();
         navigate("/login");
@@ -85,8 +92,24 @@ export default function SideBar(props: SideBarProps) {
         </div>
         <div className="sidebar-lists">
             <div className="sidebar-lists-options">
-                <div className="">
-                    <input type="text" value="" placeholder="Search lists..." />
+                <div className="sidebar-search-wrapper">
+                    <input type="text"
+                        value={searchValue}
+                        ref={inputRef}
+                        onKeyDown={(event) => {
+                            if (event.key === "Escape") {
+                                cancelSearch();
+                            }
+                        }}
+                        onChange={(event) => setSearchValue(event.target.value)}
+                        placeholder="Search lists..." />
+                    {searchValue ? (
+                        <button className="wrapped-nav-button"
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                        }}
+                        onClick={() => cancelSearch()}>X</button>
+                    ) : ""}
                 </div>
             </div>
             <div className="sidebar-list-items">
@@ -96,7 +119,10 @@ export default function SideBar(props: SideBarProps) {
                 <div className="sidebar-lists-container">
                     <ul>
                         {flatNodes
-                            .filter(list => list.parentId === null && !list.archived)
+                            .filter(list =>
+                                list.parentId === null
+                                && !list.archived
+                                && list.text.toLowerCase().includes(searchValue.toLowerCase()))
                             .map(list => (
                                 <li key={list.id}>
                                     <Link to={`/${list.id}`}>

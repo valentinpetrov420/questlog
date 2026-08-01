@@ -61,6 +61,15 @@
             margin-top: 1rem;
         }
     }
+
+    .sidebar-search-wrapper {
+        display: flex;
+        justify-content: space-evenly;
+        margin: 1rem;
+        button {
+            margin-top: 0.2rem;
+        }
+    }
 }
 
 .sidebar-user-info {
