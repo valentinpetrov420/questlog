@@ -27,11 +27,32 @@ export default function SideBar(props: SideBarProps) {
 
     const { toggleDarkMode } = useTheme();
 
+    const [sortMode, setSortMode] = useState("newest");
+
     const [searchValue, setSearchValue] = useState("");
 
     const {
         flatNodes,
     } = useNodes();
+
+    const isArchivedView = sortMode === 'archived';
+
+    const activeLists = flatNodes.filter(list => list.parentId === null && !list.archived);
+    const archivedLists = flatNodes.filter(list => list.parentId === null && list.archived);
+
+    const baseLists = isArchivedView ? archivedLists : activeLists;
+
+    const visibleLists = baseLists.filter(list =>
+        list.text.toLowerCase().includes(searchValue.toLowerCase())
+    );
+
+    const sortedLists = isArchivedView
+        ? visibleLists
+        : [...visibleLists].sort((a, b) => {
+            if (sortMode === 'createdAt') return b.createdAt - a.createdAt;
+            if (sortMode === 'updatedAt') return b.updatedAt - a.updatedAt;
+            return a.text.localeCompare(b.text); // alphabetical
+        });
 
     useEffect(() => {
         fetch('/patchnotes.json')
@@ -105,32 +126,29 @@ export default function SideBar(props: SideBarProps) {
                         placeholder="Search lists..." />
                     {searchValue ? (
                         <button className="wrapped-nav-button"
-                        onMouseDown={(event) => {
-                            event.preventDefault();
-                        }}
-                        onClick={() => cancelSearch()}>X</button>
+                            onMouseDown={(event) => {
+                                event.preventDefault();
+                            }}
+                            onClick={() => cancelSearch()}>X</button>
                     ) : ""}
                 </div>
             </div>
             <div className="sidebar-list-items">
-                <select>
-                    <option value="Newest">Newest</option>
+                <select value={sortMode} onChange={(event) => {
+                    setSortMode(event.target.value);
+                }}>
+                    <option value="createdAt">Newest</option>
+                    <option value="updatedAt">Last updated</option>
+                    <option value="alphabetical">Alphabetical</option>
+                    <option value="archived">Archived only</option>
                 </select>
                 <div className="sidebar-lists-container">
                     <ul>
-                        {flatNodes
-                            .filter(list =>
-                                list.parentId === null
-                                && !list.archived
-                                && list.text.toLowerCase().includes(searchValue.toLowerCase()))
-                            .map(list => (
-                                <li key={list.id}>
-                                    <Link to={`/${list.id}`}>
-                                        {list.text}
-                                    </Link>
-                                </li>
-                            ))
-                        }
+                        {sortedLists.map(list => (
+                            <li key={list.id}>
+                                <Link to={`/${list.id}`}>{list.text}</Link>
+                            </li>
+                        ))}
                     </ul>
                 </div>
             </div>

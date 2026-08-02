@@ -66,9 +66,14 @@
         display: flex;
         justify-content: space-evenly;
         margin: 1rem;
+
         button {
             margin-top: 0.2rem;
         }
+    }
+
+    select {
+        margin: 0.5rem;
     }
 }
 
