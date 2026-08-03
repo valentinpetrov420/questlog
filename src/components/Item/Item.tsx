@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import StatusMessage from "../StatusMessage/StatusMessage.js";
+import PopOver from "../PopOver/PopOver.js";
 import './Item.css';
 
 import { useNodes } from "../../contexts/NodesContext.js";
@@ -50,8 +51,6 @@ export default function Item(props: ItemProps) {
 
     const highlightedTodoId = props.highlightedTodoId;
 
-    const [menuOpen, setMenuOpen] = useState(false);
-
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -61,20 +60,6 @@ export default function Item(props: ItemProps) {
         }
     }, [props.autoFocus, props.text]);
 
-    const popoverRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (!menuOpen) return;
-
-        function handleClickOutside(event: MouseEvent) {
-            if (popoverRef.current && !popoverRef.current.contains(event.target as Element)) {
-                setMenuOpen(false);
-            }
-        }
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [menuOpen]);
 
     function cancelEdit() {
         setEditingTodo(false);
@@ -114,8 +99,6 @@ export default function Item(props: ItemProps) {
         setDraftTitleTodo(props.text);
     }
     async function handleDeleteClick() {
-        setMenuOpen(false);
-
         if (disabled) {
             return;
         }
@@ -151,7 +134,6 @@ export default function Item(props: ItemProps) {
         }
 
         setPending(true);
-        setMenuOpen(false);
 
         const error = await handlePromoteTodo(props.id);
 
@@ -162,8 +144,7 @@ export default function Item(props: ItemProps) {
         setError("");
         setPending(false);
     }
-
-    //todo: popover code duplication can be fixed if i reduce it to a component
+    
     if (props.type === "heading") {
         return <li ref={setNodeRef} style={style} {...attributes}>
             <StatusMessage text={error} />
@@ -191,14 +172,10 @@ export default function Item(props: ItemProps) {
                 }
 
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
-                    <div className="item-popover-wrapper" ref={popoverRef}>
-                        <button disabled={disabled}
-                            onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
-                        {menuOpen && (
-                            <div className="item-popover">
-                                <button onClick={handleDeleteClick}>Delete</button>
-                            </div>
-                        )}
+                    <div className="item-popover-wrapper">
+                        <PopOver disabled={disabled}>
+                            <button onClick={handleDeleteClick}>Delete</button>
+                        </PopOver>
                     </div>
                 </div> :
                     <div></div>
@@ -213,18 +190,13 @@ export default function Item(props: ItemProps) {
                 {props.isOwner && <span className="drag-button" {...listeners}>⠿</span>}
                 <Link className="todo-item-text" to={`/${props.id}`}>{props.text}</Link>
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
-                    <div className="item-popover-wrapper" ref={popoverRef}>
-                        <button disabled={disabled}
-                            onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
-                        {menuOpen && (
-                            <div className="item-popover">
-                                <button onClick={handleDeleteClick}>Delete</button>
-                            </div>
-                        )}
+                    <div className="item-popover-wrapper">
+                        <PopOver disabled={disabled}>
+                            <button onClick={handleDeleteClick}>Delete</button>
+                        </PopOver>
                     </div>
                 </div> :
-                    <div></div>
-                }
+                    <div></div>}
             </div>
         </li>
     }
@@ -235,14 +207,10 @@ export default function Item(props: ItemProps) {
                 {props.isOwner && <span className="drag-button" {...listeners}>⠿</span>}
                 <hr className="separator-hr" />
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
-                    <div className="item-popover-wrapper" ref={popoverRef}>
-                        <button disabled={disabled}
-                            onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
-                        {menuOpen && (
-                            <div className="item-popover">
-                                <button onClick={handleDeleteClick}>Delete</button>
-                            </div>
-                        )}
+                    <div className="item-popover-wrapper">
+                        <PopOver disabled={disabled}>
+                            <button onClick={handleDeleteClick}>Delete</button>
+                        </PopOver>
                     </div>
                 </div> :
                     <div></div>
@@ -287,15 +255,11 @@ export default function Item(props: ItemProps) {
             }
 
             {!isEditingTodo && props.isOwner ? <div className="todo-actions">
-                <div className="item-popover-wrapper" ref={popoverRef}>
-                    <button disabled={disabled}
-                        onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
-                    {menuOpen && (
-                        <div className="item-popover">
-                            <button onClick={handleDeleteClick}>Delete</button>
-                            <button onClick={handlePromoteToPageClick}>Promote to Page</button>
-                        </div>
-                    )}
+                <div className="item-popover-wrapper">
+                    <PopOver disabled={disabled}>
+                        <button onClick={handleDeleteClick}>Delete</button>
+                        <button onClick={handlePromoteToPageClick}>Promote to Page</button>
+                    </PopOver>
                 </div>
             </div> :
                 <div></div>
