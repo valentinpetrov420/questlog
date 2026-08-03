@@ -94,6 +94,9 @@ export default function NodePage() {
         <div className="list-page-container">
             {canShowBreadcrumbs ? <div>
                 <ul className="breadcrumb-tree">
+                    <li>
+                        <Link className="crumb" to={`/`}>Dashboard</Link>
+                    </li>
                     {breadcrumbs.map(crumb => {
                         return (
                             <li>
