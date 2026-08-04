@@ -1,6 +1,7 @@
 import Item from "../Item/Item.js"
 import { Node } from "../../types/Node.js";
 import StatusMessage from "../StatusMessage/StatusMessage.js";
+import PopOver from "../PopOver/PopOver.js";
 import { useEffect, useRef, useState } from "react";
 import './List.css';
 import { Link, useNavigate } from "react-router-dom";
@@ -102,40 +103,6 @@ export default function List(props: ListProps) {
         wasDisabled.current = disabled;
     }, [disabled, shouldFocusNewTodo]);
 
-    const [menuOpen, setMenuOpen] = useState(false);
-
-    const popoverRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (!menuOpen) return;
-
-        function handleClickOutside(event: MouseEvent) {
-            if (popoverRef.current && !popoverRef.current.contains(event.target as Element)) {
-                setMenuOpen(false);
-            }
-        }
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [menuOpen]);
-
-    const [itemMenuOpen, setItemMenuOpen] = useState(false);
-
-    const itemPopoverRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (!itemMenuOpen) return;
-
-        function handleClickOutside(event: MouseEvent) {
-            if (itemPopoverRef.current && !itemPopoverRef.current.contains(event.target as Element)) {
-                setItemMenuOpen(false);
-            }
-        }
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [itemMenuOpen]);
-
     const isArchived = props.isArchived;
     const isPublic = props.isPublic;
     const isOwner = user?.uid === props.ownerId;
@@ -210,7 +177,6 @@ export default function List(props: ListProps) {
             return;
         }
 
-        setMenuOpen(false);
         setDeletePending(true);
 
         try {
@@ -235,23 +201,15 @@ export default function List(props: ListProps) {
     }
     function handleCopyLink() {
         navigator.clipboard.writeText(window.location.href);
-
-        setMenuOpen(false);
     }
     function handleRestoreClick() {
         handleRestoreNode(props.id);
-
-        setMenuOpen(false);
     }
     function handleArchiveClick() {
         handleArchiveNode(props.id);
-
-        setMenuOpen(false);
     }
     function handlePinClick() {
         handlePin(props.id);
-
-        setMenuOpen(false);
     }
     async function handleCreateSeparatorClick(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
@@ -281,9 +239,6 @@ export default function List(props: ListProps) {
     async function handleCreateHeadingClick(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
 
-        //todo: newly created headings aren't autofocused, possibly might need id from the firestore request
-        // passed down from context
-
         if (deletePending) {
             return;
         }
@@ -303,8 +258,6 @@ export default function List(props: ListProps) {
                 setNewNodeId(result.id);
             }
 
-            setItemMenuOpen(false);
-
             setError("");
             setAddTodoStatus(false);
             setValue("");
@@ -319,7 +272,6 @@ export default function List(props: ListProps) {
         }
 
         setVisibilityPending(true);
-        setMenuOpen(false);
         const error = await handleVisibilityChange(props.id);
 
         if (error) {
@@ -369,11 +321,8 @@ export default function List(props: ListProps) {
     return (
         <div className="list-component" ref={setNodeRef} style={style} {...attributes}>
             {isOwner ? <div className="list-actions">
-                <div className="list-popover-wrapper" ref={popoverRef}>
-                    <button
-                        disabled={disabled}
-                        onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
-                    {menuOpen && (
+                <div className="list-popover-wrapper">
+                    <PopOver type="actions" disabled={disabled}>
                         <div className="list-popover">
                             {isOwner && !isArchived ? <button onClick={handleArchiveClick}>Archive</button> : ""}
                             {isOwner && isArchived ? <button onClick={handleRestoreClick}>Restore</button> : ""}
@@ -382,7 +331,7 @@ export default function List(props: ListProps) {
                             {isOwner ? <button onClick={handleDeleteClick}>Delete</button> : ""}
                             {props.isNodePage ? <button onClick={handleCopyLink}>Copy link</button> : ""}
                         </div>
-                    )}
+                    </PopOver>
                 </div>
                 {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners}>⠿</span> : ""}
                 <div className="fake-actions-space"></div>
@@ -438,18 +387,13 @@ export default function List(props: ListProps) {
             </DndContext>
             {isOwner ?
                 <form className="list-form" onSubmit={handleSubmit}>
-                    <div className="item-options-popover-wrapper" ref={itemPopoverRef}>
-                        <button
-                            className="item-create-options"
-                            disabled={disabled}
-                            type="button"
-                            onClick={() => setItemMenuOpen(!itemMenuOpen)}>+</button>
-                        {itemMenuOpen && (
+                    <div className="item-options-popover-wrapper">
+                        <PopOver type="create" disabled={disabled}>
                             <div className="item-options-popover">
                                 {isOwner ? <button disabled={disabled} onClick={handleCreateSeparatorClick}>Add Separator</button> : ""}
                                 {isOwner ? <button disabled={disabled} onClick={handleCreateHeadingClick}>Add Heading</button> : ""}
                             </div>
-                        )}
+                        </PopOver>
                     </div>
                     <div className="input-form-wrapper">
                         <StatusMessage text={addTodoStatus ? error : ""} />

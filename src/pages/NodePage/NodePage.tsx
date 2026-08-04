@@ -22,6 +22,7 @@ export default function NodePage() {
 
     const canShowBreadcrumbs = !!nodeFromState;
 
+    //todo: current page in breadcrumb tree should not be a link
     const breadcrumbs = useMemo(() => {
         if (!nodeFromState) { return [] };
 

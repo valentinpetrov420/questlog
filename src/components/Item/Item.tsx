@@ -173,7 +173,7 @@ export default function Item(props: ItemProps) {
 
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                     <div className="item-popover-wrapper">
-                        <PopOver disabled={disabled}>
+                        <PopOver type="actions" disabled={disabled}>
                             <button onClick={handleDeleteClick}>Delete</button>
                         </PopOver>
                     </div>
@@ -191,7 +191,7 @@ export default function Item(props: ItemProps) {
                 <Link className="todo-item-text" to={`/${props.id}`}>{props.text}</Link>
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                     <div className="item-popover-wrapper">
-                        <PopOver disabled={disabled}>
+                        <PopOver type="actions" disabled={disabled}>
                             <button onClick={handleDeleteClick}>Delete</button>
                         </PopOver>
                     </div>
@@ -208,7 +208,7 @@ export default function Item(props: ItemProps) {
                 <hr className="separator-hr" />
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                     <div className="item-popover-wrapper">
-                        <PopOver disabled={disabled}>
+                        <PopOver type="actions" disabled={disabled}>
                             <button onClick={handleDeleteClick}>Delete</button>
                         </PopOver>
                     </div>
@@ -256,7 +256,7 @@ export default function Item(props: ItemProps) {
 
             {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                 <div className="item-popover-wrapper">
-                    <PopOver disabled={disabled}>
+                    <PopOver type="actions" disabled={disabled}>
                         <button onClick={handleDeleteClick}>Delete</button>
                         <button onClick={handlePromoteToPageClick}>Promote to Page</button>
                     </PopOver>
