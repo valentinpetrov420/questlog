@@ -16,32 +16,6 @@
 		margin-bottom: 0;
 		line-height: 1.5;
 	}
-
-	.todo-actions {
-		button {
-			cursor: pointer;
-
-			color: var(--text);
-			background: transparent;
-			border: 1px solid transparent;
-			border-radius: 6px;
-			opacity: 0.3;
-
-			&:hover {
-				transition: opacity 0.2s ease;
-				opacity: 1;
-			}
-
-			&:active {
-				transform: scale(0.96);
-			}
-
-			&:disabled {
-				cursor: not-allowed;
-				opacity: 0.15;
-			}
-		}
-	}
 }
 
 .todo-wrapper.page {

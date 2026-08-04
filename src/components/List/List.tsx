@@ -321,18 +321,14 @@ export default function List(props: ListProps) {
     return (
         <div className="list-component" ref={setNodeRef} style={style} {...attributes}>
             {isOwner ? <div className="list-actions">
-                <div className="list-popover-wrapper">
-                    <PopOver type="actions" disabled={disabled}>
-                        <div className="list-popover">
-                            {isOwner && !isArchived ? <button onClick={handleArchiveClick}>Archive</button> : ""}
-                            {isOwner && isArchived ? <button onClick={handleRestoreClick}>Restore</button> : ""}
-                            {isOwner ? !props.isNodePage && <button onClick={handlePinClick}>Pin</button> : ""}
-                            {isOwner ? props.isNodePage && <button disabled={visbilityPending} onClick={handleVisibility}>{isPublic ? "Change to Private" : "Change to Public"}</button> : ""}
-                            {isOwner ? <button onClick={handleDeleteClick}>Delete</button> : ""}
-                            {props.isNodePage ? <button onClick={handleCopyLink}>Copy link</button> : ""}
-                        </div>
-                    </PopOver>
-                </div>
+                <PopOver type="actions" disabled={disabled}>
+                    {isOwner && !isArchived ? <button onClick={handleArchiveClick}>Archive</button> : ""}
+                    {isOwner && isArchived ? <button onClick={handleRestoreClick}>Restore</button> : ""}
+                    {isOwner ? !props.isNodePage && <button onClick={handlePinClick}>Pin</button> : ""}
+                    {isOwner ? props.isNodePage && <button disabled={visbilityPending} onClick={handleVisibility}>{isPublic ? "Change to Private" : "Change to Public"}</button> : ""}
+                    {isOwner ? <button onClick={handleDeleteClick}>Delete</button> : ""}
+                    {props.isNodePage ? <button onClick={handleCopyLink}>Copy link</button> : ""}
+                </PopOver>
                 {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners}>⠿</span> : ""}
                 <div className="fake-actions-space"></div>
             </div> : ""}
@@ -387,14 +383,10 @@ export default function List(props: ListProps) {
             </DndContext>
             {isOwner ?
                 <form className="list-form" onSubmit={handleSubmit}>
-                    <div className="item-options-popover-wrapper">
-                        <PopOver type="create" disabled={disabled}>
-                            <div className="item-options-popover">
-                                {isOwner ? <button disabled={disabled} onClick={handleCreateSeparatorClick}>Add Separator</button> : ""}
-                                {isOwner ? <button disabled={disabled} onClick={handleCreateHeadingClick}>Add Heading</button> : ""}
-                            </div>
-                        </PopOver>
-                    </div>
+                    <PopOver type="create" disabled={disabled}>
+                        {isOwner ? <button disabled={disabled} onClick={handleCreateSeparatorClick}>Add Separator</button> : ""}
+                        {isOwner ? <button disabled={disabled} onClick={handleCreateHeadingClick}>Add Heading</button> : ""}
+                    </PopOver>
                     <div className="input-form-wrapper">
                         <StatusMessage text={addTodoStatus ? error : ""} />
                         <input

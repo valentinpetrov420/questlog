@@ -22,59 +22,9 @@
 			margin-left: 1rem;
 		}
 	}
-
-
-	.list-popover-wrapper {
-		position: relative;
-
-		.list-popover {
-			position: absolute;
-			display: flex;
-			flex-direction: column;
-			left: 0;
-			top: 100%;
-			background: var(--bg);
-			border: 1px solid var(--border-color);
-			border-radius: 6px;
-			z-index: 10;
-			width: 10rem;
-		}
-
-		button {
-			color: var(--text);
-			cursor: pointer;
-			background: transparent;
-			border: 1px solid transparent;
-			border-radius: 6px;
-			opacity: 1;
-			margin: 0.5rem;
-
-			&:disabled {
-				opacity: 0.6;
-				cursor: not-allowed;
-			}
-		}
-	}
 }
 
 .list-actions {
-	display: flex;
-	justify-content: space-between;
-	margin: 1rem;
-
-	button {
-		color: var(--text);
-		background: transparent;
-		border: 1px solid transparent;
-		border-radius: 6px;
-		opacity: 0.3;
-
-		&:disabled {
-			opacity: 0.6;
-			cursor: not-allowed;
-		}
-	}
-
 	.drag-button {
 		margin-top: 0.5rem;
 	}
