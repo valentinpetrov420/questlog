@@ -11,6 +11,8 @@ Built as a daily-iterated React project with Firebase as the backend.
 - Google OAuth authentication.
 - Full CRUD for nodes (pages and tasks).
 - Flat node collection with parentId relationships, hydrated client-side.
+- Search and filtering.
+- Sidebar nvaigation.
 - Network error handling for list creation, edits and deletion.
 - Shareable public node URLs, visibility toggle per node.
 - Multiple node types beyond todo (heading, separator, others in the future).
@@ -61,14 +63,6 @@ npm run dev
 
 - Firestore offline persistence to reduce refresh traffic.
 - Parent node updatedAt propagation when children are mutated.
-
-## Navigation
-
-- Sidebar replacing dashboard grid when nested pages land.
-
-## Features
-
-- Search and filtering.
 
 ## DevPanel
 
