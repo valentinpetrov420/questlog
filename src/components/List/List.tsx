@@ -321,7 +321,10 @@ export default function List(props: ListProps) {
     return (
         <div className="list-component" ref={setNodeRef} style={style} {...attributes}>
             {isOwner ? <div className="list-actions">
-                <PopOver type="actions" disabled={disabled}>
+                <PopOver 
+                    type="actions" 
+                    align="left"
+                    disabled={disabled}>
                     {isOwner && !isArchived ? <button onClick={handleArchiveClick}>Archive</button> : ""}
                     {isOwner && isArchived ? <button onClick={handleRestoreClick}>Restore</button> : ""}
                     {isOwner ? !props.isNodePage && <button onClick={handlePinClick}>Pin</button> : ""}
@@ -383,7 +386,10 @@ export default function List(props: ListProps) {
             </DndContext>
             {isOwner ?
                 <form className="list-form" onSubmit={handleSubmit}>
-                    <PopOver type="create" disabled={disabled}>
+                    <PopOver 
+                    type="create"
+                    align="left"
+                    disabled={disabled}>
                         {isOwner ? <button disabled={disabled} onClick={handleCreateSeparatorClick}>Add Separator</button> : ""}
                         {isOwner ? <button disabled={disabled} onClick={handleCreateHeadingClick}>Add Heading</button> : ""}
                     </PopOver>

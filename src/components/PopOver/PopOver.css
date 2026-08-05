@@ -16,6 +16,14 @@
         z-index: 10005;
     }
 
+    .item-popover.left {
+        left: 0;
+    }
+
+    .item-popover.right {
+        right: 0;
+    }
+
     button {
         align-items: center;
         cursor: pointer;

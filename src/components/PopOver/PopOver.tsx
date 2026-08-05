@@ -2,12 +2,13 @@ import { useRef, useState, useEffect } from "react";
 import './PopOver.css';
 
 type PopoverProps = {
-    type: "create" | "actions"
+    type: "create" | "actions";
+    align: "left" | "right";
     disabled?: boolean;
     children: React.ReactNode;
 }
 
-export default function PopOver({type, disabled, children }: PopoverProps) {
+export default function PopOver({type, align, disabled, children }: PopoverProps) {
     const [menuOpen, setMenuOpen] = useState(false);
     const popoverRef = useRef<HTMLDivElement>(null);
 
@@ -38,7 +39,8 @@ export default function PopOver({type, disabled, children }: PopoverProps) {
             disabled={disabled} 
             onClick={() => setMenuOpen(!menuOpen)}>{symbol}</button>
             {menuOpen && (
-                <div className="item-popover" onClick={() => setMenuOpen(false)}>
+                <div className= {`item-popover ${align}`} 
+                onClick={() => setMenuOpen(false)}>
                     {children}
                 </div>
             )}
