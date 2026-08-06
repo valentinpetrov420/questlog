@@ -65,7 +65,7 @@ export default function List(props: ListProps) {
 
     const [titlePending, setTitlePending] = useState(false);
 
-    const [visbilityPending, setVisibilityPending] = useState(false);
+    const [visibilityPending, setVisibilityPending] = useState(false);
 
     const [addTodoStatus, setAddTodoStatus] = useState<boolean | null>(null);
     const [titleStatus, setTitleStatus] = useState<boolean | null>(null);
@@ -328,7 +328,7 @@ export default function List(props: ListProps) {
                     {isOwner && !isArchived ? <button onClick={handleArchiveClick}>Archive</button> : ""}
                     {isOwner && isArchived ? <button onClick={handleRestoreClick}>Restore</button> : ""}
                     {isOwner ? !props.isNodePage && <button onClick={handlePinClick}>Pin</button> : ""}
-                    {isOwner ? props.isNodePage && <button disabled={visbilityPending} onClick={handleVisibility}>{isPublic ? "Change to Private" : "Change to Public"}</button> : ""}
+                    {isOwner ? props.isNodePage && <button disabled={visibilityPending} onClick={handleVisibility}>{isPublic ? "Change to Private" : "Change to Public"}</button> : ""}
                     {isOwner ? <button onClick={handleDeleteClick}>Delete</button> : ""}
                     {props.isNodePage ? <button onClick={handleCopyLink}>Copy link</button> : ""}
                 </PopOver>

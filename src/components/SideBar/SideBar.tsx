@@ -8,6 +8,7 @@ import { useNodes } from "../../contexts/NodesContext";
 import { useTheme } from "../../contexts/ThemeContext";
 
 import PatchNotesModal from "../PatchNotesModal/PatchNotesModal";
+import PopOver from "../PopOver/PopOver";
 
 type SideBarProps = {
     user: User | null;
@@ -33,7 +34,17 @@ export default function SideBar(props: SideBarProps) {
 
     const {
         flatNodes,
+
+        handleArchiveNode,
+        handleRestoreNode,
+        handleVisibilityChange,
+
+        handleDeleteNode,
+
     } = useNodes();
+
+    const [deletePendingIds, setDeletePendingIds] = useState<Set<string>>(new Set());
+    const [visibilityPendingIds, setVisibilityPendingIds] = useState<Set<string>>(new Set());
 
     const isArchivedView = sortMode === 'archived';
 
@@ -86,6 +97,53 @@ export default function SideBar(props: SideBarProps) {
     function cancelSearch() {
         setSearchValue("");
         inputRef.current?.blur();
+    }
+
+    async function handleDeleteClick(id: string) {
+        setDeletePendingIds(prev => new Set(prev).add(id));
+        try {
+            const error = await handleDeleteNode(id);
+            if (error) {
+                //todo: console log is temporary, should be StatusMessage
+                console.log(error.message);
+            }
+        } finally {
+            setDeletePendingIds(prev => {
+                const next = new Set(prev);
+                next.delete(id);
+                return next;
+            });
+        }
+    }
+
+    async function handleVisibilityClick(id: string) {
+        setVisibilityPendingIds(prev => new Set(prev).add(id));
+        try {
+            const error = await handleVisibilityChange(id);
+            if (error) {
+                //todo: console log is temporary, should be StatusMessage
+                console.log(error.message);
+            }
+        } finally {
+            setVisibilityPendingIds(prev => {
+                const next = new Set(prev);
+                next.delete(id);
+                return next;
+            });
+        }
+    }
+
+    function handleArchiveClick(id: string) {
+        handleArchiveNode(id);
+    }
+
+    function handleRestoreClick(id: string) {
+        handleRestoreNode(id);
+    }
+
+    function handleCopyLink(id: string) {
+        const url = `${window.location.origin}/${id}`;
+        navigator.clipboard.writeText(url);
     }
 
     async function handleLogout() {
@@ -147,6 +205,16 @@ export default function SideBar(props: SideBarProps) {
                         {sortedLists.map(list => (
                             <li key={list.id}>
                                 <Link to={`/${list.id}`}>{list.text}</Link>
+                                <PopOver
+                                    type="actions"
+                                    align="right"
+                                    disabled={deletePendingIds.has(list.id)}>
+                                    {!list.archived ? <button onClick={() => handleArchiveClick(list.id)}>Archive</button> : ""}
+                                    {list.archived ? <button onClick={() => handleRestoreClick(list.id)}>Restore</button> : ""}
+                                    <button disabled={visibilityPendingIds.has(list.id)} onClick={() => handleVisibilityClick(list.id)}>{list.isPublic ? "Change to Private" : "Change to Public"}</button>
+                                    <button onClick={() => handleDeleteClick(list.id)}>Delete</button>
+                                    {list.isPublic ? <button disabled={visibilityPendingIds.has(list.id)} onClick={() => handleCopyLink(list.id)}>Copy link</button> : ""}
+                                </PopOver>
                             </li>
                         ))}
                     </ul>
