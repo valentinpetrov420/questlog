@@ -81,7 +81,11 @@ export default function ListView(props: ListViewProps) {
         }
 
         const sensors = useSensors(
-            useSensor(PointerSensor)
+            useSensor(PointerSensor, {
+                activationConstraint: {
+                    distance: 8,
+                },
+            })
         );
 
         function handleDragEnd(event: DragEndEvent) {

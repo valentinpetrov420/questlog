@@ -292,12 +292,16 @@ export default function List(props: ListProps) {
     }
 
     const sensors = useSensors(
-        useSensor(PointerSensor)
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        })
     );
 
     function handleDragEnd(event: DragEndEvent) {
-        
-        if(event.over === null){
+
+        if (event.over === null) {
             return;
         }
 
@@ -377,7 +381,7 @@ export default function List(props: ListProps) {
             </form>
                 : <h2 className="list-title">Title: {isOwner ? <span onClick={handleEditTitle}>{props.text}<a>✎</a></span> : <p>{props.text}</p>} </h2>}
             <DndContext sensors={sensors}
-            onDragEnd={handleDragEnd}>
+                onDragEnd={handleDragEnd}>
                 <SortableContext
                     items={(props.listItems ?? []).map(i => i.id)}
                     strategy={verticalListSortingStrategy}

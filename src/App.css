@@ -1,6 +1,6 @@
 #app {
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .lists-container {
@@ -13,6 +13,22 @@
 	margin: 1rem;
 }
 
-.visibility-dropdown{
+.visibility-dropdown {
 	margin-left: 1rem;
+}
+
+
+.drag-button {
+	cursor: grab;
+	margin-top: 0.2rem;
+	touch-action: none;
+	-webkit-user-select: none;
+	user-select: none
+}
+
+@media (max-width: 600px) {
+	.drag-button {
+		padding: 0.5rem;
+		font-size: 1.3rem;
+	}
 }
