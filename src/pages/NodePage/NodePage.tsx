@@ -22,7 +22,6 @@ export default function NodePage() {
 
     const canShowBreadcrumbs = !!nodeFromState;
 
-    //todo: current page in breadcrumb tree should not be a link
     const breadcrumbs = useMemo(() => {
         if (!nodeFromState) { return [] };
 
@@ -99,12 +98,21 @@ export default function NodePage() {
                         <Link className="crumb" to={`/`}>Dashboard</Link>
                     </li>
                     {breadcrumbs.map(crumb => {
-                        return (
-                            <li>
-                                <p className="crumb-symbol">➜</p>
-                                <Link className="crumb" to={`/${crumb.id}`}>{crumb.text}</Link>
-                            </li>
-                        )
+                        if (crumb.id === nodeId) {
+                            return (
+                                <li key={crumb.id}>
+                                    <p className="crumb-symbol">➜</p>
+                                    <p className="crumb-current">{crumb.text}</p>
+                                </li>
+                            )
+                        } else {
+                            return (
+                                <li key={crumb.id}>
+                                    <p className="crumb-symbol">➜</p>
+                                    <Link className="crumb" to={`/${crumb.id}`}>{crumb.text}</Link>
+                                </li>
+                            )
+                        }
                     })}
                 </ul>
             </div> : ""}

@@ -34,6 +34,10 @@
     }
 }
 
+.crumb-current {
+    text-decoration: underline solid var(--text);
+}
+
 
 
 @media (max-width: 780px) {
