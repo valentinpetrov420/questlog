@@ -165,10 +165,13 @@ export default function SideBar(props: SideBarProps) {
         <div className="sidebar-options">
         </div>
         <div className="sidebar-navigation">
-            <button className="wrapped-nav-button" onClick={handleGoHome}>Dashboard</button>
+            {props.user ? <button className="wrapped-nav-button" onClick={handleGoHome}>Dashboard</button>
+                : <button className="wrapped-nav-button" onClick={handleLogin}>Login with Google</button>}
+
             <button className="wrapped-nav-button" onClick={togglePatchnotes}>Patch Notes</button>
             <button className="wrapped-nav-button" onClick={toggleDarkMode}>🌘 Dark Mode</button>
         </div>
+        {props.user ? 
         <div className="sidebar-lists">
             <div className="sidebar-lists-options">
                 <div className="sidebar-search-wrapper">
@@ -192,6 +195,7 @@ export default function SideBar(props: SideBarProps) {
                 </div>
             </div>
             <div className="sidebar-list-items">
+
                 <select value={sortMode} onChange={(event) => {
                     setSortMode(event.target.value);
                 }}>
@@ -220,7 +224,7 @@ export default function SideBar(props: SideBarProps) {
                     </ul>
                 </div>
             </div>
-        </div>
+        </div> : ""}
         {props.user ?
             <div className="sidebar-user-info">
                 <div className="sidebar-user-wrapper">
