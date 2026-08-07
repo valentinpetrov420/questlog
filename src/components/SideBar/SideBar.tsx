@@ -28,8 +28,6 @@ export default function SideBar(props: SideBarProps) {
 
     const { toggleDarkMode } = useTheme();
 
-    const [sortMode, setSortMode] = useState("newest");
-
     const [searchValue, setSearchValue] = useState("");
 
     const {
@@ -46,9 +44,17 @@ export default function SideBar(props: SideBarProps) {
     const [deletePendingIds, setDeletePendingIds] = useState<Set<string>>(new Set());
     const [visibilityPendingIds, setVisibilityPendingIds] = useState<Set<string>>(new Set());
 
+    const [sortMode, setSortMode] = useState(() => {
+        return localStorage.getItem("sidebar-sortmode") || "createdAt";
+    });
+
+    useEffect(() => {
+        localStorage.setItem("sidebar-sortmode", sortMode);
+    }, [sortMode]);
+
     const isArchivedView = sortMode === 'archived';
 
-    const activeLists = flatNodes.filter(list => list.parentId === null && !list.archived);
+    const activeLists = flatNodes.filter(list => list.parentId === null && !list.archived)
     const archivedLists = flatNodes.filter(list => list.parentId === null && list.archived);
 
     const baseLists = isArchivedView ? archivedLists : activeLists;
@@ -62,7 +68,7 @@ export default function SideBar(props: SideBarProps) {
         : [...visibleLists].sort((a, b) => {
             if (sortMode === 'createdAt') return b.createdAt - a.createdAt;
             if (sortMode === 'updatedAt') return b.updatedAt - a.updatedAt;
-            return a.text.localeCompare(b.text); // alphabetical
+            return a.text.localeCompare(b.text);
         });
 
     useEffect(() => {
@@ -171,60 +177,60 @@ export default function SideBar(props: SideBarProps) {
             <button className="wrapped-nav-button" onClick={togglePatchnotes}>Patch Notes</button>
             <button className="wrapped-nav-button" onClick={toggleDarkMode}>🌘 Dark Mode</button>
         </div>
-        {props.user ? 
-        <div className="sidebar-lists">
-            <div className="sidebar-lists-options">
-                <div className="sidebar-search-wrapper">
-                    <input type="text"
-                        value={searchValue}
-                        ref={inputRef}
-                        onKeyDown={(event) => {
-                            if (event.key === "Escape") {
-                                cancelSearch();
-                            }
-                        }}
-                        onChange={(event) => setSearchValue(event.target.value)}
-                        placeholder="Search lists..." />
-                    {searchValue ? (
-                        <button className="wrapped-nav-button"
-                            onMouseDown={(event) => {
-                                event.preventDefault();
+        {props.user ?
+            <div className="sidebar-lists">
+                <div className="sidebar-lists-options">
+                    <div className="sidebar-search-wrapper">
+                        <input type="text"
+                            value={searchValue}
+                            ref={inputRef}
+                            onKeyDown={(event) => {
+                                if (event.key === "Escape") {
+                                    cancelSearch();
+                                }
                             }}
-                            onClick={() => cancelSearch()}>X</button>
-                    ) : ""}
+                            onChange={(event) => setSearchValue(event.target.value)}
+                            placeholder="Search lists..." />
+                        {searchValue ? (
+                            <button className="wrapped-nav-button"
+                                onMouseDown={(event) => {
+                                    event.preventDefault();
+                                }}
+                                onClick={() => cancelSearch()}>X</button>
+                        ) : ""}
+                    </div>
                 </div>
-            </div>
-            <div className="sidebar-list-items">
+                <div className="sidebar-list-items">
 
-                <select value={sortMode} onChange={(event) => {
-                    setSortMode(event.target.value);
-                }}>
-                    <option value="createdAt">Newest</option>
-                    <option value="updatedAt">Last updated</option>
-                    <option value="alphabetical">Alphabetical</option>
-                    <option value="archived">Archived only</option>
-                </select>
-                <div className="sidebar-lists-container">
-                    <ul>
-                        {sortedLists.map(list => (
-                            <li key={list.id}>
-                                <Link to={`/${list.id}`}>{list.text}</Link>
-                                <PopOver
-                                    type="actions"
-                                    align="right"
-                                    disabled={deletePendingIds.has(list.id)}>
-                                    {!list.archived ? <button onClick={() => handleArchiveClick(list.id)}>Archive</button> : ""}
-                                    {list.archived ? <button onClick={() => handleRestoreClick(list.id)}>Restore</button> : ""}
-                                    <button disabled={visibilityPendingIds.has(list.id)} onClick={() => handleVisibilityClick(list.id)}>{list.isPublic ? "Change to Private" : "Change to Public"}</button>
-                                    <button onClick={() => handleDeleteClick(list.id)}>Delete</button>
-                                    {list.isPublic ? <button disabled={visibilityPendingIds.has(list.id)} onClick={() => handleCopyLink(list.id)}>Copy link</button> : ""}
-                                </PopOver>
-                            </li>
-                        ))}
-                    </ul>
+                    <select value={sortMode} onChange={(event) => {
+                        setSortMode(event.target.value);
+                    }}>
+                        <option value="createdAt">Newest</option>
+                        <option value="updatedAt">Last updated</option>
+                        <option value="alphabetical">Alphabetical</option>
+                        <option value="archived">Archived only</option>
+                    </select>
+                    <div className="sidebar-lists-container">
+                        <ul>
+                            {sortedLists.map(list => (
+                                <li key={list.id}>
+                                    <Link to={`/${list.id}`}>{list.text}</Link>
+                                    <PopOver
+                                        type="actions"
+                                        align="right"
+                                        disabled={deletePendingIds.has(list.id)}>
+                                        {!list.archived ? <button onClick={() => handleArchiveClick(list.id)}>Archive</button> : ""}
+                                        {list.archived ? <button onClick={() => handleRestoreClick(list.id)}>Restore</button> : ""}
+                                        <button disabled={visibilityPendingIds.has(list.id)} onClick={() => handleVisibilityClick(list.id)}>{list.isPublic ? "Change to Private" : "Change to Public"}</button>
+                                        <button onClick={() => handleDeleteClick(list.id)}>Delete</button>
+                                        {list.isPublic ? <button disabled={visibilityPendingIds.has(list.id)} onClick={() => handleCopyLink(list.id)}>Copy link</button> : ""}
+                                    </PopOver>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </div> : ""}
+            </div> : ""}
         {props.user ?
             <div className="sidebar-user-info">
                 <div className="sidebar-user-wrapper">
