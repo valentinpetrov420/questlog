@@ -10,7 +10,13 @@ import firestoreService from "../../api/services/firestoreService.js";
 import { useAuth } from "../../contexts/AuthContext.js";
 import { useNodes } from "../../contexts/NodesContext.js";
 
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import {
+    DndContext, DragEndEvent,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from "@dnd-kit/core";
+
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { arrayMove } from '@dnd-kit/sortable';
 
@@ -284,10 +290,21 @@ export default function List(props: ListProps) {
         setVisibilityPending(false);
 
     }
+
+    const sensors = useSensors(
+        useSensor(PointerSensor)
+    );
+
     function handleDragEnd(event: DragEndEvent) {
+        
+        if(event.over === null){
+            return;
+        }
+
         if (!props.listItems) {
             return;
         }
+
         const oldIndex = props.listItems.findIndex(item => item.id === event.active.id);
         const newIndex = props.listItems.findIndex(item => item.id === event.over?.id);
 
@@ -321,8 +338,8 @@ export default function List(props: ListProps) {
     return (
         <div className="list-component" ref={setNodeRef} style={style} {...attributes}>
             {isOwner ? <div className="list-actions">
-                <PopOver 
-                    type="actions" 
+                <PopOver
+                    type="actions"
                     align="left"
                     disabled={disabled}>
                     {isOwner && !isArchived ? <button onClick={handleArchiveClick}>Archive</button> : ""}
@@ -359,7 +376,8 @@ export default function List(props: ListProps) {
                 </h2>
             </form>
                 : <h2 className="list-title">Title: {isOwner ? <span onClick={handleEditTitle}>{props.text}<a>✎</a></span> : <p>{props.text}</p>} </h2>}
-            <DndContext onDragEnd={handleDragEnd}>
+            <DndContext sensors={sensors}
+            onDragEnd={handleDragEnd}>
                 <SortableContext
                     items={(props.listItems ?? []).map(i => i.id)}
                     strategy={verticalListSortingStrategy}
@@ -386,10 +404,10 @@ export default function List(props: ListProps) {
             </DndContext>
             {isOwner ?
                 <form className="list-form" onSubmit={handleSubmit}>
-                    <PopOver 
-                    type="create"
-                    align="left"
-                    disabled={disabled}>
+                    <PopOver
+                        type="create"
+                        align="left"
+                        disabled={disabled}>
                         {isOwner ? <button disabled={disabled} onClick={handleCreateSeparatorClick}>Add Separator</button> : ""}
                         {isOwner ? <button disabled={disabled} onClick={handleCreateHeadingClick}>Add Heading</button> : ""}
                     </PopOver>

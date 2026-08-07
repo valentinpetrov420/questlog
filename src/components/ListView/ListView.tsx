@@ -6,7 +6,13 @@ import { Node } from "../../types/Node";
 import firestoreService from "../../api/services/firestoreService";
 import { useNodes } from "../../contexts/NodesContext";
 
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import {
+    DndContext, DragEndEvent,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from "@dnd-kit/core";
+
 import { SortableContext } from '@dnd-kit/sortable';
 import { arrayMove } from '@dnd-kit/sortable';
 import { rectSortingStrategy } from '@dnd-kit/sortable';
@@ -74,6 +80,10 @@ export default function ListView(props: ListViewProps) {
                 break;
         }
 
+        const sensors = useSensors(
+            useSensor(PointerSensor)
+        );
+
         function handleDragEnd(event: DragEndEvent) {
             const oldIndex = sortedLists.findIndex(list => list.id === event.active.id);
             const newIndex = sortedLists.findIndex(list => list.id === event.over?.id);
@@ -105,6 +115,7 @@ export default function ListView(props: ListViewProps) {
 
 
         return <DndContext
+            sensors={sensors}
             modifiers={[restrictToParentElement]}
             onDragEnd={handleDragEnd} >
 

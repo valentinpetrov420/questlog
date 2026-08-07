@@ -54,6 +54,7 @@
 .drag-button {
 	cursor: grab;
 	margin-top: 0.2rem;
+	touch-action: none;
 }
 
 .item-checkbox {
