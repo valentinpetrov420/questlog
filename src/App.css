@@ -3,6 +3,12 @@
 	flex-direction: column;
 }
 
+.page-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
 .lists-container {
 	margin: 2rem;
 	margin-bottom: 0;

@@ -9,6 +9,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 
 import PatchNotesModal from "../PatchNotesModal/PatchNotesModal";
 import PopOver from "../PopOver/PopOver";
+import GoogleSignInButton from "../GoogleSignInButton/GoogleSignInButton";
 
 type SideBarProps = {
     user: User | null;
@@ -85,7 +86,7 @@ export default function SideBar(props: SideBarProps) {
 
     function handleGoHome() {
         if (!props.user) {
-            return;
+            navigate('/login')
         }
 
         navigate("/");
@@ -156,10 +157,6 @@ export default function SideBar(props: SideBarProps) {
         await props.logout();
         navigate("/login");
     }
-    async function handleLogin() {
-        await props.loginWithGoogle();
-        navigate("/");
-    }
 
 
     return <div className={`sidebar-wrapper ${props.menuOpen ? "open" : ""}`}>
@@ -171,9 +168,7 @@ export default function SideBar(props: SideBarProps) {
         <div className="sidebar-options">
         </div>
         <div className="sidebar-navigation">
-            {props.user ? <button className="wrapped-nav-button" onClick={handleGoHome}>Dashboard</button>
-                : <button className="wrapped-nav-button" onClick={handleLogin}>Login with Google</button>}
-
+            <button className="wrapped-nav-button" onClick={handleGoHome}>Dashboard</button>
             <button className="wrapped-nav-button" onClick={togglePatchnotes}>Patch Notes</button>
             <button className="wrapped-nav-button" onClick={toggleDarkMode}>🌘 Dark Mode</button>
         </div>
@@ -245,7 +240,7 @@ export default function SideBar(props: SideBarProps) {
                 </div>
                 <button className="login-button wrapped-nav-button" onClick={handleLogout}>Logout</button>
             </div>
-            : <button className="login-button wrapped-nav-button" onClick={handleLogin}>Sign in</button>
+            : <GoogleSignInButton/>
         }
     </div>
 }

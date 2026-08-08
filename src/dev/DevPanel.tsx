@@ -16,10 +16,9 @@ export default function DevPanel(props: DevPanelProps) {
     return <div className="devPanel">
 
         <button
+            disabled={true}
             onClick={async () => {
                 if (props.userId) {
-
-
                     console.log(await firestoreService.nodes.createNode(props.userId, {
                         type: "todo",
                         parentId: "K45SQVA1sKFE1zzwXMoz",
@@ -31,6 +30,7 @@ export default function DevPanel(props: DevPanelProps) {
             createNode()
         </button>
         <button
+            disabled={true}
             onClick={async () => {
                 console.log(nodes);
             }}>

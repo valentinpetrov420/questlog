@@ -20,7 +20,7 @@ import AppLayout from './AppLayout.js';
 
 
 export default function App() {
-	const { loginWithGoogle, user } = useAuth();
+	const { user } = useAuth();
 	const { theme } = useTheme();
 
 	return (
@@ -30,9 +30,7 @@ export default function App() {
 				<Routes>
 					<Route path="/login" element={
 						<PublicRoute>
-							<LoginPage
-								loginWithGoogle={loginWithGoogle}
-							/>
+							<LoginPage/>
 						</PublicRoute>
 					} />
 					<Route element={<AppLayout />}>

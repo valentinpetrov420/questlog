@@ -1,0 +1,30 @@
+.login-card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-direction: column;
+    gap: 2rem;
+    background-color: var(--list-bg);
+    text-align: center;
+    width: 70%;
+    align-self: center;
+
+    h1{
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .login-description {
+        width: 60%;
+    }
+}
+
+@media (max-width: 600px) {
+    .login-card-container {
+        width: 100%;
+        .login-description {
+            width: 80%;
+        }
+    }
+}

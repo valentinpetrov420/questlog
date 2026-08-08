@@ -82,7 +82,8 @@
 
 .sidebar-user-info {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-around;  
+    padding-bottom: 1rem;
 
     .sidebar-user-wrapper {
         display: flex;
