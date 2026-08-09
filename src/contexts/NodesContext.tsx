@@ -30,7 +30,7 @@ type NodesContextValue = {
     sortMode: string;
     setSortMode: React.Dispatch<React.SetStateAction<string>>;
 
-    handleCreateNode: (text: string, visibility: boolean) => Promise<ActionError | undefined>;
+    handleCreateNode: (text: string, visibility: boolean) => Promise<CreateNodeResult>;
     handleCreateChildNode: (text: string, parentId: string, type: Node["type"]) => Promise<CreateNodeResult>;
     //todo: handle failures of optimistic updates somehow, like a rollback,
     // because they return a result payload with a message; do something with it
@@ -92,8 +92,9 @@ export function NodesProvider({ children }: NodesProviderProps) {
     async function handleCreateNode(text: string, visibility: boolean) {
         if (!user) {
             return {
-                success: false,
-                message: "authentication error"
+                error: {
+                    message: "authentication error"
+                }
             };
         }
 
@@ -101,8 +102,9 @@ export function NodesProvider({ children }: NodesProviderProps) {
 
         if (!result.valid) {
             return {
-                success: false,
-                message: result.error
+                error: {
+                    message: result.error
+                }
             };
         }
 
@@ -138,9 +140,11 @@ export function NodesProvider({ children }: NodesProviderProps) {
             console.log("created node: ", text);
             console.log("created node with visibility: " + visibility);
 
-            return undefined;
+            return { id };
         } catch (error) {
-            return formatError(error, "Failed to create node", "createNode");
+            return {
+                error: formatError(error, "Failed to create node", "createNode")
+            }
         }
     }
 
@@ -173,7 +177,6 @@ export function NodesProvider({ children }: NodesProviderProps) {
                 text: result.value,
                 order,
             });
-
 
             setFlatNodes(prev => [
                 ...prev,

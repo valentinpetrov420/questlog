@@ -38,10 +38,10 @@ export default function CreateListForm() {
         const isPublic = draftVisibility === "public";
 
         try {
-            const error = await handleCreateNode(title, isPublic);
+            const result = await handleCreateNode(title, isPublic);
 
-            if (error) {
-                setError(error.message);
+            if (result.error) {
+                setError(result.error.message);
                 setStatus(true);
                 return;
             }

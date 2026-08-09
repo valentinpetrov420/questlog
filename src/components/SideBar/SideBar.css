@@ -56,6 +56,9 @@
 
 .sidebar-lists {
     .sidebar-list-items {
+        display: flex;
+        flex-direction: column;
+
         .sidebar-lists-container {
             overflow-y: auto;
             overflow-x: hidden;
@@ -76,13 +79,20 @@
     }
 
     select {
-        margin: 0.5rem;
+        margin: 1rem;
+        width: 45%;
+    }
+
+    .sidebar-new-page {
+        margin-left: 1rem;
+        font-size: 1.2rem;
+        font-weight: bold;
     }
 }
 
 .sidebar-user-info {
     display: flex;
-    justify-content: space-around;  
+    justify-content: space-around;
     padding-bottom: 1rem;
 
     .sidebar-user-wrapper {

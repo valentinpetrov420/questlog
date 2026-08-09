@@ -1,4 +1,4 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 
 import { User } from "firebase/auth";
@@ -10,6 +10,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import PatchNotesModal from "../PatchNotesModal/PatchNotesModal";
 import PopOver from "../PopOver/PopOver";
 import GoogleSignInButton from "../GoogleSignInButton/GoogleSignInButton";
+import StatusMessage from "../StatusMessage/StatusMessage";
 
 type SideBarProps = {
     user: User | null;
@@ -34,6 +35,8 @@ export default function SideBar(props: SideBarProps) {
     const {
         flatNodes,
 
+        handleCreateNode,
+
         handleArchiveNode,
         handleRestoreNode,
         handleVisibilityChange,
@@ -41,6 +44,11 @@ export default function SideBar(props: SideBarProps) {
         handleDeleteNode,
 
     } = useNodes();
+
+    const [newPagePending, setNewPagePending] = useState(false);
+    const [newPageStatus, setNewPageStatus] = useState(false);
+
+    const [error, setError] = useState("");
 
     const [deletePendingIds, setDeletePendingIds] = useState<Set<string>>(new Set());
     const [visibilityPendingIds, setVisibilityPendingIds] = useState<Set<string>>(new Set());
@@ -83,6 +91,7 @@ export default function SideBar(props: SideBarProps) {
     }, []);
 
     const navigate = useNavigate();
+    const { nodeId } = useParams();
 
     function handleGoHome() {
         if (!props.user) {
@@ -106,7 +115,29 @@ export default function SideBar(props: SideBarProps) {
         inputRef.current?.blur();
     }
 
+    async function handleNewPage(){
+        setNewPagePending(true);
+
+        try {
+            const result = await handleCreateNode("New Page", false);
+
+            if (result.error) {
+                setError(result.error.message);
+                setNewPageStatus(true);
+                return;
+            }
+
+            setError("");
+            setNewPageStatus(false);
+
+            navigate(`/${result.id}`);
+        } finally {
+            setNewPagePending(false);
+        }
+    }
+
     async function handleDeleteClick(id: string) {
+        console.log(location);
         setDeletePendingIds(prev => new Set(prev).add(id));
         try {
             const error = await handleDeleteNode(id);
@@ -114,6 +145,11 @@ export default function SideBar(props: SideBarProps) {
                 //todo: console log is temporary, should be StatusMessage
                 console.log(error.message);
             }
+
+            if(nodeId === id){
+                navigate('/');
+            }
+
         } finally {
             setDeletePendingIds(prev => {
                 const next = new Set(prev);
@@ -205,6 +241,11 @@ export default function SideBar(props: SideBarProps) {
                         <option value="alphabetical">Alphabetical</option>
                         <option value="archived">Archived only</option>
                     </select>
+                    {newPageStatus && <StatusMessage text={error}></StatusMessage>}
+                    <button className="wrapped-nav-button sidebar-new-page"
+                        disabled={newPagePending}
+                        onClick={handleNewPage}>+ New Page</button>
+
                     <div className="sidebar-lists-container">
                         <ul>
                             {sortedLists.map(list => (
@@ -240,7 +281,7 @@ export default function SideBar(props: SideBarProps) {
                 </div>
                 <button className="login-button wrapped-nav-button" onClick={handleLogout}>Logout</button>
             </div>
-            : <GoogleSignInButton/>
+            : <GoogleSignInButton />
         }
     </div>
 }
