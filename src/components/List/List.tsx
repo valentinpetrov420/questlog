@@ -25,6 +25,7 @@ import { CSS } from '@dnd-kit/utilities';
 
 type ListProps = {
     isNodePage: boolean,
+    newParentId?: string,
 
     key: string
     id: string,
@@ -77,6 +78,24 @@ export default function List(props: ListProps) {
     const [titleStatus, setTitleStatus] = useState<boolean | null>(null);
 
     const [error, setError] = useState("");
+
+    const [shouldFocusTitle, setShouldFocusTitle] = useState(props.id === props.newParentId);
+    const titleInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (shouldFocusTitle) {
+            setDraftTitle(props.text);
+            setEditing(true);
+        }
+    }, [shouldFocusTitle, props.text]);
+
+    useEffect(() => {
+        if (isEditing && shouldFocusTitle) {
+            titleInputRef.current?.focus();
+            titleInputRef.current?.select();
+            setShouldFocusTitle(false);
+        }
+    }, [isEditing, shouldFocusTitle]);
 
     const [newNodeId, setNewNodeId] = useState<string | null>(null);
 
@@ -363,6 +382,7 @@ export default function List(props: ListProps) {
                     <div className="input-form-wrapper">
                         <input
                             autoFocus
+                            ref={titleInputRef}
                             disabled={titlePending}
                             value={draftTitle}
                             onChange={(event) => setDraftTitle(event.target.value)}

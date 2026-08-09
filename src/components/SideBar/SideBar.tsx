@@ -115,7 +115,7 @@ export default function SideBar(props: SideBarProps) {
         inputRef.current?.blur();
     }
 
-    async function handleNewPage(){
+    async function handleNewPage() {
         setNewPagePending(true);
 
         try {
@@ -130,14 +130,15 @@ export default function SideBar(props: SideBarProps) {
             setError("");
             setNewPageStatus(false);
 
-            navigate(`/${result.id}`);
+            navigate(`/${result.id}`, {
+                state: { newParentId: result.id }
+            });
         } finally {
             setNewPagePending(false);
         }
     }
 
     async function handleDeleteClick(id: string) {
-        console.log(location);
         setDeletePendingIds(prev => new Set(prev).add(id));
         try {
             const error = await handleDeleteNode(id);
@@ -146,7 +147,7 @@ export default function SideBar(props: SideBarProps) {
                 console.log(error.message);
             }
 
-            if(nodeId === id){
+            if (nodeId === id) {
                 navigate('/');
             }
 

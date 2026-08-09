@@ -1,13 +1,14 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import { Node } from "../../types/Node.js";
 
 import { useNodes } from "../../contexts/NodesContext.js";
-import List from "../../components/List/List.js";
+
 import { useEffect, useState, useMemo } from "react";
 import './NodePage.css';
 
 import firestoreService from '../../api/services/firestoreService.js';
 import SkeletonPage from "../SkeletonPage/SkeletonPage.js";
+import List from "../../components/List/List.js";
 
 export default function NodePage() {
     const [node, setNode] = useState<Node | null>(null);
@@ -19,6 +20,9 @@ export default function NodePage() {
     } = useNodes();
 
     const nodeFromState = flatNodes.find(n => n.id === nodeId);
+
+    const location = useLocation();
+    const newParentId = location.state?.newParentId ?? false;
 
     const canShowBreadcrumbs = !!nodeFromState;
 
@@ -121,6 +125,7 @@ export default function NodePage() {
                 <List key={node.id}
 
                     isNodePage={true}
+                    newParentId={newParentId}
 
                     id={node.id}
                     text={node.text}
