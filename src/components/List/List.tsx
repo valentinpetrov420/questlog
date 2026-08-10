@@ -381,7 +381,6 @@ export default function List(props: ListProps) {
                     <span className="title-label">Title:</span>
                     <div className="input-form-wrapper">
                         <input
-                            autoFocus
                             ref={titleInputRef}
                             disabled={titlePending}
                             value={draftTitle}

@@ -18,7 +18,7 @@ Built as a daily-iterated React project with Firebase as the backend.
 - Multiple node types beyond todo (heading, separator, others in the future).
 - Breadcrumb navigation for nested nodes.
 - Any task node promotable to a page with its own /:nodeId.
-- Ownership gating — actions hidden from non-owners.
+- Ownership gating - actions hidden from non-owners.
 - Dark/light theme with persistence.
 - Responsive layout for desktop and mobile devices.
 - Drag-and-drop reordering for lists and list items.
@@ -27,7 +27,7 @@ Built as a daily-iterated React project with Firebase as the backend.
 - Reusable input validation system:
     - Empty input validation.
     - Maximum length validation.
-- Pin, archive, restore.
+- Pin, archive, restore. 
 - Pinned lists with automatic next-task highlighting.
 - Dynamic list sorting:
     - Recently created.

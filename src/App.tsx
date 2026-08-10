@@ -17,6 +17,7 @@ import { useAuth } from './contexts/AuthContext.js';
 import ProtectedRoute from './contexts/ProtectedRoute.js';
 import PublicRoute from './contexts/PublicRoute.js';
 import AppLayout from './AppLayout.js';
+import AboutPage from './pages/AboutPage/AboutPage.js';
 
 
 export default function App() {
@@ -30,7 +31,7 @@ export default function App() {
 				<Routes>
 					<Route path="/login" element={
 						<PublicRoute>
-							<LoginPage/>
+							<LoginPage />
 						</PublicRoute>
 					} />
 					<Route element={<AppLayout />}>
@@ -42,9 +43,10 @@ export default function App() {
 						<Route path="/:nodeId" element={
 							<NodePage />
 						} />
+						<Route path="/about" element={
+							<AboutPage />
+						}/>
 					</Route>
-
-
 				</Routes>
 			</main>
 			{import.meta.env.DEV && (

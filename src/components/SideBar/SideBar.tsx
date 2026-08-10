@@ -101,6 +101,10 @@ export default function SideBar(props: SideBarProps) {
         navigate("/");
     }
 
+    function handleGoAbout(){
+        navigate("/about");
+    }
+
     function togglePatchnotes() {
         setPatchnotesOpen(prev => !prev);
     }
@@ -206,6 +210,7 @@ export default function SideBar(props: SideBarProps) {
         </div>
         <div className="sidebar-navigation">
             <button className="wrapped-nav-button" onClick={handleGoHome}>Dashboard</button>
+            <button className="wrapped-nav-button" onClick={handleGoAbout}>About</button>
             <button className="wrapped-nav-button" onClick={togglePatchnotes}>Patch Notes</button>
             <button className="wrapped-nav-button" onClick={toggleDarkMode}>🌘 Dark Mode</button>
         </div>
