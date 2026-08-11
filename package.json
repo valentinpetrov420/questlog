@@ -4,9 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run generate:readme && vite",
     "generate:changelog": "node scripts/generateChangelog.js",
-    "build": "npm run generate:changelog && vite build",
+    "generate:readme": "node scripts/readme-copy.js",
+    "build": "npm run generate:changelog && npm run generate:readme && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest"
@@ -19,6 +20,7 @@
     "firebase": "^12.14.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.18.0"
   },
   "devDependencies": {

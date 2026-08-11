@@ -1,0 +1,36 @@
+.about-page-container{
+    width: 50%;
+
+    h1{
+        font-size: 1.5rem;
+        margin: 1.5rem
+    }
+
+    h2{
+        font-size: 1.2rem;
+        margin: 1rem;
+    }
+
+    p{
+        margin: 1rem;
+    }
+
+    ul{
+        margin: 1rem;
+        li{
+            margin: 0.5rem;
+        }
+    }
+}
+
+@media (max-width: 1000px) {
+    .about-page-container{
+        width: 80%;
+    }
+}
+
+@media (max-width: 600px) {
+    .about-page-container{
+        width: 100%;
+    }
+}
