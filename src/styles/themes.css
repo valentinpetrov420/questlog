@@ -21,6 +21,7 @@
 
 	--progress-container: #374151;
 	--progress-fill: #3b82f6;
+}
 
 #app[data-theme="lightMode"] {
 	--bg: #eee;
@@ -34,7 +35,6 @@
 
 	--progress-container: #e5e7eb;
 	--progress-fill: #60a5fa;
-}
 }
 
 #app {
