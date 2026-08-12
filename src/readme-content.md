@@ -17,6 +17,7 @@ Built as a daily-iterated React project with Firebase as the backend.
 - Network error handling for list creation, edits and deletion.
 - Shareable public node URLs, visibility toggle per node.
 - Multiple node types beyond todo (heading, separator, others in the future).
+- README.md imported into About Page
 - Breadcrumb navigation for nested nodes.
 - Any task node promotable to a page with its own /:nodeId.
 - Ownership gating - actions hidden from non-owners.
@@ -70,6 +71,7 @@ npm run dev
 
 ## Features
 
+- Guest Mode that doesn't require a google login to use the site's UI, but google login still required for cross-device persistance.
 - Progress bar for quick task progress scanning.
 
 ## DevPanel

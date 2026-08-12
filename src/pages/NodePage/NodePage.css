@@ -2,6 +2,7 @@
     width: 100%;
 
     .list-page-wrapper {
+        margin-top: 1rem;
         .list-component {
             width: 65%;
             margin: auto;

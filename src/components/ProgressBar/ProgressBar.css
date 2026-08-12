@@ -1,0 +1,6 @@
+.progress-bar-container{
+    background-color: grey;
+    .progress-bar-fill{
+        background-color: gold;
+    }
+}

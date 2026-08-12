@@ -22,6 +22,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import ProgressBar from "../ProgressBar/ProgressBar.js";
 
 type ListProps = {
     isNodePage: boolean,
@@ -60,6 +61,16 @@ export default function List(props: ListProps) {
         handleDeleteNode,
 
     } = useNodes();
+
+    
+    let progress: number | null = null;
+    if (props.listItems) {
+        const todos = props.listItems.filter(item => item.type === 'todo');
+        const completedTodos = todos.filter(item => item.completed === true);
+        if (todos.length > 0) {
+            progress = Math.round((completedTodos.length / todos.length) * 100);
+        }
+    }
 
     const [value, setValue] = useState("");
 
@@ -360,6 +371,7 @@ export default function List(props: ListProps) {
 
     return (
         <div className="list-component" ref={setNodeRef} style={style} {...attributes}>
+            {progress !== null ? <ProgressBar percent={progress}></ProgressBar> : ""}
             {isOwner ? <div className="list-actions">
                 <PopOver
                     type="actions"

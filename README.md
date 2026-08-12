@@ -71,7 +71,7 @@ npm run dev
 
 ## Features
 
-- Guest Mode that doesn't require a google login to use the site's UI, but google login still require for cross-device persistance.
+- Guest Mode that doesn't require a google login to use the site's UI, but google login still required for cross-device persistance.
 - Progress bar for quick task progress scanning.
 
 ## DevPanel
