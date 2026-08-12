@@ -1,6 +1,11 @@
-.progress-bar-container{
-    background-color: grey;
-    .progress-bar-fill{
-        background-color: gold;
+.progress-bar-container {
+    background-color: var(--progress-container);
+
+    border-radius: 4px;
+
+    .progress-bar-fill {
+        background-color: var(--progress-fill);
+
+        transition: width 0.3s ease;
     }
 }
