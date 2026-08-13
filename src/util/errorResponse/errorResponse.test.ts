@@ -8,7 +8,6 @@ describe("formatError", () => {
         const result = formatError(firebaseErr, "Failed to create node", "createNode");
 
         expect(result).toEqual({
-            success: false,
             message: "Failed to create node",
             code: "permission-denied",
         });
@@ -19,7 +18,6 @@ describe("formatError", () => {
         const result = formatError(genericErr, "Failed to create node", "createNode");
 
         expect(result).toEqual({
-            success: false,
             message: "Failed to create node",
         });
     });
