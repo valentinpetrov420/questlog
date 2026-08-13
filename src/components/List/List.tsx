@@ -9,6 +9,7 @@ import firestoreService from "../../api/services/firestoreService.js";
 
 import { useAuth } from "../../contexts/AuthContext.js";
 import { useNodes } from "../../contexts/NodesContext.js";
+import progressBarCalc from "../../util/progressBarCalc/progressBarCalc.js";
 
 import {
     DndContext, DragEndEvent,
@@ -62,15 +63,8 @@ export default function List(props: ListProps) {
 
     } = useNodes();
 
-    
-    let progress: number | null = null;
-    if (props.listItems) {
-        const todos = props.listItems.filter(item => item.type === 'todo');
-        const completedTodos = todos.filter(item => item.completed === true);
-        if (todos.length > 0) {
-            progress = Math.round((completedTodos.length / todos.length) * 100);
-        }
-    }
+    const todos = props.listItems?.filter(item => item.type === 'todo') ?? [];
+    const progress = progressBarCalc(todos);
 
     const [value, setValue] = useState("");
 
