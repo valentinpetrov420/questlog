@@ -1,5 +1,13 @@
-import { useParams, Link, useLocation } from "react-router-dom";
+import { useParams, Link, useLocation, useNavigate } from "react-router-dom";
 import { Node } from "../../types/Node.js";
+
+import {
+    doc,
+    onSnapshot,
+}
+    from "firebase/firestore";
+
+import { db } from "../../api/firebase.js";
 
 import { useNodes } from "../../contexts/NodesContext.js";
 
@@ -13,6 +21,33 @@ import List from "../../components/List/List.js";
 export default function NodePage() {
     const [node, setNode] = useState<Node | null>(null);
     const { nodeId } = useParams();
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!nodeId) {
+            return;
+        }
+
+        const nodeRef = doc(db, "nodes", nodeId);
+
+        const unsubscribe = onSnapshot(nodeRef, snapshot => {
+            if (!snapshot.exists()) {
+                navigate("/");
+                return;
+            }
+
+            // the Node data structure in firebase doesnt store an id explicitly in the object, but firebase stores it as snapshot.id
+            // however an id is needed for the UI to reference specific component elements (i.e. autofocus+select title edit on New Page, which needs newParentId)
+            // thats why the setNode below looks weird
+            setNode({
+                id: snapshot.id,
+                ...(snapshot.data() as Omit<Node, "id">),
+            });
+        });
+
+        return unsubscribe;
+    }, [nodeId, navigate]);
 
     const {
         nodes, flatNodes,
@@ -71,7 +106,7 @@ export default function NodePage() {
                 .finally(() => {
                     setNodesLoading(false)
                 }
-                );
+            );
         }
 
     }, [nodeId, flatNodes]);
