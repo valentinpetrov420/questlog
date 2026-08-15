@@ -261,7 +261,7 @@ export default function SideBar(props: SideBarProps) {
                         <ul>
                             {sortedLists.map(list => (
                                 <li key={list.id}>
-                                    <Link to={`/${list.id}`}>{list.text}</Link>
+                                    <Link to={`/${list.id}`} onClick={() => props.setMenuOpen(false)}>{list.text}</Link>
                                     <PopOver
                                         type="actions"
                                         align="right"

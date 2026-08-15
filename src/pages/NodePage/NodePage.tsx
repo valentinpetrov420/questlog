@@ -50,7 +50,7 @@ export default function NodePage() {
     }, [nodeId, navigate]);
 
     const {
-        nodes, flatNodes,
+        flatNodes,
         nodesLoading, setNodesLoading,
     } = useNodes();
 
@@ -77,49 +77,44 @@ export default function NodePage() {
         return crumbs;
     }, [nodeFromState, flatNodes]);
 
+    const [fetchedItems, setFetchedItems] = useState<Node[] | null>(null);
     useEffect(() => {
         if (!nodeId) {
             return;
         }
 
         if (nodeFromState) {
-            setNode({
-                ...nodeFromState,
-                items: flatNodes
-                    .filter(child => child.parentId === nodeId)
-                    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-            });
+            setFetchedItems(null);
             return;
 
-        } else {
-
-            setNodesLoading(true);
-
-            firestoreService.nodes.getNode(nodeId)
-                .then((response) => {
-                    if (!response) {
-                        setNode(null);
-                        return;
-                    }
-                    setNode(response);
-                })
-                .finally(() => {
-                    setNodesLoading(false)
-                }
-            );
         }
+
+        setNodesLoading(true);
+
+        firestoreService.nodes.getNode(nodeId)
+            .then((response) => {
+                if (!response) {
+                    setNode(null);
+                    return;
+                }
+                setNode(response);
+                setFetchedItems(response.items ?? []);
+            })
+            .finally(() => {
+                setNodesLoading(false)
+            }
+            );
 
     }, [nodeId, flatNodes]);
 
-    useEffect(() => {
-        if (nodeId) {
-            return;
+    const items = useMemo(() => {
+        if (nodeFromState) {
+            return flatNodes
+                .filter(child => child.parentId === nodeId)
+                .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
         }
-        const updated = nodes.find(n => n.id === nodeId);
-        if (updated) {
-            setNode(updated);
-        }
-    }, [nodes, nodeId]);
+        return fetchedItems ?? [];
+    }, [flatNodes, nodeId, nodeFromState, fetchedItems]);
 
     if (nodesLoading) {
         return <SkeletonPage type="nodepage" />
@@ -164,7 +159,7 @@ export default function NodePage() {
 
                     id={node.id}
                     text={node.text}
-                    listItems={node.items}
+                    listItems={items}
                     pinned={node.pinned}
                     isArchived={node.archived}
                     isPublic={node.isPublic}
