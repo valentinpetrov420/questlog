@@ -1,5 +1,5 @@
 import { useNavigate, Link, useParams } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, SetStateAction } from "react";
 
 import { User } from "firebase/auth";
 
@@ -16,6 +16,8 @@ type SideBarProps = {
     user: User | null;
     logout: () => void;
     loginWithGoogle: () => void;
+
+    setMenuOpen: React.Dispatch<SetStateAction<boolean>>;
     menuOpen: boolean;
 }
 
@@ -99,10 +101,12 @@ export default function SideBar(props: SideBarProps) {
         }
 
         navigate("/");
+        props.setMenuOpen(prev => !prev);
     }
 
-    function handleGoAbout(){
+    function handleGoAbout() {
         navigate("/about");
+        props.setMenuOpen(prev => !prev);
     }
 
     function togglePatchnotes() {
@@ -137,6 +141,7 @@ export default function SideBar(props: SideBarProps) {
             navigate(`/${result.id}`, {
                 state: { newParentId: result.id }
             });
+            props.setMenuOpen(prev => !prev);
         } finally {
             setNewPagePending(false);
         }

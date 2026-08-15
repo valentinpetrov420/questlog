@@ -27,6 +27,7 @@ export default function AppLayout() {
             <div className="layout">
                 <SideBar
                     menuOpen={menuOpen}
+                    setMenuOpen={setMenuOpen}
                     user={user}
                     logout={logout}
                     loginWithGoogle={loginWithGoogle} />
