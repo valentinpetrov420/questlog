@@ -25,3 +25,4 @@ dist-ssr
 
 public/changelog.json
 public/patchnotes.json
+src/readme-content.md

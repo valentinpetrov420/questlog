@@ -70,3 +70,12 @@
         }
     }
 }
+
+@media (max-width: 600px) {
+    .popover-wrapper {
+        button {
+            padding: 0.3rem;
+            font-size: 1.3rem;
+        }
+    }
+}

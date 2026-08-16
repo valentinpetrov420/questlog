@@ -148,7 +148,7 @@ export default function Item(props: ItemProps) {
     if (props.type === "heading") {
         return <li ref={setNodeRef} style={style} {...attributes}>
             <StatusMessage text={error} />
-            <div className={isEditingTodo ? "edit-form-wrapper" : "todo-wrapper heading"}>
+            <div className={isEditingTodo ? "edit-form-wrapper" : "item-wrapper heading"}>
                 {props.isOwner ? <span className="drag-button" {...listeners}>⠿</span> : ""}
                 {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
                     <input className="edit-item-input heading"
@@ -189,7 +189,7 @@ export default function Item(props: ItemProps) {
 
     if (props.type === "page") {
         return <li ref={setNodeRef} style={style} {...attributes}>
-            <div className="todo-wrapper page">
+            <div className="item-wrapper page">
                 {props.isOwner && <span className="drag-button" {...listeners}>⠿</span>}
                 <Link className="todo-item-text" to={`/${props.id}`}>{props.text}</Link>
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
@@ -209,7 +209,7 @@ export default function Item(props: ItemProps) {
 
     if (props.type === "separator") {
         return <li ref={setNodeRef} style={style} {...attributes}>
-            <div className="todo-wrapper separator">
+            <div className="item-wrapper separator">
                 {props.isOwner && <span className="drag-button" {...listeners}>⠿</span>}
                 <hr className="separator-hr" />
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
@@ -230,7 +230,7 @@ export default function Item(props: ItemProps) {
 
     return <li ref={setNodeRef} style={style} {...attributes}>
         <StatusMessage text={error} />
-        <div className={isEditingTodo ? "edit-form-wrapper" : "todo-wrapper"}>
+        <div className={isEditingTodo ? "edit-form-wrapper" : "item-wrapper"}>
             {props.isOwner ? <span className="drag-button" {...listeners}>⠿</span> : ""}
             <input
                 className="item-checkbox"

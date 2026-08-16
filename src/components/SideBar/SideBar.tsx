@@ -238,7 +238,7 @@ export default function SideBar(props: SideBarProps) {
                                 onMouseDown={(event) => {
                                     event.preventDefault();
                                 }}
-                                onClick={() => cancelSearch()}>X</button>
+                                onClick={() => cancelSearch()}>✕</button>
                         ) : ""}
                     </div>
                 </div>

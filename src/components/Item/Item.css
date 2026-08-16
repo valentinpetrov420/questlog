@@ -1,4 +1,4 @@
-.todo-wrapper {
+.item-wrapper {
 	margin: 1rem;
 	display: flex;
 	align-items: center;
@@ -18,15 +18,15 @@
 	}
 }
 
-.todo-wrapper.page {
+.item-wrapper.page {
 	margin-top: 1rem;
 }
 
-.todo-wrapper.separator {
+.item-wrapper.separator {
 	margin-top: 1rem;
 }
 
-.todo-wrapper.heading {
+.item-wrapper.heading {
 	h3 {
 		flex: 1;
 		margin-left: 1rem;
@@ -100,5 +100,11 @@
 			line-height: 1.5;
 			vertical-align: middle;
 		}
+	}
+}
+
+@media (max-width: 600px){
+	.item-wrapper{
+		margin-left: 0.3rem;
 	}
 }
