@@ -24,6 +24,7 @@ Built as a daily-iterated React project with Firebase as the backend.
 - Dark/light theme with persistence.
 - Responsive layout for desktop and mobile devices.
 - Drag-and-drop reordering for lists and list items.
+- Progress bar for quick task progress scanning.
 - Unit Tests for utility functions.
 - Skeleton loading states replacing plain text loading.
 - Reusable input validation system:
@@ -72,7 +73,6 @@ npm run dev
 ## Features
 
 - Guest Mode that doesn't require a google login to use the site's UI, but google login still required for cross-device persistance.
-- Progress bar for quick task progress scanning.
 
 ## DevPanel
 
