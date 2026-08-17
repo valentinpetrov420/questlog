@@ -75,6 +75,8 @@ export default function List(props: ListProps) {
     const [deletePending, setDeletePending] = useState(false);
     const [resetPending, setResetPending] = useState(false);
 
+    const hasCompletedTodoItems = props.listItems?.some(node => node.type === "todo" && node.completed === true);
+
     const [addItemPending, setAddItemPending] = useState(false);
 
     const [titlePending, setTitlePending] = useState(false);
@@ -317,13 +319,13 @@ export default function List(props: ListProps) {
 
     }
     async function handleResetClick() {
-        if (resetPending || deletePending || addItemPending){
+        if (resetPending || deletePending || addItemPending) {
             return;
         }
 
         setResetPending(true);
 
-         try {
+        try {
             const error = await handleResetTasks(props.id);
 
             if (error) {
@@ -403,7 +405,9 @@ export default function List(props: ListProps) {
                     {props.isNodePage ? <button onClick={handleCopyLink}>Copy link</button> : ""}
                 </PopOver>
                 {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners}>⠿</span> : ""}
-                {isOwner ? <button className="item-create-options" disabled={resetPending || deletePending || addItemPending} onClick={handleResetClick}>Reset</button> : <div className="fake-actions-space"></div>}
+                {isOwner && hasCompletedTodoItems 
+                ? <button className="item-create-options" disabled={resetPending || deletePending || addItemPending} onClick={handleResetClick}>Reset</button> 
+                : <div className="fake-actions-space"></div>}
             </div> : ""}
             <StatusMessage text={titleStatus ? error : ""} />
             {isEditing ? <form className="edit-list-title" onSubmit={handleSubmitEdit}>
