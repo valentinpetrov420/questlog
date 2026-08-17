@@ -444,24 +444,32 @@ export function NodesProvider({ children }: NodesProviderProps) {
         const completedTasksIds = new Set(completedTasks.map(node => node.id));
 
         if (completedTasksIds.size <= 0) {
-            console.log("nothing to reset");
-            return undefined;
+            return;
         }
 
-        await firestoreService.nodes.resetTasks(completedTasksIds);
+        try {
+            if (!user) {
+                return formatError("", "Failed to delete node", "deleteNode");
+            }
 
-        setFlatNodes(prev =>
-            prev.map(node =>
-                completedTasksIds.has(node.id)
-                    ? {
-                        ...node,
-                        completed: false,
-                        updatedAt: Date.now()
-                    }
-                    : node
-            )
-        );
-        return undefined;
+            await firestoreService.nodes.resetTasks(completedTasksIds);
+
+            setFlatNodes(prev =>
+                prev.map(node =>
+                    completedTasksIds.has(node.id)
+                        ? {
+                            ...node,
+                            completed: false,
+                            updatedAt: Date.now()
+                        }
+                        : node
+                )
+            );
+
+        } catch (error) {
+            return formatError(error, "Failed to reset list", "resetTasks");
+        }
+
     }
 
     async function handlePromoteTodo(nodeId: string) {

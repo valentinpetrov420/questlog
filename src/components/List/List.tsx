@@ -217,7 +217,7 @@ export default function List(props: ListProps) {
             if (error) {
                 setError(error.message);
                 setTitleStatus(true);
-
+                return;
             }
 
             setError("");
@@ -329,6 +329,7 @@ export default function List(props: ListProps) {
             if (error) {
                 setError(error.message);
                 setTitleStatus(true);
+                return;
             }
 
             setError("");
