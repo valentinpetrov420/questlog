@@ -58,6 +58,7 @@ export default function List(props: ListProps) {
         handleEditNodeText,
         handlePin,
         handleVisibilityChange,
+        handleResetTasks,
 
         handleDeleteNode,
 
@@ -314,6 +315,9 @@ export default function List(props: ListProps) {
         setVisibilityPending(false);
 
     }
+    async function handleResetClick() {
+        handleResetTasks(props.id);
+    }
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -379,7 +383,7 @@ export default function List(props: ListProps) {
                     {props.isNodePage ? <button onClick={handleCopyLink}>Copy link</button> : ""}
                 </PopOver>
                 {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners}>⠿</span> : ""}
-                <div className="fake-actions-space"></div>
+                {isOwner ? <button className="item-create-options" onClick={handleResetClick}>Reset</button> : <div className="fake-actions-space"></div>}
             </div> : ""}
             <StatusMessage text={titleStatus ? error : ""} />
             {isEditing ? <form className="edit-list-title" onSubmit={handleSubmitEdit}>

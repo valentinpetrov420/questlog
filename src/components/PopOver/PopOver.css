@@ -62,7 +62,13 @@
         background: transparent;
         border: 1px solid transparent;
         border-radius: 6px;
+        cursor: pointer;
         opacity: 0.3;
+
+        &:hover {
+            transition: opacity 0.2s ease;
+            opacity: 1;
+        }
 
         &:disabled {
             opacity: 0.6;

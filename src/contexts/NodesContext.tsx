@@ -43,7 +43,10 @@ type NodesContextValue = {
     handlePin: (nodeId: string) => Promise<ActionError | undefined>;
     handleVisibilityChange: (nodeId: string) => Promise<ActionError | undefined>;
     handleDeleteNode: (nodeId: string) => Promise<ActionError | undefined>;
+
     handleToggleChildNode: (nodeId: string) => Promise<ActionError | undefined>;
+    handleResetTasks: (parentId: string) => Promise<ActionError | undefined>
+
     handlePromoteTodo: (nodeId: string) => Promise<ActionError | undefined>;
 };
 
@@ -429,6 +432,32 @@ export function NodesProvider({ children }: NodesProviderProps) {
 
         return undefined;
     }
+    async function handleResetTasks(parentId: string) {
+        if (!parentId) {
+            return {
+                success: false,
+                message: "Missing parentId"
+            };
+        }
+
+        const completedTasks = flatNodes.filter(node => node.parentId === parentId && node.completed === true);
+        const completedTasksIds = new Set(completedTasks.map(node => node.id));
+
+        await firestoreService.nodes.resetTasks(completedTasksIds);
+
+        setFlatNodes(prev =>
+            prev.map(node =>
+                completedTasksIds.has(node.id)
+                    ? {
+                        ...node,
+                        completed: false,
+                        updatedAt: Date.now()
+                    }
+                    : node
+            )
+        );
+        return undefined;
+    }
 
     async function handlePromoteTodo(nodeId: string) {
         if (!nodeId) {
@@ -477,6 +506,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
                 handleDeleteNode,
 
                 handleToggleChildNode,
+                handleResetTasks,
 
                 handlePromoteTodo,
             }}

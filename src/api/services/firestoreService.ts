@@ -61,11 +61,11 @@ async function getNode(nodeId: string): Promise<Node | null> {
         );
 
         const items = childrenSnapshot.docs
-        .map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        } as Node ))
-        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));;
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            } as Node))
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));;
 
         return {
             id: snapshot.id,
@@ -115,10 +115,20 @@ async function updateNodeOptimistic(nodeId: string, data: object) {
         updatedAt: Date.now(),
     });
 }
+async function resetTasks(nodeIds: Set<string>) {
+    await Promise.all(
+        [...nodeIds].map(nodeId =>
+            updateNodeOptimistic(nodeId, {
+                completed: false,
+            })
+        )
+    );
+    console.log("Reset tasks: " + nodeIds.size);
+}
 
 async function deleteNode(nodeId: string, ownerId: string) {
     await __devDelay();
-    
+
     const childrenSnapshot = await getDocs(
         query(
             collection(db, "nodes"),
@@ -145,6 +155,7 @@ const firestoreService = {
         getNodes,
 
         updateNode, updateNodeOptimistic,
+        resetTasks,
 
         deleteNode,
     }
