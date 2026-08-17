@@ -443,6 +443,11 @@ export function NodesProvider({ children }: NodesProviderProps) {
         const completedTasks = flatNodes.filter(node => node.parentId === parentId && node.completed === true);
         const completedTasksIds = new Set(completedTasks.map(node => node.id));
 
+        if (completedTasksIds.size <= 0) {
+            console.log("nothing to reset");
+            return undefined;
+        }
+
         await firestoreService.nodes.resetTasks(completedTasksIds);
 
         setFlatNodes(prev =>

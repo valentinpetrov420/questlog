@@ -116,6 +116,8 @@ async function updateNodeOptimistic(nodeId: string, data: object) {
     });
 }
 async function resetTasks(nodeIds: Set<string>) {
+    await __devDelay();
+    
     await Promise.all(
         [...nodeIds].map(nodeId =>
             updateNodeOptimistic(nodeId, {

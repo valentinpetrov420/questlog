@@ -18,7 +18,10 @@ type ItemProps = {
 
     type: "todo" | "page" | "separator" | "heading";
     isOwner: boolean;
+
     deletePending: boolean;
+    resetPending: boolean;
+
     highlightedTodoId: string | null;
 }
 
@@ -47,7 +50,7 @@ export default function Item(props: ItemProps) {
 
     const [error, setError] = useState("");
 
-    const disabled = pending || props.deletePending;
+    const disabled = pending || props.deletePending || props.resetPending;
 
     const highlightedTodoId = props.highlightedTodoId;
 

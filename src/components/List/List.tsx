@@ -73,6 +73,7 @@ export default function List(props: ListProps) {
     const [isEditing, setEditing] = useState(false);
 
     const [deletePending, setDeletePending] = useState(false);
+    const [resetPending, setResetPending] = useState(false);
 
     const [addItemPending, setAddItemPending] = useState(false);
 
@@ -316,7 +317,25 @@ export default function List(props: ListProps) {
 
     }
     async function handleResetClick() {
-        handleResetTasks(props.id);
+        if (resetPending || deletePending || addItemPending){
+            return;
+        }
+
+        setResetPending(true);
+
+         try {
+            const error = await handleResetTasks(props.id);
+
+            if (error) {
+                setError(error.message);
+                setTitleStatus(true);
+            }
+
+            setError("");
+            setTitleStatus(false);
+        } finally {
+            setResetPending(false);
+        }
     }
 
     const sensors = useSensors(
@@ -383,7 +402,7 @@ export default function List(props: ListProps) {
                     {props.isNodePage ? <button onClick={handleCopyLink}>Copy link</button> : ""}
                 </PopOver>
                 {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners}>⠿</span> : ""}
-                {isOwner ? <button className="item-create-options" onClick={handleResetClick}>Reset</button> : <div className="fake-actions-space"></div>}
+                {isOwner ? <button className="item-create-options" disabled={resetPending || deletePending || addItemPending} onClick={handleResetClick}>Reset</button> : <div className="fake-actions-space"></div>}
             </div> : ""}
             <StatusMessage text={titleStatus ? error : ""} />
             {isEditing ? <form className="edit-list-title" onSubmit={handleSubmitEdit}>
@@ -420,6 +439,7 @@ export default function List(props: ListProps) {
                         {(props.listItems ?? []).map(item => (
                             <Item isOwner={isOwner}
 
+                                resetPending={resetPending}
                                 deletePending={deletePending}
 
                                 autoFocus={item.id === newNodeId}
