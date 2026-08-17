@@ -73,6 +73,7 @@ export default function List(props: ListProps) {
     const [isEditing, setEditing] = useState(false);
 
     const [deletePending, setDeletePending] = useState(false);
+
     const [resetPending, setResetPending] = useState(false);
 
     const hasCompletedTodoItems = props.listItems?.some(node => node.type === "todo" && node.completed === true);
@@ -406,7 +407,8 @@ export default function List(props: ListProps) {
                 </PopOver>
                 {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners}>⠿</span> : ""}
                 {isOwner && hasCompletedTodoItems 
-                ? <button className="item-create-options" disabled={resetPending || deletePending || addItemPending} onClick={handleResetClick}>Reset</button> 
+                ? <button className="item-create-options" 
+                disabled={resetPending || deletePending || addItemPending} onClick={handleResetClick}>Reset</button> 
                 : <div className="fake-actions-space"></div>}
             </div> : ""}
             <StatusMessage text={titleStatus ? error : ""} />
