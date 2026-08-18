@@ -1,8 +1,6 @@
 import "./DevPanel.css";
 
-import firestoreService from "../api/services/firestoreService";
-
-import { useNodes } from "../contexts/NodesContext";
+import localStorageService from "../api/services/localStorageService";
 
 import { networkStress } from "./networkStress";
 
@@ -11,30 +9,34 @@ type DevPanelProps = {
 }
 
 export default function DevPanel(props: DevPanelProps) {
-    const { nodes } = useNodes();
+    console.log("User: " + props.userId);
 
     return <div className="devPanel">
-
         <button
-            disabled={true}
-            onClick={async () => {
-                if (props.userId) {
-                    console.log(await firestoreService.nodes.createNode(props.userId, {
-                        type: "todo",
-                        parentId: "K45SQVA1sKFE1zzwXMoz",
-                        text: "test todo 2",
-                        isPublic: false,
-                    }));
-                }
+            onClick={() => {
+                const result = localStorageService.nodes.createNode("guest", {
+                    type: "todo",
+                    parentId: null,
+                    text: "test",
+                    isPublic: false,
+                })
+                console.log(result);
             }}>
-            createNode()
+            createNode();
         </button>
         <button
-            disabled={true}
-            onClick={async () => {
-                console.log(nodes);
+            onClick={() => {
+                const result = localStorageService.nodes.getNodes();
+                console.log(result);
             }}>
-            getNodes()
+            getNodes();
+        </button>
+        <button
+            onClick={() => {
+                localStorageService.nodes.clearLocalNodes();
+                console.log("cleared guestNodes");
+            }}>
+            clearLocalNodes();
         </button>
         <select
             onChange={(event) => {
