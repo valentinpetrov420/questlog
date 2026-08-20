@@ -31,12 +31,27 @@ type AuthProviderProps = {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-	const [user, setUser] = useState<AppUser | null>(null);
 	const [authReady, setAuthReady] = useState(false);
+	const [user, setUser] = useState<AppUser | null>(() => {
+		const guestMode = localStorage.getItem("guest-mode");
+
+		if (guestMode === "true") {
+			return {
+				uid: "guest",
+				displayName: "Guest",
+				photoURL: null,
+			};
+		}
+
+		return null;
+	});
+
 
 	useEffect(() => {
 		const unsub = onAuthStateChanged(auth, (u: User | null) => {
-			setUser(u);
+			if (u) {
+				setUser(u);
+			}
 			setAuthReady(true);
 		});
 
