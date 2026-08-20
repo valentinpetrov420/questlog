@@ -1,10 +1,23 @@
 import './LoginPage.css';
 import GoogleSignInButton from "../../components/GoogleSignInButton/GoogleSignInButton";
 
-export default function LoginPage() {
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
-    function continueAsGuest() {
-        //interact with authcontext
+import { useAuth } from '../../contexts/AuthContext';
+
+export default function LoginPage() {
+    const { continueAsGuest, authReady, user } = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        console.log("user: ", user);
+    }, [user]);
+
+    async function handleContinueAsGuest() {
+        await continueAsGuest();
+        console.log("authReady: " + authReady);
+        navigate("/");
     }
 
     //todo: implement Continue as Guest app behavior, gating firestore services if theres no user (use localStorage instead)
@@ -15,7 +28,7 @@ export default function LoginPage() {
         {import.meta.env.DEV && (
             <div className='login-guest'>
                 <p>or</p>
-                <span className='continue-as-guest' onClick={continueAsGuest}>Continue as Guest</span>
+                <span className='continue-as-guest' onClick={handleContinueAsGuest}>Continue as Guest</span>
             </div>
         )}
     </div>

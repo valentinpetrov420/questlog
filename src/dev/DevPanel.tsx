@@ -9,8 +9,6 @@ type DevPanelProps = {
 }
 
 export default function DevPanel(props: DevPanelProps) {
-    console.log("User: " + props.userId);
-
     return <div className="devPanel">
         <button
             onClick={() => {

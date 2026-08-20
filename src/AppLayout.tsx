@@ -10,7 +10,7 @@ import { siteName } from "./constants/app";
 import './AppLayout.css';
 
 export default function AppLayout() {
-    const { user, logout, loginWithGoogle } = useAuth();
+    const { user, logoutUser, loginWithGoogle } = useAuth();
     const [menuOpen, setMenuOpen] = useState(false);
 
     return (
@@ -29,7 +29,7 @@ export default function AppLayout() {
                     menuOpen={menuOpen}
                     setMenuOpen={setMenuOpen}
                     user={user}
-                    logout={logout}
+                    logoutUser={logoutUser}
                     loginWithGoogle={loginWithGoogle} />
                 <div className="content">
                     <Outlet />

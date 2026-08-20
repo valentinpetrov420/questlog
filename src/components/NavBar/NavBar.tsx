@@ -1,13 +1,12 @@
 import './NavBar.css';
 
 import { useNavigate } from "react-router-dom";
-import { User } from "firebase/auth";
-
+import { type AppUser } from '../../contexts/AuthContext';
 type NavBarProps = {
     siteName: string;
     menuOpen: boolean;
     toggleMenu: () => void;
-    user: User | null,
+    user: AppUser | null,
 }
 
 export default function NavBar(props: NavBarProps) {

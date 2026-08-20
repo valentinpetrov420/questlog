@@ -1,7 +1,6 @@
 import { useNavigate, Link, useParams } from "react-router-dom";
 import { useState, useEffect, useRef, SetStateAction } from "react";
 
-import { User } from "firebase/auth";
 
 import './SideBar.css';
 import { useNodes } from "../../contexts/NodesContext";
@@ -11,10 +10,11 @@ import PatchNotesModal from "../PatchNotesModal/PatchNotesModal";
 import PopOver from "../PopOver/PopOver";
 import GoogleSignInButton from "../GoogleSignInButton/GoogleSignInButton";
 import StatusMessage from "../StatusMessage/StatusMessage";
+import { type AppUser } from "../../contexts/AuthContext";
 
 type SideBarProps = {
-    user: User | null;
-    logout: () => void;
+    user: AppUser | null;
+    logoutUser: () => void;
     loginWithGoogle: () => void;
 
     setMenuOpen: React.Dispatch<SetStateAction<boolean>>;
@@ -200,7 +200,7 @@ export default function SideBar(props: SideBarProps) {
     }
 
     async function handleLogout() {
-        await props.logout();
+        await props.logoutUser();
         navigate("/login");
     }
 
