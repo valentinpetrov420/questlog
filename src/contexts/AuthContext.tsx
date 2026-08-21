@@ -49,9 +49,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 	useEffect(() => {
 		const unsub = onAuthStateChanged(auth, (u: User | null) => {
+			const guestMode = localStorage.getItem("guest-mode") === "true";
+
 			if (u) {
 				setUser(u);
+			} else if (!guestMode) {
+				setUser(null);
 			}
+			
 			setAuthReady(true);
 		});
 
@@ -70,6 +75,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 	const logoutUser = async () => {
 		if (user?.uid === "guest") {
+			localStorage.removeItem("guest-mode");
 			setUser(null);
 			return;
 		}
