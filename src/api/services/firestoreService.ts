@@ -65,7 +65,7 @@ async function getNode(nodeId: string): Promise<Node | null> {
                 id: doc.id,
                 ...doc.data()
             } as Node))
-            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));;
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
         return {
             id: snapshot.id,

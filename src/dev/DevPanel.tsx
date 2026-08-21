@@ -12,6 +12,12 @@ export default function DevPanel(props: DevPanelProps) {
     return <div className="devPanel">
         <button
             onClick={() => {
+                console.log(props.userId);
+            }}>
+            get userId;
+        </button>
+        <button
+            onClick={() => {
                 const result = localStorageService.nodes.createNode("guest", {
                     type: "todo",
                     parentId: null,
@@ -31,10 +37,10 @@ export default function DevPanel(props: DevPanelProps) {
         </button>
         <button
             onClick={() => {
-                localStorageService.nodes.clearLocalNodes();
+                localStorageService.nodes.__clearLocalNodes();
                 console.log("cleared guestNodes");
             }}>
-            clearLocalNodes();
+            __clearLocalNodes();
         </button>
         <select
             onChange={(event) => {

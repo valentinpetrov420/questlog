@@ -1,3 +1,4 @@
+import { __devDelay } from "../../dev/networkStress";
 import { Node } from "../../types/Node";
 
 type CreateNodeData = {
@@ -8,7 +9,9 @@ type CreateNodeData = {
     order?: number;
 };
 
-function createNode(ownerId: string, { type = "page", parentId = null, text = "", isPublic = false, order = 0 }: CreateNodeData) {
+async function createNode(ownerId: string, { type = "page", parentId = null, text = "", isPublic = false, order = 0 }: CreateNodeData) {
+    await __devDelay();
+
     const nodes: Node[] = JSON.parse(
         localStorage.getItem("guestNodes") ?? "[]"
     );
@@ -35,11 +38,31 @@ function createNode(ownerId: string, { type = "page", parentId = null, text = ""
     return node.id;
 }
 
-function getNodes(){
-    return localStorage.getItem("guestNodes") ?? "[]";
+
+async function getNode(nodeId: string): Promise<Node | null>{
+    const flatNodes = await getNodes();
+
+    const node = flatNodes.find(n => n.id === nodeId);
+
+    if (!node) {
+        return null;
+    }
+
+    const items = flatNodes
+        .filter(n => n.parentId === nodeId)
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+    return {
+        ...node,
+        items
+    };
 }
 
-function clearLocalNodes(){
+async function getNodes(): Promise<Node[]>{
+    return JSON.parse(localStorage.getItem("guestNodes") ?? "[]");
+}
+
+function __clearLocalNodes(){
     localStorage.removeItem("guestNodes")
 }
 
@@ -48,8 +71,9 @@ const localStorageService = {
         createNode,
 
         getNodes,
+        getNode,
 
-        clearLocalNodes
+        __clearLocalNodes
     }
 }
 
