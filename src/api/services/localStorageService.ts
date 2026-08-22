@@ -39,7 +39,7 @@ async function createNode(ownerId: string, { type = "page", parentId = null, tex
 }
 
 
-async function getNode(nodeId: string): Promise<Node | null>{
+async function getNode(nodeId: string): Promise<Node | null> {
     const flatNodes = await getNodes();
 
     const node = flatNodes.find(n => n.id === nodeId);
@@ -57,12 +57,79 @@ async function getNode(nodeId: string): Promise<Node | null>{
         items
     };
 }
-
-async function getNodes(): Promise<Node[]>{
+async function getNodes(): Promise<Node[]> {
     return JSON.parse(localStorage.getItem("guestNodes") ?? "[]");
 }
 
-function __clearLocalNodes(){
+async function updateNode(id: string, data: object) {
+    await __devDelay();
+
+    const flatNodes = await getNodes();
+
+    const updatedFlatNodes = flatNodes.map(node => node.id === id 
+        ? { ...node, ...data }
+        : node
+    );
+
+    localStorage.setItem("guestNodes", JSON.stringify(updatedFlatNodes));
+}
+async function updateNodeOptimistic(id: string, data: object) {
+    const flatNodes = await getNodes();
+
+    const updatedFlatNodes = flatNodes.map(node => node.id === id
+        ? { ...node, ...data }
+        : node
+    );
+
+    localStorage.setItem("guestNodes", JSON.stringify(updatedFlatNodes));
+}
+async function resetTasks(nodeIds: Set<string>) {
+    await __devDelay();
+    
+    await Promise.all(
+        [...nodeIds].map(nodeId =>
+            updateNodeOptimistic(nodeId, {
+                completed: false,
+            })
+        )
+    );
+    console.log("Reset tasks: " + nodeIds.size);
+}
+
+async function deleteNode(nodeId: string, ownerId: string) {
+    await __devDelay();
+
+    const flatNodes = await getNodes();
+
+    const idsToDelete = new Set<string>();
+
+    // this looks more complicated than firestoreService because firestore functions like
+    // where, collection, deleteDoc, updateDoc etc
+    // hide complexity away and i had to be explicit about the flow
+    // but it is the same functionality
+
+    function collectDescendants(id: string) {
+        idsToDelete.add(id);
+
+        const children = flatNodes.filter(node =>
+            node.parentId === id &&
+            node.ownerId === ownerId
+        );
+
+        children.forEach(child => {
+            collectDescendants(child.id);
+        });
+    }
+
+    collectDescendants(nodeId);
+
+    const updatedFlatNodes = flatNodes.filter(node => !idsToDelete.has(node.id));
+
+    localStorage.setItem("guestNodes", JSON.stringify(updatedFlatNodes));
+}
+
+
+function __clearLocalNodes() {
     localStorage.removeItem("guestNodes")
 }
 
@@ -72,6 +139,11 @@ const localStorageService = {
 
         getNodes,
         getNode,
+
+        updateNode, updateNodeOptimistic,
+        resetTasks,
+
+        deleteNode,
 
         __clearLocalNodes
     }
