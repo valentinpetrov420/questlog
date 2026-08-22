@@ -45,8 +45,7 @@ export default function DevPanel(props: DevPanelProps) {
         <select
             onChange={(event) => {
                 networkStress.delayMs = Number(event.target.value);
-            }}
-        >
+            }}>
             <option value="0">no delay</option>
             <option value="500">500ms</option>
             <option value="1000">1000ms</option>
