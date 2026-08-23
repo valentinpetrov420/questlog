@@ -120,7 +120,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
             const roots = flatNodes.filter(n => n.parentId === null);
             const order = roots.length;
 
-            const id = await firestoreService.nodes.createNode(user.uid, {
+            const id = await nodeService.nodes.createNode(user.uid, {
                 type: "page",
                 text: result.value,
                 isPublic: visibility,
@@ -179,7 +179,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
             const siblings = flatNodes.filter(n => n.parentId === parentId);
             const order = siblings.length;
 
-            const id = await firestoreService.nodes.createNode(user.uid, {
+            const id = await nodeService.nodes.createNode(user.uid, {
                 parentId,
                 type,
                 text: result.value,
