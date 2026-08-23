@@ -328,7 +328,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
             )
         );
 
-        firestoreService.nodes.updateNodeOptimistic(nodeId, { pinned: newPinned });
+        nodeService.nodes.updateNodeOptimistic(nodeId, { pinned: newPinned });
     }
     async function handleVisibilityChange(nodeId: string) {
         console.log("new visibility on node: " + nodeId);
