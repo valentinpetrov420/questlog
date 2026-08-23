@@ -397,7 +397,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
                 return formatError("", "Failed to delete node", "deleteNode");
             }
 
-            await firestoreService.nodes.deleteNode(nodeId, user.uid);
+            await nodeService.nodes.deleteNode(nodeId, user.uid);
 
             const updatedState = flatNodes.filter(node => node.id !== nodeId);
             setFlatNodes(updatedState);
