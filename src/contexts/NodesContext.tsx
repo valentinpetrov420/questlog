@@ -440,7 +440,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
             )
         );
 
-        firestoreService.nodes.updateNodeOptimistic(nodeId, {
+        nodeService.nodes.updateNodeOptimistic(nodeId, {
             completed: newCompleted
         });
 
