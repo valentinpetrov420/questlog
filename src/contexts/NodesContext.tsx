@@ -237,7 +237,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
             )
         );
 
-        firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: true })
+        nodeService.nodes.updateNodeOptimistic(nodeId, { archived: true })
     }
     async function handleRestoreNode(nodeId: string) {
         const confirmed = window.confirm("Restore this list?");
@@ -261,7 +261,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
             )
         );
 
-        firestoreService.nodes.updateNodeOptimistic(nodeId, { archived: false })
+        nodeService.nodes.updateNodeOptimistic(nodeId, { archived: false })
     }
     async function handleEditNodeText(nodeId: string, newText: string) {
         console.log("received: " + newText);
