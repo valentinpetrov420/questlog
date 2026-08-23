@@ -8,6 +8,7 @@ import nestNodes from "../api/services/storage.ts";
 
 import { useAuth } from './AuthContext.tsx';
 import firestoreService from "../api/services/firestoreService.ts";
+import localStorageService from "../api/services/localStorageService.ts";
 
 type ActionError = {
     message: string,
@@ -66,6 +67,10 @@ export function NodesProvider({ children }: NodesProviderProps) {
 
     const { user, authReady } = useAuth();
 
+    const nodeService = user?.uid === "guest"
+        ? localStorageService
+        : firestoreService
+
     const [sortMode, setSortMode] = useState(() => {
         return localStorage.getItem("sortmode") || "createdAt";
     });
@@ -84,7 +89,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
             return;
         }
 
-        firestoreService.nodes.getNodes(user.uid).then((nodes: Node[]) => {
+        nodeService.nodes.getNodes(user.uid).then((nodes: Node[]) => {
             setFlatNodes(nodes);
         })
             .finally(() => {
