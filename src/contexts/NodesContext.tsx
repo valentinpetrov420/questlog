@@ -283,7 +283,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
         }
 
         try {
-            await firestoreService.nodes.updateNode(nodeId, { text: result.value })
+            await nodeService.nodes.updateNode(nodeId, { text: result.value })
 
             setFlatNodes(prev =>
                 prev.map(node =>
