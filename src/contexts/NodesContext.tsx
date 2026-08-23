@@ -466,7 +466,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
                 return formatError("", "Failed to delete node", "deleteNode");
             }
 
-            await firestoreService.nodes.resetTasks(completedTasksIds);
+            await nodeService.nodes.resetTasks(completedTasksIds);
 
             setFlatNodes(prev =>
                 prev.map(node =>

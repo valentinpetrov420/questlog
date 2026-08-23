@@ -86,13 +86,19 @@ async function updateNodeOptimistic(id: string, data: object) {
 async function resetTasks(nodeIds: Set<string>) {
     await __devDelay();
     
-    await Promise.all(
-        [...nodeIds].map(nodeId =>
-            updateNodeOptimistic(nodeId, {
+    const flatNodes = await getNodes();
+
+    const updatedFlatNodes = flatNodes.map(node =>
+        nodeIds.has(node.id)
+            ? {
+                ...node,
                 completed: false,
-            })
-        )
+                updatedAt: Date.now()
+            }
+            : node
     );
+
+    localStorage.setItem("guestNodes", JSON.stringify(updatedFlatNodes));
     console.log("Reset tasks: " + nodeIds.size);
 }
 
