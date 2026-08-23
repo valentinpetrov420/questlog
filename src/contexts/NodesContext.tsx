@@ -495,7 +495,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
         }
 
         try {
-            await firestoreService.nodes.updateNode(nodeId, { type: "page" })
+            await nodeService.nodes.updateNode(nodeId, { type: "page" })
 
             setFlatNodes(prev =>
                 prev.map(node =>
