@@ -333,6 +333,15 @@ export function NodesProvider({ children }: NodesProviderProps) {
     async function handleVisibilityChange(nodeId: string) {
         console.log("new visibility on node: " + nodeId);
 
+        if(user?.uid === "guest"){
+            await nodeService.nodes.updateNode(nodeId, { isPublic: false });
+
+            return {
+                success: false,
+                message: "Unavailable in guest mode"
+            }
+        }
+
         if (!nodeId) {
             return {
                 success: false,
@@ -352,7 +361,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
         const newVisibility = !targetNode.isPublic;
 
         try {
-            await firestoreService.nodes.updateNode(nodeId, { isPublic: newVisibility });
+            await nodeService.nodes.updateNode(nodeId, { isPublic: newVisibility });
 
             setFlatNodes(prev =>
                 prev.map(node =>

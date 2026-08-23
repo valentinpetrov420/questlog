@@ -110,6 +110,7 @@ export default function List(props: ListProps) {
     const [newNodeId, setNewNodeId] = useState<string | null>(null);
 
     const { user } = useAuth();
+    const isGuest = user?.uid === "guest";
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -401,7 +402,7 @@ export default function List(props: ListProps) {
                     {isOwner && !isArchived ? <button onClick={handleArchiveClick}>Archive</button> : ""}
                     {isOwner && isArchived ? <button onClick={handleRestoreClick}>Restore</button> : ""}
                     {isOwner ? !props.isNodePage && <button onClick={handlePinClick}>Pin</button> : ""}
-                    {isOwner ? props.isNodePage && <button disabled={visibilityPending} onClick={handleVisibility}>{isPublic ? "Change to Private" : "Change to Public"}</button> : ""}
+                    {isOwner ? props.isNodePage && <button disabled={visibilityPending || isGuest} onClick={handleVisibility}>{isPublic ? "Change to Private" : "Change to Public"}</button> : ""}
                     {isOwner ? <button onClick={handleDeleteClick}>Delete</button> : ""}
                     {props.isNodePage ? <button onClick={handleCopyLink}>Copy link</button> : ""}
                 </PopOver>

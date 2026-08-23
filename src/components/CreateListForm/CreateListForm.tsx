@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import "./CreateListForm.css";
 
 import { useNodes } from "../../contexts/NodesContext.js";
+import { useAuth } from "../../contexts/AuthContext.js";
 
 export default function CreateListForm() {
     const {
@@ -14,6 +15,10 @@ export default function CreateListForm() {
     const [draftVisibility, setDraftVisibility] = useState("private");
 
     const [pending, setPending] = useState(false);
+
+    const { user } = useAuth();
+
+    const isGuest = user?.uid === "guest";
 
     const [error, setError] = useState("");
     const [status, setStatus] = useState<boolean | null>(null);;
@@ -35,7 +40,12 @@ export default function CreateListForm() {
 
         setPending(true);
 
-        const isPublic = draftVisibility === "public";
+        let isPublic;
+        isPublic = draftVisibility === "public";
+
+        if (isGuest){
+            isPublic = false;
+        }
 
         try {
             const result = await handleCreateNode(title, isPublic);
@@ -66,7 +76,7 @@ export default function CreateListForm() {
             disabled={pending}>
             {pending ? "Creating..." : "Create new quest"}
         </button>
-        <select className="visibility-dropdown"
+        {isGuest ? "" : <select className="visibility-dropdown"
             disabled={pending}
             value={draftVisibility}
             onChange={(event) => {
@@ -74,6 +84,6 @@ export default function CreateListForm() {
             }}>
             <option value="private">Private</option>
             <option value="public">Public</option>
-        </select>
+        </select>}
     </form>
 }
