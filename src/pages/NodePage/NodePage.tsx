@@ -10,11 +10,14 @@ import {
 import { db } from "../../api/firebase.js";
 
 import { useNodes } from "../../contexts/NodesContext.js";
+import { useAuth } from "../../contexts/AuthContext.js";
 
 import { useEffect, useState, useMemo } from "react";
 import './NodePage.css';
 
 import firestoreService from '../../api/services/firestoreService.js';
+import localStorageService from "../../api/services/localStorageService.js";
+
 import SkeletonPage from "../SkeletonPage/SkeletonPage.js";
 import List from "../../components/List/List.js";
 
@@ -24,8 +27,18 @@ export default function NodePage() {
 
     const navigate = useNavigate();
 
+    const { user } = useAuth();
+
+    const nodeService = user?.uid === "guest"
+        ? localStorageService
+        : firestoreService
+
     useEffect(() => {
         if (!nodeId) {
+            return;
+        }
+
+        if (user?.uid === "guest") {
             return;
         }
 
@@ -78,20 +91,25 @@ export default function NodePage() {
     }, [nodeFromState, flatNodes]);
 
     const [fetchedItems, setFetchedItems] = useState<Node[] | null>(null);
+    const [nodeLoading, setNodeLoading] = useState(true);
+
     useEffect(() => {
         if (!nodeId) {
             return;
         }
 
         if (nodeFromState) {
+            setNode(nodeFromState);
             setFetchedItems(null);
+            setNodeLoading(false);
             return;
-
         }
 
         setNodesLoading(true);
+        setNodeLoading(true);
 
-        firestoreService.nodes.getNode(nodeId)
+
+        nodeService.nodes.getNode(nodeId)
             .then((response) => {
                 if (!response) {
                     setNode(null);
@@ -116,7 +134,7 @@ export default function NodePage() {
         return fetchedItems ?? [];
     }, [flatNodes, nodeId, nodeFromState, fetchedItems]);
 
-    if (nodesLoading) {
+    if (nodesLoading || nodeLoading) {
         return <SkeletonPage type="nodepage" />
     };
 

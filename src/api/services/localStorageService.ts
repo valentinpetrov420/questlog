@@ -44,6 +44,8 @@ async function getNode(nodeId: string): Promise<Node | null> {
 
     const node = flatNodes.find(n => n.id === nodeId);
 
+    console.log(node);
+
     if (!node) {
         return null;
     }
