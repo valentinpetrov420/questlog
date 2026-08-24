@@ -79,6 +79,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 			setUser(null);
 			return;
 		}
+		setUser(null);
 
 		await logout();
 	}

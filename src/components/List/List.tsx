@@ -402,9 +402,9 @@ export default function List(props: ListProps) {
                     {isOwner && !isArchived ? <button onClick={handleArchiveClick}>Archive</button> : ""}
                     {isOwner && isArchived ? <button onClick={handleRestoreClick}>Restore</button> : ""}
                     {isOwner ? !props.isNodePage && <button onClick={handlePinClick}>Pin</button> : ""}
-                    {isOwner ? props.isNodePage && <button disabled={visibilityPending || isGuest} onClick={handleVisibility}>{isPublic ? "Change to Private" : "Change to Public"}</button> : ""}
+                    {!isGuest && isOwner ? props.isNodePage && <button disabled={visibilityPending || isGuest} onClick={handleVisibility}>{isPublic ? "Change to Private" : "Change to Public"}</button> : ""}
                     {isOwner ? <button onClick={handleDeleteClick}>Delete</button> : ""}
-                    {props.isNodePage ? <button onClick={handleCopyLink}>Copy link</button> : ""}
+                    {!isGuest && props.isNodePage ? <button onClick={handleCopyLink}>Copy link</button> : ""}
                 </PopOver>
                 {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners}>⠿</span> : ""}
                 {isOwner && hasCompletedTodoItems 
