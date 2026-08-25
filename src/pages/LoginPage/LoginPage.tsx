@@ -25,11 +25,9 @@ export default function LoginPage() {
         <h1 className="login-branding">Questlog</h1>
         <p className="login-description">Organize anything as pages or tasks - nested, shareable, yours.</p>
         <GoogleSignInButton />
-        {import.meta.env.DEV && (
-            <div className='login-guest'>
-                <p>or</p>
-                <span className='continue-as-guest' onClick={handleContinueAsGuest}>Continue as Guest</span>
-            </div>
-        )}
+        <div className='login-guest'>
+            <p>or</p>
+            <span className='continue-as-guest' onClick={handleContinueAsGuest}>Continue as Guest</span>
+        </div>
     </div>
 }

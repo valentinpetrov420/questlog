@@ -13,6 +13,7 @@ export default function GoogleSignInButton() {
 
     async function handleLoginClick() {
         await loginWithGoogle();
+		localStorage.removeItem("guest-mode");
         navigate("/");
     }
 
