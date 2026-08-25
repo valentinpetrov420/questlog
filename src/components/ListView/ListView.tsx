@@ -4,7 +4,10 @@ import './ListView.css';
 import { Node } from "../../types/Node";
 
 import firestoreService from "../../api/services/firestoreService";
+import localStorageService from "../../api/services/localStorageService";
+
 import { useNodes } from "../../contexts/NodesContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 import {
     DndContext, DragEndEvent,
@@ -30,6 +33,12 @@ export default function ListView(props: ListViewProps) {
 
         setSortMode,
     } = useNodes();
+
+    const { user } = useAuth();
+    const isGuest = user?.uid === "guest";
+    const nodeService = isGuest
+        ? localStorageService
+        : firestoreService
 
     if (props.role === "pinned") {
         const pinnedLists = props.lists.filter(list => list.pinned && !list.archived);
@@ -100,9 +109,7 @@ export default function ListView(props: ListViewProps) {
                 return;
             }
 
-            reordered.forEach((list, index) => {
-                firestoreService.nodes.updateNodeOptimistic(list.id, { order: index, updatedAt: Date.now() });
-            });
+            nodeService.nodes.reorder(reordered);
 
             const reorderedWithOrder = reordered.map((list, index) => ({
                 ...list,

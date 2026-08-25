@@ -5,7 +5,9 @@ import PopOver from "../PopOver/PopOver.js";
 import { useEffect, useRef, useState } from "react";
 import './List.css';
 import { Link, useNavigate } from "react-router-dom";
+
 import firestoreService from "../../api/services/firestoreService.js";
+import localStorageService from "../../api/services/localStorageService.js";
 
 import { useAuth } from "../../contexts/AuthContext.js";
 import { useNodes } from "../../contexts/NodesContext.js";
@@ -111,6 +113,9 @@ export default function List(props: ListProps) {
 
     const { user } = useAuth();
     const isGuest = user?.uid === "guest";
+    const nodeService = user?.uid === "guest"
+        ? localStorageService
+        : firestoreService
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -376,9 +381,7 @@ export default function List(props: ListProps) {
             return;
         }
 
-        reordered.forEach((item, index) => {
-            firestoreService.nodes.updateNodeOptimistic(item.id, { order: index, updatedAt: Date.now() });
-        });
+        nodeService.nodes.reorder(reordered);
 
         const reorderedWithOrder = reordered.map((item, index) => ({
             ...item,

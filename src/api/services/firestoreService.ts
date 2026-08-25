@@ -46,6 +46,7 @@ async function createNode(ownerId: string, { type = "page", parentId = null, tex
 
     return docRef.id;
 }
+
 async function getNode(nodeId: string): Promise<Node | null> {
     try {
         console.log("fetching node:", nodeId);
@@ -127,6 +128,16 @@ async function resetTasks(nodeIds: Set<string>) {
     );
     console.log("Reset tasks: " + nodeIds.size);
 }
+async function reorder(reordered: Node[]){
+    await Promise.all(
+        reordered.map((node, index) =>
+            updateNodeOptimistic(node.id, {
+                order: index,
+                updatedAt: Date.now()
+            })
+        )
+    );
+}
 
 async function deleteNode(nodeId: string, ownerId: string) {
     await __devDelay();
@@ -158,6 +169,7 @@ const firestoreService = {
 
         updateNode, updateNodeOptimistic,
         resetTasks,
+        reorder,
 
         deleteNode,
     }

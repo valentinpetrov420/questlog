@@ -103,6 +103,29 @@ async function resetTasks(nodeIds: Set<string>) {
     localStorage.setItem("guestNodes", JSON.stringify(updatedFlatNodes));
     console.log("Reset tasks: " + nodeIds.size);
 }
+async function reorder(reordered: Node[]){
+    const flatNodes = await getNodes();
+
+    const orderMap = new Map(
+        reordered.map((node, index) => [node.id, index])
+    );
+
+    const updatedNodes = flatNodes.map(node => {
+        const order = orderMap.get(node.id);
+
+        if (order === undefined) {
+            return node;
+        }
+
+        return {
+            ...node,
+            order,
+            updatedAt: Date.now()
+        };
+    });
+
+    localStorage.setItem("guestNodes", JSON.stringify(updatedNodes));
+}
 
 async function deleteNode(nodeId: string, ownerId: string) {
     await __devDelay();
@@ -150,6 +173,7 @@ const localStorageService = {
 
         updateNode, updateNodeOptimistic,
         resetTasks,
+        reorder,
 
         deleteNode,
 
