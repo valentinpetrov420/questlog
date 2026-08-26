@@ -65,9 +65,7 @@ export default function SideBar(props: SideBarProps) {
 
     const isArchivedView = sortMode === 'archived';
 
-    //todo: isGuest can be a context call to prevent duplication
-    const {user} = useAuth();
-    const isGuest = user?.uid === "guest";
+    const { isGuest } = useAuth();
 
     const activeLists = flatNodes.filter(list => list.parentId === null && !list.archived)
     const archivedLists = flatNodes.filter(list => list.parentId === null && list.archived);
@@ -272,9 +270,9 @@ export default function SideBar(props: SideBarProps) {
                                         disabled={deletePendingIds.has(list.id)}>
                                         {!list.archived ? <button onClick={() => handleArchiveClick(list.id)}>Archive</button> : ""}
                                         {list.archived ? <button onClick={() => handleRestoreClick(list.id)}>Restore</button> : ""}
-                                        {!isGuest && <button disabled={visibilityPendingIds.has(list.id)} onClick={() => handleVisibilityClick(list.id)}>{list.isPublic ? "Change to Private" : "Change to Public"}</button>}
+                                        {!isGuest() && <button disabled={visibilityPendingIds.has(list.id)} onClick={() => handleVisibilityClick(list.id)}>{list.isPublic ? "Change to Private" : "Change to Public"}</button>}
                                         <button onClick={() => handleDeleteClick(list.id)}>Delete</button>
-                                        {!isGuest && list.isPublic ? <button disabled={visibilityPendingIds.has(list.id)} onClick={() => handleCopyLink(list.id)}>Copy link</button> : ""}
+                                        {!isGuest() && list.isPublic ? <button disabled={visibilityPendingIds.has(list.id)} onClick={() => handleCopyLink(list.id)}>Copy link</button> : ""}
                                     </PopOver>
                                 </li>
                             ))}
@@ -282,7 +280,7 @@ export default function SideBar(props: SideBarProps) {
                     </div>
                 </div>
             </div> : ""}
-        {!isGuest && props.user ?
+        {!isGuest() && props.user ?
             <div className="sidebar-user-info">
                 <div className="sidebar-user-wrapper">
                     <div className='user-photo-container'>

@@ -3,18 +3,27 @@ import "./DevPanel.css";
 import localStorageService from "../api/services/localStorageService";
 
 import { networkStress } from "./networkStress";
+import { useAuth } from "../contexts/AuthContext";
 
 type DevPanelProps = {
     userId?: string,
 }
 
 export default function DevPanel(props: DevPanelProps) {
+    const { isGuest } = useAuth();
+
     return <div className="devPanel">
         <button
             onClick={() => {
                 console.log(props.userId);
             }}>
             get userId;
+        </button>
+        <button
+            onClick={() => {
+                console.log(isGuest());
+            }}>
+            isGuest();
         </button>
         <button
             onClick={() => {

@@ -34,9 +34,8 @@ export default function ListView(props: ListViewProps) {
         setSortMode,
     } = useNodes();
 
-    const { user } = useAuth();
-    const isGuest = user?.uid === "guest";
-    const nodeService = isGuest
+    const { isGuest } = useAuth();
+    const nodeService = isGuest()
         ? localStorageService
         : firestoreService
 

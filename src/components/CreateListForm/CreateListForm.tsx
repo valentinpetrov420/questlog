@@ -16,9 +16,7 @@ export default function CreateListForm() {
 
     const [pending, setPending] = useState(false);
 
-    const { user } = useAuth();
-
-    const isGuest = user?.uid === "guest";
+    const { isGuest } = useAuth();
 
     const [error, setError] = useState("");
     const [status, setStatus] = useState<boolean | null>(null);;
@@ -43,7 +41,7 @@ export default function CreateListForm() {
         let isPublic;
         isPublic = draftVisibility === "public";
 
-        if (isGuest){
+        if (isGuest()) {
             isPublic = false;
         }
 
@@ -76,7 +74,7 @@ export default function CreateListForm() {
             disabled={pending}>
             {pending ? "Creating..." : "Create new quest"}
         </button>
-        {isGuest ? "" : <select className="visibility-dropdown"
+        {isGuest() ? "" : <select className="visibility-dropdown"
             disabled={pending}
             value={draftVisibility}
             onChange={(event) => {

@@ -20,6 +20,7 @@ type AuthContextValue = {
 
 	loginWithGoogle: typeof loginWithGoogle;
 	continueAsGuest: () => void;
+	isGuest: () => boolean;
 
 	logoutUser: () => Promise<void>;
 };
@@ -73,6 +74,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		setAuthReady(true);
 	};
 
+	const isGuest = () => {
+		return user?.uid === "guest";
+	}
+
 	const logoutUser = async () => {
 		if (user?.uid === "guest") {
 			localStorage.removeItem("guest-mode");
@@ -87,7 +92,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 	return (
 		<AuthContext.Provider
 			value={
-				{ user, authReady, logoutUser, loginWithGoogle, continueAsGuest }
+				{ user, authReady, logoutUser, loginWithGoogle, continueAsGuest, isGuest }
 			}>
 			{children}
 		</AuthContext.Provider>

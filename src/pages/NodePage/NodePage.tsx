@@ -27,9 +27,9 @@ export default function NodePage() {
 
     const navigate = useNavigate();
 
-    const { user } = useAuth();
+    const { isGuest } = useAuth();
 
-    const nodeService = user?.uid === "guest"
+    const nodeService = isGuest()
         ? localStorageService
         : firestoreService
 
@@ -38,7 +38,7 @@ export default function NodePage() {
             return;
         }
 
-        if (user?.uid === "guest") {
+        if (isGuest()) {
             return;
         }
 
