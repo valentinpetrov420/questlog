@@ -9,7 +9,8 @@ Built as a daily-iterated React project with Firebase as the backend.
 
 ## Features
 
-- Google OAuth authentication.
+- Google OAuth authentication branch with Firebase persistence.
+- Guest Mode branch with localStorage persistence. (changing nodes to public/sharing and cross-device persistence require login).
 - Full CRUD for nodes (pages and tasks).
 - Flat node collection with parentId relationships, hydrated client-side.
 - Search and filtering.
@@ -69,10 +70,17 @@ npm run dev
 
 - Firestore offline persistence to reduce refresh traffic.
 - Parent node updatedAt propagation when children are mutated.
+- Expand tests to more than just utility functions.
+- CI:
+    - typecheck
+    - lint
+    - tests
+
 
 ## Features
 
-- Guest Mode that doesn't require a google login to use the site's UI, but google login still required for cross-device persistance.
+- More node types.
+- Guest Mode data to Firebase data migration on login.
 
 ## DevPanel
 
