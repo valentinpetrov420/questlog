@@ -53,7 +53,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 			const guestMode = localStorage.getItem("guest-mode") === "true";
 
 			if (u) {
+				// this u is only truthy if its a firebase user, doesn't fire for AppUser/guest-mode
+				// it is guaranteed to be a firebase authentication
 				setUser(u);
+				localStorage.removeItem("guest-mode");
 			} else if (!guestMode) {
 				setUser(null);
 			}
