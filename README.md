@@ -1,11 +1,22 @@
 # Questlog
 
-<!-- hide:start -->
-Demo: https://questlog-tan-seven.vercel.app/
-<!-- hide:end -->
+[![CI](https://github.com/valentinpetrov420/questlog/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/valentinpetrov420/questlog/actions/workflows/ci.yml)
+
 A productivity tool built on a flat node architecture, inspired by Notion. 
 Any node can be a page or a task, enabling recursive nesting and shareable public links.
 Built as a daily-iterated React project with Firebase as the backend.
+
+<!-- hide:start -->
+Demo: https://questlog-tan-seven.vercel.app/
+
+![Desktop dashboard view](desktop-dashboard.png)
+![Mobile sidebar view](mobile-sidebar.png)
+![Mobile dashboard view](mobile-dashboard.png)
+<!-- hide:end -->
+
+## Stack
+
+React - TypeScript - Vite - Firebase (Auth + Firestore) - Vitest - ESLint
 
 ## Features
 
@@ -41,7 +52,13 @@ Built as a daily-iterated React project with Firebase as the backend.
     - Archived
 - Route-guarded navigation with auth-aware redirects.
 - Dev-only network latency simulation.
+
+
 - Build-time changelog generated from git commit history.
+- CI:
+    - typecheck.
+    - lint.
+    - tests.
 
 <!-- hide:start -->
 ## How to run it locally
@@ -71,11 +88,6 @@ npm run dev
 - Firestore offline persistence to reduce refresh traffic.
 - Parent node updatedAt propagation when children are mutated.
 - Expand tests to more than just utility functions.
-- CI:
-    - typecheck
-    - lint
-    - tests
-
 
 ## Features
 

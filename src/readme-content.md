@@ -1,5 +1,14 @@
 # Questlog
 
+
+[![CI](https://github.com/valentinpetrov420/questlog/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/valentinpetrov420/questlog/actions/workflows/ci.yml)
+
+<!-- hide:start -->
+![Desktop dashboard view](desktop-dashboard.png)
+![Mobile sidebar view](mobile-sidebar.png)
+![Mobile dashboard view](mobile-dashboard.png)
+<!-- hide:end -->
+
 <!-- hide:start -->
 Demo: https://questlog-tan-seven.vercel.app/
 <!-- hide:end -->
@@ -7,9 +16,14 @@ A productivity tool built on a flat node architecture, inspired by Notion.
 Any node can be a page or a task, enabling recursive nesting and shareable public links.
 Built as a daily-iterated React project with Firebase as the backend.
 
+## Stack
+
+React - TypeScript - Vite - Firebase (Auth + Firestore) - Vitest - ESLint
+
 ## Features
 
-- Google OAuth authentication.
+- Google OAuth authentication branch with Firebase persistence.
+- Guest Mode branch with localStorage persistence. (changing nodes to public/sharing and cross-device persistence require login).
 - Full CRUD for nodes (pages and tasks).
 - Flat node collection with parentId relationships, hydrated client-side.
 - Search and filtering.
@@ -40,7 +54,13 @@ Built as a daily-iterated React project with Firebase as the backend.
     - Archived
 - Route-guarded navigation with auth-aware redirects.
 - Dev-only network latency simulation.
+
+
 - Build-time changelog generated from git commit history.
+- CI:
+    - typecheck.
+    - lint.
+    - tests.
 
 <!-- hide:start -->
 ## How to run it locally
@@ -69,10 +89,12 @@ npm run dev
 
 - Firestore offline persistence to reduce refresh traffic.
 - Parent node updatedAt propagation when children are mutated.
+- Expand tests to more than just utility functions.
 
 ## Features
 
-- Guest Mode that doesn't require a google login to use the site's UI, but google login still required for cross-device persistance.
+- More node types.
+- Guest Mode data to Firebase data migration on login.
 
 ## DevPanel
 
