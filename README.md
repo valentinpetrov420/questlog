@@ -9,9 +9,9 @@ Built as a daily-iterated React project with Firebase as the backend.
 <!-- hide:start -->
 Demo: https://questlog-tan-seven.vercel.app/
 
-![Desktop dashboard view](desktop-dashboard.png)
-![Mobile sidebar view](mobile-sidebar.png)
-![Mobile dashboard view](mobile-dashboard.png)
+![Desktop dashboard view](docs/screenshots/desktop-dashboard.png)
+![Mobile sidebar view](docs/screenshots/mobile-sidebar.png)
+![Mobile dashboard view](docs/screenshots/mobile-dashboard.png)
 <!-- hide:end -->
 
 ## Stack
@@ -48,12 +48,10 @@ React - TypeScript - Vite - Firebase (Auth + Firestore) - Vitest - ESLint
     - Recently created.
     - Custom order.
     - Recently updated.
-    - Alphabetical
-    - Archived
+    - Alphabetical.
+    - Archived.
 - Route-guarded navigation with auth-aware redirects.
 - Dev-only network latency simulation.
-
-
 - Build-time changelog generated from git commit history.
 - CI:
     - typecheck.
