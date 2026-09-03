@@ -129,6 +129,48 @@ describe('PopOver', () => {
         expect(screen.queryByText('Delete')).not.toBeInTheDocument();
     });
 
-    //todo: write tests for auxiliary/secondary functionality like type displaying "+" / "⋯"
-    // and align={"left" | "right"}
+    it('displays the menu toggle as + when type is create', () => {
+        render(<PopOver
+            type="create"
+            align="left"
+            disabled={false}>
+            <button onClick={() => { }}>Delete</button>
+        </PopOver>)
+
+        expect(screen.getByText('+')).toBeInTheDocument();
+    });
+
+    it('properly applies left class if it has props.align as left', async () => {
+        const user = userEvent.setup();
+
+        const { container } = render(<PopOver
+            type="create"
+            align="left"
+            disabled={false}>
+            <button onClick={() => { }}>Delete</button>
+        </PopOver>)
+
+        await user.click(screen.getByText('+'));
+
+        const popover = container.querySelector('.item-popover');
+
+        expect(popover).toHaveClass('left');
+    });
+
+    it('properly applies right class if it has props.align as right', async () => {
+        const user = userEvent.setup();
+
+        const { container } = render(<PopOver
+            type="create"
+            align="right"
+            disabled={false}>
+            <button onClick={() => { }}>Delete</button>
+        </PopOver>)
+
+        await user.click(screen.getByText('+'));
+
+        const popover = container.querySelector('.item-popover');
+
+        expect(popover).toHaveClass('right');
+    });
 });
