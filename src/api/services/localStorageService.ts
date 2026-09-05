@@ -44,8 +44,6 @@ async function getNode(nodeId: string): Promise<Node | null> {
 
     const node = flatNodes.find(n => n.id === nodeId);
 
-    console.log(node);
-
     if (!node) {
         return null;
     }
@@ -65,11 +63,12 @@ async function getNodes(): Promise<Node[]> {
 
 async function updateNode(id: string, data: object) {
     await __devDelay();
+    const { id: _, ownerId: __, ...updates } = data as Node;
 
     const flatNodes = await getNodes();
 
     const updatedFlatNodes = flatNodes.map(node => node.id === id 
-        ? { ...node, ...data }
+        ? { ...node, ...updates }
         : node
     );
 
@@ -78,8 +77,10 @@ async function updateNode(id: string, data: object) {
 async function updateNodeOptimistic(id: string, data: object) {
     const flatNodes = await getNodes();
 
+    const { id: _, ownerId: __, ...updates } = data as Node;
+
     const updatedFlatNodes = flatNodes.map(node => node.id === id
-        ? { ...node, ...data }
+        ? { ...node, ...updates }
         : node
     );
 
