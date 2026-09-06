@@ -131,7 +131,7 @@ describe("localStorageService", () => {
             ownerId: "test"
         }
         )
-    })
+    });
 
     it("resetTasks resets all tasks properly", async () => {
         const parentId = await localStorageService.nodes.createNode("test",
@@ -184,5 +184,71 @@ describe("localStorageService", () => {
         const resetTasks = resetNodes.filter(node => completedTasksIds.has(node.id));
 
         expect(resetTasks.every(task => task.completed === false)).toBe(true);
-    })
+    });
+
+    it("reorder correctly updates order property of nodes in the provided array", async () => {
+        const parentId = await localStorageService.nodes.createNode(
+            "test",
+            {
+                type: "page",
+                parentId: null,
+                text: "parent",
+                isPublic: false,
+                order: 0
+            }
+        );
+
+        const id1 = await localStorageService.nodes.createNode(
+            "test",
+            {
+                type: "todo",
+                parentId,
+                text: "#1",
+                isPublic: false,
+                order: 0
+            }
+        );
+
+        const id2 = await localStorageService.nodes.createNode(
+            "test",
+            {
+                type: "todo",
+                parentId,
+                text: "#2",
+                isPublic: false,
+                order: 1
+            }
+        );
+
+        const id3 = await localStorageService.nodes.createNode(
+            "test",
+            {
+                type: "todo",
+                parentId,
+                text: "#3",
+                isPublic: false,
+                order: 2
+            }
+        );
+
+        const nodes = await localStorageService.nodes.getNodes();
+
+        const node1 = nodes.find(node => node.id === id1)!;
+        const node2 = nodes.find(node => node.id === id2)!;
+        const node3 = nodes.find(node => node.id === id3)!;
+
+        await localStorageService.nodes.reorder([
+            node3,
+            node1,
+            node2
+        ]);
+
+        const updatedNodes = await localStorageService.nodes.getNodes();
+
+        expect(updatedNodes.find(node => node.id === id3)?.order).toBe(0);
+        expect(updatedNodes.find(node => node.id === id1)?.order).toBe(1);
+        expect(updatedNodes.find(node => node.id === id2)?.order).toBe(2);
+    });
+
+    
 });
