@@ -250,5 +250,55 @@ describe("localStorageService", () => {
         expect(updatedNodes.find(node => node.id === id2)?.order).toBe(2);
     });
 
-    
+    it("deleteNode deletes the specified node by id", async () => {
+        const id = await localStorageService.nodes.createNode("test",
+            {
+                type: "todo",
+                parentId: null,
+                text: "#1",
+                isPublic: false,
+                order: 0
+            });
+
+        await localStorageService.nodes.createNode("test",
+            {
+                type: "todo",
+                parentId: null,
+                text: "#2",
+                isPublic: false,
+                order: 0
+            });
+
+        await localStorageService.nodes.deleteNode(id, "test");
+
+        const deletedNode = await localStorageService.nodes.getNode(id);
+
+        expect(deletedNode).toBeNull();
+    });
+
+    it("__clearStorage clears storage", async () => {
+        await localStorageService.nodes.createNode("test",
+            {
+                type: "todo",
+                parentId: null,
+                text: "#1",
+                isPublic: false,
+                order: 0
+            });
+
+        await localStorageService.nodes.createNode("test",
+            {
+                type: "todo",
+                parentId: null,
+                text: "#2",
+                isPublic: false,
+                order: 0
+            });
+
+        await localStorageService.nodes.__clearLocalNodes();
+
+        const nodes = await localStorageService.nodes.getNodes();
+
+        expect(nodes).toEqual([]);
+    });
 });

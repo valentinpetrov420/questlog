@@ -161,8 +161,8 @@ async function deleteNode(nodeId: string, ownerId: string) {
 }
 
 
-function __clearLocalNodes() {
-    localStorage.removeItem("guestNodes")
+async function __clearLocalNodes() {
+    localStorage.removeItem("guestNodes");
 }
 
 const localStorageService = {

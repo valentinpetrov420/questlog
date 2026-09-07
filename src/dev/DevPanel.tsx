@@ -45,8 +45,8 @@ export default function DevPanel(props: DevPanelProps) {
             getNodes();
         </button>
         <button
-            onClick={() => {
-                localStorageService.nodes.__clearLocalNodes();
+            onClick={async () => {
+                await localStorageService.nodes.__clearLocalNodes();
                 console.log("cleared guestNodes");
             }}>
             __clearLocalNodes();
