@@ -12,4 +12,4 @@ jobs:
       - run: npm ci
       - run: npx tsc --noEmit
       - run: npm run lint
-      - run: npm run test
+      - run: npx firebase emulators:exec --only firestore "npm run test -- --run"
