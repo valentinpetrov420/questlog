@@ -1,12 +1,11 @@
-import { describe, it, expect } from 'vitest';
-import { beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest';
 import localStorageService from './localStorageService';
 import type { Node } from '../../types/Node';
 
 describe("localStorageService", () => {
     beforeEach(() => {
         localStorage.clear();
-    })
+    });
 
     it("createNode creates a new node", async () => {
         const id = await localStorageService.nodes.createNode("test",
