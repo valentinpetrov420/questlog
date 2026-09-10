@@ -101,18 +101,22 @@ async function getNodes(userId: string): Promise<Node[]> {
 async function updateNode(nodeId: string, data: object) {
     await __devDelay();
 
+    const { id: _, ownerId: __, ...updates } = data as Node;
+
     const docRef = doc(db, "nodes", nodeId);
 
     await updateDoc(docRef, {
-        ...data,
+        ...updates,
         updatedAt: Date.now(),
     });
 }
 async function updateNodeOptimistic(nodeId: string, data: object) {
     const docRef = doc(db, "nodes", nodeId);
 
+    const { id: _, ownerId: __, ...updates } = data as Node;
+
     await updateDoc(docRef, {
-        ...data,
+        ...updates,
         updatedAt: Date.now(),
     });
 }

@@ -1,5 +1,6 @@
 import firestoreService from "./firestoreService";
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import type { Node } from "../../types/Node";
 
 import {
     collection,
@@ -13,6 +14,10 @@ beforeEach(async () => {
     const snapshot = await getDocs(collection(db, "nodes"));
 
     await Promise.all(snapshot.docs.map(document => deleteDoc(document.ref)));
+});
+
+afterEach(() => {
+    vi.restoreAllMocks();
 });
 
 describe("FirestoreService", () => {
@@ -97,8 +102,59 @@ describe("FirestoreService", () => {
         const ownerId = "test";
         const nodes = await firestoreService.nodes.getNodes(ownerId);
 
-        console.log(nodes);
-
         expect(nodes.length).toEqual(0);
-    })
+    });
+
+    it("updateNode updates the correct node properly", async () => {
+        const ownerId = "test";
+
+        const nodeId = await firestoreService.nodes.createNode(ownerId, {
+            type: "page",
+            parentId: null,
+            text: "test",
+            isPublic: false,
+            order: 0,
+        });
+
+        await firestoreService.nodes.updateNode(nodeId, { text: "updated" });
+
+        const node = await firestoreService.nodes.getNode(nodeId);
+
+        expect(node).toMatchObject({
+            text: "updated",
+        });
+    });
+    it("updateNode updates the updatedAt property", async () => {
+        const nodeId = await firestoreService.nodes.createNode("test", {
+            text: "test",
+        });
+
+        vi.spyOn(Date, "now").mockReturnValue(999999);
+
+        await firestoreService.nodes.updateNode(nodeId, {
+            text: "updated"
+        });
+
+        const updatedNode = await firestoreService.nodes.getNode(nodeId);
+
+        expect(updatedNode?.updatedAt).toBe(999999);
+    });
+    it("updateNode ignores illegal data and passes legal data", async () => {
+        const ownerId = "test";
+
+        const id = await firestoreService.nodes.createNode(ownerId,
+            {
+                type: "todo",
+                parentId: null,
+                text: "test",
+                isPublic: false,
+                order: 0
+            });
+
+        await firestoreService.nodes.updateNode(id, { text: "updated", ownerId: "newuser" } as Node);
+
+        const updatedNode = await firestoreService.nodes.getNode(id);
+
+        expect(updatedNode?.ownerId).toBe("test");
+    });
 });

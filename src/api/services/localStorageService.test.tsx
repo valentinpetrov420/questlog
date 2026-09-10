@@ -108,8 +108,7 @@ describe("localStorageService", () => {
 
         expect(node).toMatchObject({
             text: "updated",
-        }
-        )
+        });
     });
     it("updateNode ignores illegal data and passes legal data", async () => {
         const id = await localStorageService.nodes.createNode("test",
@@ -128,8 +127,7 @@ describe("localStorageService", () => {
         expect(node).toMatchObject({
             text: "updated",
             ownerId: "test"
-        }
-        )
+        });
     });
 
     it("resetTasks resets all tasks properly", async () => {
