@@ -157,4 +157,55 @@ describe("FirestoreService", () => {
 
         expect(updatedNode?.ownerId).toBe("test");
     });
+
+    it("resetTasks resets all tasks properly", async () => {
+        const ownerId = "test";
+
+        const parentId = await firestoreService.nodes.createNode(ownerId, {
+            type: "page",
+            parentId: null,
+            text: "test",
+            isPublic: false,
+            order: 0,
+        });
+
+        const id = await firestoreService.nodes.createNode(ownerId, {
+            type: "todo",
+            parentId: parentId,
+            text: "#1",
+            isPublic: false,
+            order: 0,
+        });
+        const id2 = await firestoreService.nodes.createNode(ownerId, {
+            type: "todo",
+            parentId: parentId,
+            text: "#2",
+            isPublic: false,
+            order: 0,
+        });
+        const id3 = await firestoreService.nodes.createNode(ownerId, {
+            type: "todo",
+            parentId: parentId,
+            text: "#3",
+            isPublic: false,
+            order: 0,
+        });
+
+        await firestoreService.nodes.updateNode(id, {completed: true});
+        await firestoreService.nodes.updateNode(id2, {completed: true});
+        await firestoreService.nodes.updateNode(id3, {completed: true});
+
+        const allNodes = await firestoreService.nodes.getNodes(ownerId);
+
+        const completedTasks = allNodes.filter(node => node.parentId === parentId && node.completed === true);
+        const completedTasksIds = new Set(completedTasks.map(node => node.id));
+
+        await firestoreService.nodes.resetTasks(completedTasksIds);
+
+        const resetNodes = await firestoreService.nodes.getNodes(ownerId);
+
+        const resetTasks = resetNodes.filter(node => completedTasksIds.has(node.id));
+
+        expect(resetTasks.every(task => task.completed === false)).toBe(true);
+    });
 });
