@@ -208,4 +208,56 @@ describe("FirestoreService", () => {
 
         expect(resetTasks.every(task => task.completed === false)).toBe(true);
     });
+
+    it("reorder correctly updates order property of nodes in the provided array", async () => {
+        const ownerId = "test";
+
+        const parentId = await firestoreService.nodes.createNode(ownerId, {
+            type: "page",
+            parentId: null,
+            text: "test",
+            isPublic: false,
+            order: 0,
+        });
+
+        const id1 = await firestoreService.nodes.createNode(ownerId, {
+            type: "todo",
+            parentId: parentId,
+            text: "#1",
+            isPublic: false,
+            order: 0,
+        });
+        const id2 = await firestoreService.nodes.createNode(ownerId, {
+            type: "todo",
+            parentId: parentId,
+            text: "#2",
+            isPublic: false,
+            order: 0,
+        });
+        const id3 = await firestoreService.nodes.createNode(ownerId, {
+            type: "todo",
+            parentId: parentId,
+            text: "#3",
+            isPublic: false,
+            order: 0,
+        });
+
+        const nodes = await firestoreService.nodes.getNodes(ownerId);
+
+        const node1 = nodes.find(node => node.id === id1)!;
+        const node2 = nodes.find(node => node.id === id2)!;
+        const node3 = nodes.find(node => node.id === id3)!;
+
+        await firestoreService.nodes.reorder([
+            node3,
+            node1,
+            node2
+        ]);
+
+        const updatedNodes = await firestoreService.nodes.getNodes(ownerId);
+
+        expect(updatedNodes.find(node => node.id === id3)?.order).toBe(0);
+        expect(updatedNodes.find(node => node.id === id1)?.order).toBe(1);
+        expect(updatedNodes.find(node => node.id === id2)?.order).toBe(2);
+    });
 });
