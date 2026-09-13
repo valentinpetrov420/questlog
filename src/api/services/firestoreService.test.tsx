@@ -260,4 +260,59 @@ describe("FirestoreService", () => {
         expect(updatedNodes.find(node => node.id === id1)?.order).toBe(1);
         expect(updatedNodes.find(node => node.id === id2)?.order).toBe(2);
     });
+
+    it("deleteNode deletes a specified node", async () => {
+        const ownerId = "test";
+
+        const nodeId = await firestoreService.nodes.createNode(ownerId, {
+            type: "page",
+            parentId: null,
+            text: "test",
+            isPublic: false,
+            order: 0,
+        });
+
+        await firestoreService.nodes.deleteNode(nodeId, ownerId);
+
+        const deletedNode = await firestoreService.nodes.getNode(nodeId);
+
+        expect(deletedNode).toBeNull();
+    });
+    it("deleteNode deletes descendants recursively", async () => {
+        const ownerId = "test";
+
+        const parentId = await firestoreService.nodes.createNode(ownerId, {
+            type: "page",
+            parentId: null,
+            text: "test",
+            isPublic: false,
+            order: 0,
+        });
+
+        const childId = await firestoreService.nodes.createNode(ownerId, {
+            type: "todo",
+            parentId: parentId,
+            text: "#1",
+            isPublic: false,
+            order: 0,
+        });
+
+        const grandchildId = await firestoreService.nodes.createNode(ownerId, {
+            type: "todo",
+            parentId: childId,
+            text: "#1",
+            isPublic: false,
+            order: 0,
+        });
+
+        await firestoreService.nodes.deleteNode(parentId, ownerId);
+
+        const deletedNode = await firestoreService.nodes.getNode(parentId);
+        const deletedChildNode = await firestoreService.nodes.getNode(childId);
+        const deletedGrandChildNode = await firestoreService.nodes.getNode(grandchildId);
+
+        expect(deletedNode).toBeNull();
+        expect(deletedChildNode).toBeNull();
+        expect(deletedGrandChildNode).toBeNull();
+    });
 });
