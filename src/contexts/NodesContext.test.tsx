@@ -1,0 +1,98 @@
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { renderHook, 
+    //act, 
+    waitFor } from "@testing-library/react";
+import { ReactNode } from "react";
+
+import {
+    NodesProvider,
+    useNodes,
+} from "./NodesContext";
+
+import { useAuth } from "./AuthContext";
+
+import firestoreService from "../api/services/firestoreService";
+//import localStorageService from "../api/services/localStorageService";
+
+import type { Node } from "../types/Node";
+
+
+vi.mock("./AuthContext", () => ({ useAuth: vi.fn() }));
+
+vi.mock("../api/services/firestoreService", () => ({
+    default: {
+        nodes: {
+            getNodes: vi.fn(),
+            createNode: vi.fn(),
+            updateNode: vi.fn(),
+            updateNodeOptimistic: vi.fn(),
+            deleteNode: vi.fn(),
+            resetTasks: vi.fn(),
+        },
+    },
+}));
+
+vi.mock("../api/services/localStorageService", () => ({
+    default: {
+        nodes: {
+            getNodes: vi.fn(),
+            createNode: vi.fn(),
+            updateNode: vi.fn(),
+            updateNodeOptimistic: vi.fn(),
+            deleteNode: vi.fn(),
+            resetTasks: vi.fn(),
+        },
+    },
+}));
+
+
+function wrapper({ children }: { children: ReactNode }) {
+    return (
+        <NodesProvider>
+            {children}
+        </NodesProvider>
+    );
+}
+
+const testNode = {
+    id: "node-1",
+    type: "page",
+    parentId: null,
+    text: "test",
+    ownerId: "test",
+    isPublic: false,
+    pinned: false,
+    archived: false,
+    completed: false,
+    order: 0,
+    createdAt: 1000,
+    updatedAt: 1000,
+};
+
+describe("NodesContext", () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+
+        localStorage.clear();
+
+        vi.mocked(useAuth).mockReturnValue({
+            user: {
+                uid: "test",
+            },
+            authReady: true,
+        } as ReturnType<typeof useAuth>);
+
+        vi.mocked(firestoreService.nodes.getNodes).mockResolvedValue([testNode] as Node[]);
+    });
+
+    it("loads nodes for an authenticated user", async () => {
+
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        expect(result.current.flatNodes).toEqual([testNode]);
+    });
+});
