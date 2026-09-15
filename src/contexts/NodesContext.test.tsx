@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { renderHook, 
+import {
+    renderHook,
     //act, 
-    waitFor } from "@testing-library/react";
+    waitFor
+} from "@testing-library/react";
 import { ReactNode } from "react";
 
 import {
@@ -10,6 +12,7 @@ import {
 } from "./NodesContext";
 
 import { useAuth } from "./AuthContext";
+import { maxLength } from "../constants/app";
 
 import firestoreService from "../api/services/firestoreService";
 //import localStorageService from "../api/services/localStorageService";
@@ -94,5 +97,48 @@ describe("NodesContext", () => {
         });
 
         expect(result.current.flatNodes).toEqual([testNode]);
+    });
+
+    it("authenticated handleCreateNode returns id on success and updates flatNodes", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const id = await result.current.handleCreateNode("test", false);
+        const id2 = await result.current.handleCreateNode("test", false);
+
+        await waitFor(() => {
+            expect(result.current.flatNodes.length).toBe(3);
+        });
+
+        expect(id).toBeDefined();
+        expect(id2).toBeDefined();
+        expect(result.current.flatNodes.length).toBe(3);
+    });
+
+    it("authenticated handleCreateNode returns an error message on failure, doesn't update flatNodes", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const createResult = await result.current.handleCreateNode("", false);
+
+        const createResult2 = await result.current.handleCreateNode("2".repeat(maxLength + 1), false);
+
+        expect(createResult).toEqual({
+            error: {
+                message: "Field cannot be empty."
+            }
+        });
+        expect(createResult2).toEqual({
+            error: {
+                message: `Cannot be longer than ${maxLength} symbols.`
+            }
+        });
+        expect(result.current.flatNodes.length).toBe(1);
     });
 });
