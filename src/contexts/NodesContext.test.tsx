@@ -117,7 +117,6 @@ describe("NodesContext", () => {
         expect(id2).toBeDefined();
         expect(result.current.flatNodes.length).toBe(3);
     });
-
     it("authenticated handleCreateNode returns an error message on failure, doesn't update flatNodes", async () => {
         const { result } = renderHook(() => useNodes(), { wrapper });
 
@@ -140,5 +139,33 @@ describe("NodesContext", () => {
             }
         });
         expect(result.current.flatNodes.length).toBe(1);
+    });
+
+    it("authenticated handleCreateChildNode returns id on success and updates flatNodes", async () => {
+        vi.mocked(firestoreService.nodes.createNode)
+            .mockResolvedValueOnce("parent-id")
+            .mockResolvedValueOnce("child-id");
+
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const parentId = await result.current.handleCreateNode("test", false);
+        const childId = await result.current.handleCreateChildNode("test", parentId.id!, "todo");
+
+        await waitFor(() => {
+            expect(result.current.flatNodes.length).toBe(3);
+        });
+
+        expect(parentId).toBeDefined();
+        expect(childId).toBeDefined();
+
+        const childNodeResult = result.current.flatNodes.find(node => node.id === childId.id);
+
+        expect(childNodeResult?.parentId).toBe(parentId.id);
+        expect(childNodeResult?.text).toEqual("test");
+        expect(childNodeResult?.type).toEqual("todo");
     });
 });
