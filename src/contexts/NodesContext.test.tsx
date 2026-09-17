@@ -206,7 +206,6 @@ describe("NodesContext", () => {
 
     it("authenticated handleCreateChildNode returns error message on missing parentId", async () => {
         vi.mocked(firestoreService.nodes.createNode)
-            .mockResolvedValueOnce("parent-id")
             .mockResolvedValueOnce("child-id");
 
         const { result } = renderHook(() => useNodes(), { wrapper });
@@ -215,8 +214,6 @@ describe("NodesContext", () => {
             expect(result.current.nodesLoading).toBe(false);
         });
 
-
-        const parentId = await result.current.handleCreateNode("test", false);
         const childCreateResult = await result.current.handleCreateChildNode("test", undefined!, "todo");
 
         await waitFor(() => {
