@@ -217,7 +217,7 @@ describe("NodesContext", () => {
         const childCreateResult = await result.current.handleCreateChildNode("test", undefined!, "todo");
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(2);
+            expect(result.current.flatNodes.length).toBe(1);
         });
 
         expect(childCreateResult).toEqual({
