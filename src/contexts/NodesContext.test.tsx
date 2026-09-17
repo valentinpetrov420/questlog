@@ -168,4 +168,39 @@ describe("NodesContext", () => {
         expect(childNodeResult?.text).toEqual("test");
         expect(childNodeResult?.type).toEqual("todo");
     });
+
+    it("authenticated handleCreateChildNode returns an error message on failure, doesn't update flatNodes", async () => {
+        vi.mocked(firestoreService.nodes.createNode)
+            .mockResolvedValueOnce("parent-id")
+
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const parentId = await result.current.handleCreateNode("test", false);
+        const childCreateResult = await result.current.handleCreateChildNode("", parentId.id!, "todo");
+        const childCreateResult2 = await result.current.handleCreateChildNode("2".repeat(maxLength+1), parentId.id!, "todo");
+
+        await waitFor(() => {
+            expect(result.current.flatNodes.length).toBe(2);
+        });
+
+        expect(childCreateResult).toEqual({
+            error: {
+                message: "Field cannot be empty."
+            }
+        });
+
+        expect(childCreateResult2).toEqual({
+            error: {
+                message: `Cannot be longer than ${maxLength} symbols.`
+            }
+        });
+
+        expect(result.current.flatNodes.length).toBe(2);
+
+        expect(firestoreService.nodes.createNode).toHaveBeenCalledTimes(1);
+    });
 });
