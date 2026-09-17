@@ -165,6 +165,14 @@ export function NodesProvider({ children }: NodesProviderProps) {
             };
         }
 
+        if (!parentId) {
+            return {
+                error: {
+                    message: "missing parentId"
+                }
+            };
+        }
+
         const result = validateText(text);
 
         if (!result.valid) {

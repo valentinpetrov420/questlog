@@ -181,7 +181,7 @@ describe("NodesContext", () => {
 
         const parentId = await result.current.handleCreateNode("test", false);
         const childCreateResult = await result.current.handleCreateChildNode("", parentId.id!, "todo");
-        const childCreateResult2 = await result.current.handleCreateChildNode("2".repeat(maxLength+1), parentId.id!, "todo");
+        const childCreateResult2 = await result.current.handleCreateChildNode("2".repeat(maxLength + 1), parentId.id!, "todo");
 
         await waitFor(() => {
             expect(result.current.flatNodes.length).toBe(2);
@@ -202,5 +202,31 @@ describe("NodesContext", () => {
         expect(result.current.flatNodes.length).toBe(2);
 
         expect(firestoreService.nodes.createNode).toHaveBeenCalledTimes(1);
+    });
+
+    it("authenticated handleCreateChildNode returns error message on missing parentId", async () => {
+        vi.mocked(firestoreService.nodes.createNode)
+            .mockResolvedValueOnce("parent-id")
+            .mockResolvedValueOnce("child-id");
+
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+
+        const parentId = await result.current.handleCreateNode("test", false);
+        const childCreateResult = await result.current.handleCreateChildNode("test", undefined!, "todo");
+
+        await waitFor(() => {
+            expect(result.current.flatNodes.length).toBe(2);
+        });
+
+        expect(childCreateResult).toEqual({
+            error: {
+                message: "missing parentId"
+            }
+        });
     });
 });
