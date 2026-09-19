@@ -255,7 +255,6 @@ describe("NodesContext", () => {
             expect(archivedNode?.archived).toBe(true);
         });
     });
-
     it("authenticated handleArchiveNode doesn't update flatNodes if window confirm is declined", async () => {
         vi.mocked(firestoreService.nodes.createNode)
             .mockResolvedValueOnce("parent-id")
@@ -280,5 +279,85 @@ describe("NodesContext", () => {
 
         expect(firestoreService.nodes.updateNodeOptimistic).not.toHaveBeenCalled();
         expect(archivedNode?.archived).toBe(false);
+    });
+
+    it("authenticated handleRestoreNode correctly updates flatNodes if window confirm is accepted", async () => {
+        vi.mocked(firestoreService.nodes.createNode)
+            .mockResolvedValueOnce("parent-id")
+
+        vi.spyOn(window, "confirm").mockReturnValueOnce(true).mockReturnValueOnce(true);
+
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const parentResult = await result.current.handleCreateNode("test", false);
+
+        await waitFor(() => {
+            expect(result.current.flatNodes.length).toBe(2);
+        });
+
+        await result.current.handleArchiveNode(parentResult.id!);
+
+        await waitFor(() => {
+            const archivedNode = result.current.flatNodes.find(
+                node => node.id === parentResult.id
+            );
+
+            expect(archivedNode?.archived).toBe(true);
+        });
+
+        await result.current.handleRestoreNode(parentResult.id!);
+
+        await waitFor(() => {
+            expect(firestoreService.nodes.updateNodeOptimistic)
+                .toHaveBeenCalledWith(parentResult.id, { archived: false });
+        });
+
+        const restoredNode = result.current.flatNodes.find(node => node.id === parentResult.id);
+
+        expect(restoredNode?.archived).toBe(false);
+    });
+    it("authenticated handleRestoreNode doesn't update flatNodes if window confirm is declined", async () => {
+        vi.mocked(firestoreService.nodes.createNode)
+            .mockResolvedValueOnce("parent-id")
+
+        vi.spyOn(window, "confirm").mockReturnValueOnce(true).mockReturnValueOnce(false);
+
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const parentResult = await result.current.handleCreateNode("test", false);
+
+        await waitFor(() => {
+            expect(result.current.flatNodes.length).toBe(2);
+        });
+
+        await result.current.handleArchiveNode(parentResult.id!);
+
+        await waitFor(() => {
+            const archivedNode = result.current.flatNodes.find(
+                node => node.id === parentResult.id
+            );
+
+            expect(archivedNode?.archived).toBe(true);
+        });
+
+        await result.current.handleRestoreNode(parentResult.id!);
+
+        await waitFor(() => {
+            const archivedNode = result.current.flatNodes.find(
+                node => node.id === parentResult.id
+            );
+
+            expect(archivedNode?.archived).toBe(true);
+        });
+
+        expect(firestoreService.nodes.updateNodeOptimistic).toHaveBeenCalledTimes(1);
     });
 });
