@@ -388,7 +388,6 @@ describe("NodesContext", () => {
             expect(renamedNode?.text).toBe("new");
         });
     });
-
     it("authenticated handleEditNodeText returns error for invalid text and doesn't update flatNodes and doesn't call service", async () => {
         vi.mocked(firestoreService.nodes.createNode)
             .mockResolvedValueOnce("parent-id")
@@ -421,5 +420,25 @@ describe("NodesContext", () => {
 
         expect(editedNode?.text).toBe("#1");
         expect(editedNode2?.text).toBe("#2");
+    });
+    it("authenticated handleEditNodeText returns error when id is invalid", async () => {
+        //vi.mocked(firestoreService.nodes.createNode)
+        //    .mockResolvedValueOnce("parent-id");
+
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const createResult = await result.current.handleCreateNode("test", false);
+
+        await waitFor(() => {
+            expect(result.current.flatNodes.length).toBe(2);
+        });
+
+        const editResult = await result.current.handleEditNodeText(createResult.id!, "new");
+
+        expect(editResult?.message).toBe("Missing nodeId");
     });
 });
