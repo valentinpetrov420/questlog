@@ -316,9 +316,13 @@ describe("NodesContext", () => {
                 .toHaveBeenCalledWith(parentResult.id, { archived: false });
         });
 
-        const restoredNode = result.current.flatNodes.find(node => node.id === parentResult.id);
+        await waitFor(() => {
+            const restoredNode = result.current.flatNodes.find(
+                node => node.id === parentResult.id
+            );
 
-        expect(restoredNode?.archived).toBe(false);
+            expect(restoredNode?.archived).toBe(false);
+        });
     });
     it("authenticated handleRestoreNode doesn't update flatNodes if window confirm is declined", async () => {
         vi.mocked(firestoreService.nodes.createNode)
@@ -359,5 +363,63 @@ describe("NodesContext", () => {
         });
 
         expect(firestoreService.nodes.updateNodeOptimistic).toHaveBeenCalledTimes(1);
+    });
+
+    it("authenticated handleEditNodeText correctly updates flatNodes", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const createResult = await result.current.handleCreateNode("test", false);
+
+        await waitFor(() => {
+            expect(result.current.flatNodes.length).toBe(2);
+        });
+
+        await result.current.handleEditNodeText(createResult.id!, "new");
+
+        await waitFor(() => {
+            const renamedNode = result.current.flatNodes.find(
+                node => node.id === createResult.id
+            );
+
+            expect(renamedNode?.text).toBe("new");
+        });
+    });
+
+    it("authenticated handleEditNodeText returns error for invalid text and doesn't update flatNodes and doesn't call service", async () => {
+        vi.mocked(firestoreService.nodes.createNode)
+            .mockResolvedValueOnce("parent-id")
+            .mockResolvedValueOnce("child-id")
+            .mockResolvedValueOnce("child-id-2");
+
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const createResult = await result.current.handleCreateNode("test", false);
+        const childResult = await result.current.handleCreateChildNode("#1", createResult.id!, "todo");
+        const child2Result = await result.current.handleCreateChildNode("#2", createResult.id!, "todo");
+
+        await waitFor(() => {
+            expect(result.current.flatNodes.length).toBe(4);
+        });
+
+        const editResult = await result.current.handleEditNodeText(childResult.id!, "");
+        const editResult2 = await result.current.handleEditNodeText(child2Result.id!, "2".repeat(maxLength + 1));
+
+        expect(editResult?.message).toBe("Field cannot be empty.");
+        expect(editResult2?.message).toBe(`Cannot be longer than ${maxLength} symbols.`);
+        expect(firestoreService.nodes.updateNode).not.toHaveBeenCalled();
+
+        const editedNode = result.current.flatNodes.find(node => node.id === childResult.id);
+        const editedNode2 = result.current.flatNodes.find(node => node.id === child2Result.id);
+
+        expect(editedNode?.text).toBe("#1");
+        expect(editedNode2?.text).toBe("#2");
     });
 });
