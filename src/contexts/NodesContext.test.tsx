@@ -168,7 +168,6 @@ describe("NodesContext", () => {
         expect(childNodeResult?.text).toEqual("test");
         expect(childNodeResult?.type).toEqual("todo");
     });
-
     it("authenticated handleCreateChildNode returns an error message on failure, doesn't update flatNodes", async () => {
         vi.mocked(firestoreService.nodes.createNode)
             .mockResolvedValueOnce("parent-id")
@@ -203,7 +202,6 @@ describe("NodesContext", () => {
 
         expect(firestoreService.nodes.createNode).toHaveBeenCalledTimes(1);
     });
-
     it("authenticated handleCreateChildNode returns error message on missing parentId", async () => {
         vi.mocked(firestoreService.nodes.createNode)
             .mockResolvedValueOnce("child-id");
@@ -440,5 +438,43 @@ describe("NodesContext", () => {
         const editResult = await result.current.handleEditNodeText(createResult.id!, "new");
 
         expect(editResult?.message).toBe("Missing nodeId");
+    });
+
+    it("authenticated handlePin correctly updates flatNodes", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const testNode = result.current.flatNodes.find(node => node.id === "node-1");
+
+        await result.current.handlePin(testNode?.id!);
+
+        await waitFor(() => {
+            const pinnedNode = result.current.flatNodes.find(node => node.id === "node-1");
+
+            expect(pinnedNode?.pinned).toBe(true);
+        });
+
+        await result.current.handlePin(testNode?.id!);
+
+        await waitFor(() => {
+            const pinnedNode = result.current.flatNodes.find(node => node.id === "node-1");
+
+            expect(pinnedNode?.pinned).toBe(false);
+        });
+    });
+    it("authenticated handlePin returns error message object if id is missng and doesn't send a service call", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const pinResult = await result.current.handlePin("");
+
+        expect(pinResult?.message).toBe("Missing nodeId");
+        expect(firestoreService.nodes.updateNodeOptimistic).not.toHaveBeenCalled();
     });
 });
