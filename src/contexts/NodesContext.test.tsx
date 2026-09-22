@@ -477,4 +477,45 @@ describe("NodesContext", () => {
         expect(pinResult?.message).toBe("Missing nodeId");
         expect(firestoreService.nodes.updateNodeOptimistic).not.toHaveBeenCalled();
     });
+
+    it("authenticated handleChangeVisibility correctly updates flatNodes", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const testNode = result.current.flatNodes.find(node => node.id === "node-1");
+
+        await result.current.handleVisibilityChange(testNode?.id!);
+
+        await waitFor(() => {
+            const publicNode = result.current.flatNodes.find(node => node.id === "node-1");
+
+            expect(publicNode?.isPublic).toBe(true);
+        });
+
+        await result.current.handleVisibilityChange(testNode?.id!);
+
+        await waitFor(() => {
+            const privateNode = result.current.flatNodes.find(node => node.id === "node-1");
+
+            expect(privateNode?.isPublic).toBe(false);
+        });
+    });
+    it("authenticated handleChangeVisibility returns error message object if id is missng and doesn't send a service call", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const publicResult = await result.current.handleVisibilityChange("");
+
+        expect(publicResult?.message).toBe("Missing nodeId");
+        expect(firestoreService.nodes.updateNodeOptimistic).not.toHaveBeenCalled();
+    });
+    //todo: maybe a separate describe for guest user behavior
+
+    
 });
