@@ -517,5 +517,52 @@ describe("NodesContext", () => {
     });
     //todo: maybe a separate describe for guest user behavior
 
-    
+    it("authenticated handleDeleteNode correctly updates flatNodes if window confirm is accepted", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        vi.spyOn(window, "confirm").mockReturnValue(true);
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const testNode = result.current.flatNodes.find(node => node.id === "node-1");
+
+        await result.current.handleDeleteNode(testNode?.id!);
+
+        await waitFor(() => {
+            expect(result.current.flatNodes.length).toBe(0);
+        });
+    });
+    it("authenticated handleDeleteNode doesn't flatNodes if window confirm is declined", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        vi.spyOn(window, "confirm").mockReturnValue(false);
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const testNode = result.current.flatNodes.find(node => node.id === "node-1");
+
+        await result.current.handleDeleteNode(testNode?.id!);
+
+        await waitFor(() => {
+            expect(result.current.flatNodes.length).toBe(1);
+            expect(firestoreService.nodes.deleteNode).not.toHaveBeenCalled();
+        });
+    });
+    it("authenticated handleDeleteNode returns error message object if id is missing", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        vi.spyOn(window, "confirm").mockReturnValue(true);
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const deleteResult = await result.current.handleDeleteNode("");
+
+        expect(deleteResult?.message).toBe("Missing nodeId");
+    });
 });

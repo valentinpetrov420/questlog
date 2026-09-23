@@ -408,6 +408,9 @@ export function NodesProvider({ children }: NodesProviderProps) {
             await nodeService.nodes.deleteNode(nodeId, user.uid);
 
             const updatedState = flatNodes.filter(node => node.id !== nodeId);
+            //todo: leaves behind orphaned ghost nodes that don't display but are in state
+            // might break export/imports and other side actions that involve bulk operations
+            
             setFlatNodes(updatedState);
 
             return undefined;
