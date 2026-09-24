@@ -565,4 +565,41 @@ describe("NodesContext", () => {
 
         expect(deleteResult?.message).toBe("Missing nodeId");
     });
+
+    it("authenticated handleToggleChildNode correctly updates flatNodes", async () => {
+        vi.mocked(firestoreService.nodes.createNode)
+            .mockResolvedValueOnce("child-id");
+
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        await result.current.handleCreateChildNode("#1", "node-1", "todo");
+
+        await waitFor(() => {
+            expect(result.current.flatNodes.length).toBe(2);
+        });
+
+        await result.current.handleToggleChildNode("child-id");
+
+        await waitFor(() => {
+            const node = result.current.flatNodes.find(node => node.id === "child-id");
+
+            expect(node?.completed).toBe(true);
+        });
+    });
+    it("authenticated handleToggleChildNode returns error message object if id is missing and doesn't send a service call", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const toggleResult = await result.current.handleToggleChildNode("");
+
+        expect(toggleResult?.message).toBe("Missing nodeId");
+        expect(firestoreService.nodes.updateNodeOptimistic).not.toHaveBeenCalled();
+    });
 });
