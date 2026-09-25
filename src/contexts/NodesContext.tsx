@@ -474,7 +474,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
 
         try {
             if (!user) {
-                return formatError("", "Failed to delete node", "deleteNode");
+                return formatError("", "Failed to reset tasks", "ResetTasks");
             }
 
             await nodeService.nodes.resetTasks(completedTasksIds);

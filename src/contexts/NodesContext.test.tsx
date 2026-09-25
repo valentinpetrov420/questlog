@@ -72,6 +72,24 @@ const testNode = {
     updatedAt: 1000,
 };
 
+//todo: 2nd test node was needed for handleResetTasks timing out
+// tests before that created a child node because there wasn't one yet
+// can re-do them later
+const testNode2 = {
+    id: "node-2",
+    type: "todo",
+    parentId: "node-1",
+    text: "test",
+    ownerId: "test",
+    isPublic: false,
+    pinned: false,
+    archived: false,
+    completed: false,
+    order: 0,
+    createdAt: 1000,
+    updatedAt: 1000,
+};
+
 describe("NodesContext", () => {
     beforeEach(() => {
         vi.clearAllMocks();
@@ -85,7 +103,7 @@ describe("NodesContext", () => {
             authReady: true,
         } as ReturnType<typeof useAuth>);
 
-        vi.mocked(firestoreService.nodes.getNodes).mockResolvedValue([testNode] as Node[]);
+        vi.mocked(firestoreService.nodes.getNodes).mockResolvedValue([testNode, testNode2] as Node[]);
     });
 
     it("loads nodes for an authenticated user", async () => {
@@ -96,7 +114,7 @@ describe("NodesContext", () => {
             expect(result.current.nodesLoading).toBe(false);
         });
 
-        expect(result.current.flatNodes).toEqual([testNode]);
+        expect(result.current.flatNodes).toEqual([testNode, testNode2]);
     });
 
     it("authenticated handleCreateNode returns id on success and updates flatNodes", async () => {
@@ -110,12 +128,12 @@ describe("NodesContext", () => {
         const id2 = await result.current.handleCreateNode("test", false);
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(3);
+            expect(result.current.flatNodes.length).toBe(4);
         });
 
         expect(id).toBeDefined();
         expect(id2).toBeDefined();
-        expect(result.current.flatNodes.length).toBe(3);
+        expect(result.current.flatNodes.length).toBe(4);
     });
     it("authenticated handleCreateNode returns an error message on failure, doesn't update flatNodes", async () => {
         const { result } = renderHook(() => useNodes(), { wrapper });
@@ -138,7 +156,7 @@ describe("NodesContext", () => {
                 message: `Cannot be longer than ${maxLength} symbols.`
             }
         });
-        expect(result.current.flatNodes.length).toBe(1);
+        expect(result.current.flatNodes.length).toBe(2);
     });
 
     it("authenticated handleCreateChildNode returns id on success and updates flatNodes", async () => {
@@ -156,7 +174,7 @@ describe("NodesContext", () => {
         const childId = await result.current.handleCreateChildNode("test", parentId.id!, "todo");
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(3);
+            expect(result.current.flatNodes.length).toBe(4);
         });
 
         expect(parentId).toBeDefined();
@@ -183,7 +201,7 @@ describe("NodesContext", () => {
         const childCreateResult2 = await result.current.handleCreateChildNode("2".repeat(maxLength + 1), parentId.id!, "todo");
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(2);
+            expect(result.current.flatNodes.length).toBe(3);
         });
 
         expect(childCreateResult).toEqual({
@@ -198,7 +216,7 @@ describe("NodesContext", () => {
             }
         });
 
-        expect(result.current.flatNodes.length).toBe(2);
+        expect(result.current.flatNodes.length).toBe(3);
 
         expect(firestoreService.nodes.createNode).toHaveBeenCalledTimes(1);
     });
@@ -215,7 +233,7 @@ describe("NodesContext", () => {
         const childCreateResult = await result.current.handleCreateChildNode("test", undefined!, "todo");
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(1);
+            expect(result.current.flatNodes.length).toBe(2);
         });
 
         expect(childCreateResult).toEqual({
@@ -240,7 +258,7 @@ describe("NodesContext", () => {
         const parentResult = await result.current.handleCreateNode("test", false);
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(2);
+            expect(result.current.flatNodes.length).toBe(3);
         });
 
         await result.current.handleArchiveNode(parentResult.id!);
@@ -268,7 +286,7 @@ describe("NodesContext", () => {
         const parentResult = await result.current.handleCreateNode("test", false);
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(2);
+            expect(result.current.flatNodes.length).toBe(3);
         });
 
         await result.current.handleArchiveNode(parentResult.id!);
@@ -294,7 +312,7 @@ describe("NodesContext", () => {
         const parentResult = await result.current.handleCreateNode("test", false);
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(2);
+            expect(result.current.flatNodes.length).toBe(3);
         });
 
         await result.current.handleArchiveNode(parentResult.id!);
@@ -337,7 +355,7 @@ describe("NodesContext", () => {
         const parentResult = await result.current.handleCreateNode("test", false);
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(2);
+            expect(result.current.flatNodes.length).toBe(3);
         });
 
         await result.current.handleArchiveNode(parentResult.id!);
@@ -373,7 +391,7 @@ describe("NodesContext", () => {
         const createResult = await result.current.handleCreateNode("test", false);
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(2);
+            expect(result.current.flatNodes.length).toBe(3);
         });
 
         await result.current.handleEditNodeText(createResult.id!, "new");
@@ -403,7 +421,7 @@ describe("NodesContext", () => {
         const child2Result = await result.current.handleCreateChildNode("#2", createResult.id!, "todo");
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(4);
+            expect(result.current.flatNodes.length).toBe(5);
         });
 
         const editResult = await result.current.handleEditNodeText(childResult.id!, "");
@@ -432,7 +450,7 @@ describe("NodesContext", () => {
         const createResult = await result.current.handleCreateNode("test", false);
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(2);
+            expect(result.current.flatNodes.length).toBe(3);
         });
 
         const editResult = await result.current.handleEditNodeText(createResult.id!, "new");
@@ -531,7 +549,7 @@ describe("NodesContext", () => {
         await result.current.handleDeleteNode(testNode?.id!);
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(0);
+            expect(result.current.flatNodes.length).toBe(1);
         });
     });
     it("authenticated handleDeleteNode doesn't flatNodes if window confirm is declined", async () => {
@@ -548,7 +566,7 @@ describe("NodesContext", () => {
         await result.current.handleDeleteNode(testNode?.id!);
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(1);
+            expect(result.current.flatNodes.length).toBe(2);
             expect(firestoreService.nodes.deleteNode).not.toHaveBeenCalled();
         });
     });
@@ -579,7 +597,7 @@ describe("NodesContext", () => {
         await result.current.handleCreateChildNode("#1", "node-1", "todo");
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(2);
+            expect(result.current.flatNodes.length).toBe(3);
         });
 
         await result.current.handleToggleChildNode("child-id");
@@ -600,6 +618,43 @@ describe("NodesContext", () => {
         const toggleResult = await result.current.handleToggleChildNode("");
 
         expect(toggleResult?.message).toBe("Missing nodeId");
+        expect(firestoreService.nodes.updateNodeOptimistic).not.toHaveBeenCalled();
+    });
+
+    it("authenticated handleResetTasks correctly updates flatNodes", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        await result.current.handleToggleChildNode("node-2");
+
+        await waitFor(() => {
+            const node = result.current.flatNodes.find(node => node.id === "node-2");
+
+            expect(node?.completed).toBe(true);
+        });
+
+        await result.current.handleResetTasks("node-1");
+
+        await waitFor(() => {
+            const node = result.current.flatNodes.find(node => node.id === "node-2");
+
+            expect(node?.completed).toBe(false);
+        });
+    });
+
+    it("authenticated handleResetTasks returns error message object if id is missing and doesn't send a service call", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const resetTasksResult = await result.current.handleResetTasks("");
+
+        expect(resetTasksResult?.message).toBe("Missing parentId");
         expect(firestoreService.nodes.updateNodeOptimistic).not.toHaveBeenCalled();
     });
 });
