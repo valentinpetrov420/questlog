@@ -657,4 +657,33 @@ describe("NodesContext", () => {
         expect(resetTasksResult?.message).toBe("Missing parentId");
         expect(firestoreService.nodes.updateNodeOptimistic).not.toHaveBeenCalled();
     });
+
+    it("authenticated handlePromoteTodo correctly updates flatNodes", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        await result.current.handlePromoteTodo("node-2");
+
+        await waitFor(() => {
+            const node = result.current.flatNodes.find(node => node.id === "node-2");
+
+            expect(node?.type).toBe("page");
+        });
+    });
+
+    it("authenticated handlePromoteTodo returns error message object if id is missing and doesn't send a service call", async () => {
+        const { result } = renderHook(() => useNodes(), { wrapper });
+
+        await waitFor(() => {
+            expect(result.current.nodesLoading).toBe(false);
+        });
+
+        const promoteResult = await result.current.handlePromoteTodo("");
+
+        expect(promoteResult?.message).toBe("Missing nodeId");
+        expect(firestoreService.nodes.updateNode).not.toHaveBeenCalled();
+    });
 });
