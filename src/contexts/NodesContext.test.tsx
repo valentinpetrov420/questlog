@@ -125,15 +125,13 @@ describe("NodesContext", () => {
         });
 
         const id = await result.current.handleCreateNode("test", false);
-        const id2 = await result.current.handleCreateNode("test", false);
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(4);
+            expect(result.current.flatNodes.length).toBe(3);
         });
 
         expect(id).toBeDefined();
-        expect(id2).toBeDefined();
-        expect(result.current.flatNodes.length).toBe(4);
+        expect(result.current.flatNodes.length).toBe(3);
     });
     it("authenticated handleCreateNode returns an error message on failure, doesn't update flatNodes", async () => {
         const { result } = renderHook(() => useNodes(), { wrapper });
@@ -170,19 +168,17 @@ describe("NodesContext", () => {
             expect(result.current.nodesLoading).toBe(false);
         });
 
-        const parentId = await result.current.handleCreateNode("test", false);
-        const childId = await result.current.handleCreateChildNode("test", parentId.id!, "todo");
+        const childId = await result.current.handleCreateChildNode("test", "node-1", "todo");
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(4);
+            expect(result.current.flatNodes.length).toBe(3);
         });
 
-        expect(parentId).toBeDefined();
         expect(childId).toBeDefined();
 
         const childNodeResult = result.current.flatNodes.find(node => node.id === childId.id);
 
-        expect(childNodeResult?.parentId).toBe(parentId.id);
+        expect(childNodeResult?.parentId).toBe("node-1");
         expect(childNodeResult?.text).toEqual("test");
         expect(childNodeResult?.type).toEqual("todo");
     });
@@ -196,12 +192,11 @@ describe("NodesContext", () => {
             expect(result.current.nodesLoading).toBe(false);
         });
 
-        const parentId = await result.current.handleCreateNode("test", false);
-        const childCreateResult = await result.current.handleCreateChildNode("", parentId.id!, "todo");
-        const childCreateResult2 = await result.current.handleCreateChildNode("2".repeat(maxLength + 1), parentId.id!, "todo");
+        const childCreateResult = await result.current.handleCreateChildNode("", "node-1", "todo");
+        const childCreateResult2 = await result.current.handleCreateChildNode("2".repeat(maxLength + 1), "node-1", "todo");
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(3);
+            expect(result.current.flatNodes.length).toBe(2);
         });
 
         expect(childCreateResult).toEqual({
@@ -216,9 +211,9 @@ describe("NodesContext", () => {
             }
         });
 
-        expect(result.current.flatNodes.length).toBe(3);
+        expect(result.current.flatNodes.length).toBe(2);
 
-        expect(firestoreService.nodes.createNode).toHaveBeenCalledTimes(1);
+        expect(firestoreService.nodes.createNode).not.toHaveBeenCalled();
     });
     it("authenticated handleCreateChildNode returns error message on missing parentId", async () => {
         vi.mocked(firestoreService.nodes.createNode)
@@ -244,9 +239,6 @@ describe("NodesContext", () => {
     });
 
     it("authenticated handleArchiveNode correctly updates flatNodes if window confirm is accepted", async () => {
-        vi.mocked(firestoreService.nodes.createNode)
-            .mockResolvedValueOnce("parent-id")
-
         vi.spyOn(window, "confirm").mockReturnValue(true);
 
         const { result } = renderHook(() => useNodes(), { wrapper });
@@ -255,26 +247,15 @@ describe("NodesContext", () => {
             expect(result.current.nodesLoading).toBe(false);
         });
 
-        const parentResult = await result.current.handleCreateNode("test", false);
+        await result.current.handleArchiveNode("node-1");
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(3);
-        });
-
-        await result.current.handleArchiveNode(parentResult.id!);
-
-        await waitFor(() => {
-            const archivedNode = result.current.flatNodes.find(
-                node => node.id === parentResult.id
-            );
+            const archivedNode = result.current.flatNodes.find(node => node.id === "node-1");
 
             expect(archivedNode?.archived).toBe(true);
         });
     });
     it("authenticated handleArchiveNode doesn't update flatNodes if window confirm is declined", async () => {
-        vi.mocked(firestoreService.nodes.createNode)
-            .mockResolvedValueOnce("parent-id")
-
         vi.spyOn(window, "confirm").mockReturnValue(false);
 
         const { result } = renderHook(() => useNodes(), { wrapper });
@@ -283,25 +264,22 @@ describe("NodesContext", () => {
             expect(result.current.nodesLoading).toBe(false);
         });
 
-        const parentResult = await result.current.handleCreateNode("test", false);
-
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(3);
+            expect(result.current.flatNodes.length).toBe(2);
         });
 
-        await result.current.handleArchiveNode(parentResult.id!);
+        await result.current.handleArchiveNode("node-1");
 
-        const archivedNode = result.current.flatNodes.find(node => node.id === parentResult.id);
+        const archivedNode = result.current.flatNodes.find(node => node.id === "node-1");
 
         expect(firestoreService.nodes.updateNodeOptimistic).not.toHaveBeenCalled();
         expect(archivedNode?.archived).toBe(false);
     });
 
     it("authenticated handleRestoreNode correctly updates flatNodes if window confirm is accepted", async () => {
-        vi.mocked(firestoreService.nodes.createNode)
-            .mockResolvedValueOnce("parent-id")
-
-        vi.spyOn(window, "confirm").mockReturnValueOnce(true).mockReturnValueOnce(true);
+        vi.spyOn(window, "confirm")
+            .mockReturnValueOnce(true)
+            .mockReturnValueOnce(true);
 
         const { result } = renderHook(() => useNodes(), { wrapper });
 
@@ -309,42 +287,31 @@ describe("NodesContext", () => {
             expect(result.current.nodesLoading).toBe(false);
         });
 
-        const parentResult = await result.current.handleCreateNode("test", false);
+        await result.current.handleArchiveNode("node-1");
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(3);
-        });
-
-        await result.current.handleArchiveNode(parentResult.id!);
-
-        await waitFor(() => {
-            const archivedNode = result.current.flatNodes.find(
-                node => node.id === parentResult.id
-            );
+            const archivedNode = result.current.flatNodes.find(node => node.id === "node-1");
 
             expect(archivedNode?.archived).toBe(true);
         });
 
-        await result.current.handleRestoreNode(parentResult.id!);
+        await result.current.handleRestoreNode("node-1");
 
         await waitFor(() => {
             expect(firestoreService.nodes.updateNodeOptimistic)
-                .toHaveBeenCalledWith(parentResult.id, { archived: false });
+                .toHaveBeenCalledWith("node-1", { archived: false });
         });
 
         await waitFor(() => {
-            const restoredNode = result.current.flatNodes.find(
-                node => node.id === parentResult.id
-            );
+            const restoredNode = result.current.flatNodes.find(node => node.id === "node-1");
 
             expect(restoredNode?.archived).toBe(false);
         });
     });
     it("authenticated handleRestoreNode doesn't update flatNodes if window confirm is declined", async () => {
-        vi.mocked(firestoreService.nodes.createNode)
-            .mockResolvedValueOnce("parent-id")
-
-        vi.spyOn(window, "confirm").mockReturnValueOnce(true).mockReturnValueOnce(false);
+        vi.spyOn(window, "confirm")
+            .mockReturnValueOnce(true)
+            .mockReturnValueOnce(false);
 
         const { result } = renderHook(() => useNodes(), { wrapper });
 
@@ -352,28 +319,18 @@ describe("NodesContext", () => {
             expect(result.current.nodesLoading).toBe(false);
         });
 
-        const parentResult = await result.current.handleCreateNode("test", false);
+        await result.current.handleArchiveNode("node-1");
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(3);
-        });
-
-        await result.current.handleArchiveNode(parentResult.id!);
-
-        await waitFor(() => {
-            const archivedNode = result.current.flatNodes.find(
-                node => node.id === parentResult.id
-            );
+            const archivedNode = result.current.flatNodes.find(node => node.id === "node-1");
 
             expect(archivedNode?.archived).toBe(true);
         });
 
-        await result.current.handleRestoreNode(parentResult.id!);
+        await result.current.handleRestoreNode("node-1");
 
         await waitFor(() => {
-            const archivedNode = result.current.flatNodes.find(
-                node => node.id === parentResult.id
-            );
+            const archivedNode = result.current.flatNodes.find(node => node.id === "node-1");
 
             expect(archivedNode?.archived).toBe(true);
         });
@@ -388,27 +345,17 @@ describe("NodesContext", () => {
             expect(result.current.nodesLoading).toBe(false);
         });
 
-        const createResult = await result.current.handleCreateNode("test", false);
+        await result.current.handleEditNodeText("node-1", "new");
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(3);
-        });
-
-        await result.current.handleEditNodeText(createResult.id!, "new");
-
-        await waitFor(() => {
-            const renamedNode = result.current.flatNodes.find(
-                node => node.id === createResult.id
-            );
+            const renamedNode = result.current.flatNodes.find(node => node.id === "node-1");
 
             expect(renamedNode?.text).toBe("new");
         });
     });
     it("authenticated handleEditNodeText returns error for invalid text and doesn't update flatNodes and doesn't call service", async () => {
         vi.mocked(firestoreService.nodes.createNode)
-            .mockResolvedValueOnce("parent-id")
             .mockResolvedValueOnce("child-id")
-            .mockResolvedValueOnce("child-id-2");
 
         const { result } = renderHook(() => useNodes(), { wrapper });
 
@@ -416,44 +363,33 @@ describe("NodesContext", () => {
             expect(result.current.nodesLoading).toBe(false);
         });
 
-        const createResult = await result.current.handleCreateNode("test", false);
-        const childResult = await result.current.handleCreateChildNode("#1", createResult.id!, "todo");
-        const child2Result = await result.current.handleCreateChildNode("#2", createResult.id!, "todo");
+        const childResult = await result.current.handleCreateChildNode("#1", "node-1", "todo");
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(5);
+            expect(result.current.flatNodes.length).toBe(3);
         });
 
         const editResult = await result.current.handleEditNodeText(childResult.id!, "");
-        const editResult2 = await result.current.handleEditNodeText(child2Result.id!, "2".repeat(maxLength + 1));
+        const editResult2 = await result.current.handleEditNodeText("node-2", "2".repeat(maxLength + 1));
 
         expect(editResult?.message).toBe("Field cannot be empty.");
         expect(editResult2?.message).toBe(`Cannot be longer than ${maxLength} symbols.`);
         expect(firestoreService.nodes.updateNode).not.toHaveBeenCalled();
 
         const editedNode = result.current.flatNodes.find(node => node.id === childResult.id);
-        const editedNode2 = result.current.flatNodes.find(node => node.id === child2Result.id);
+        const editedNode2 = result.current.flatNodes.find(node => node.id === "node-2");
 
         expect(editedNode?.text).toBe("#1");
-        expect(editedNode2?.text).toBe("#2");
+        expect(editedNode2?.text).toBe("test");
     });
     it("authenticated handleEditNodeText returns error when id is invalid", async () => {
-        //vi.mocked(firestoreService.nodes.createNode)
-        //    .mockResolvedValueOnce("parent-id");
-
         const { result } = renderHook(() => useNodes(), { wrapper });
 
         await waitFor(() => {
             expect(result.current.nodesLoading).toBe(false);
         });
 
-        const createResult = await result.current.handleCreateNode("test", false);
-
-        await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(3);
-        });
-
-        const editResult = await result.current.handleEditNodeText(createResult.id!, "new");
+        const editResult = await result.current.handleEditNodeText("", "new");
 
         expect(editResult?.message).toBe("Missing nodeId");
     });
@@ -585,25 +521,16 @@ describe("NodesContext", () => {
     });
 
     it("authenticated handleToggleChildNode correctly updates flatNodes", async () => {
-        vi.mocked(firestoreService.nodes.createNode)
-            .mockResolvedValueOnce("child-id");
-
         const { result } = renderHook(() => useNodes(), { wrapper });
 
         await waitFor(() => {
             expect(result.current.nodesLoading).toBe(false);
         });
 
-        await result.current.handleCreateChildNode("#1", "node-1", "todo");
+        await result.current.handleToggleChildNode("node-2");
 
         await waitFor(() => {
-            expect(result.current.flatNodes.length).toBe(3);
-        });
-
-        await result.current.handleToggleChildNode("child-id");
-
-        await waitFor(() => {
-            const node = result.current.flatNodes.find(node => node.id === "child-id");
+            const node = result.current.flatNodes.find(node => node.id === "node-2");
 
             expect(node?.completed).toBe(true);
         });
@@ -655,7 +582,7 @@ describe("NodesContext", () => {
         const resetTasksResult = await result.current.handleResetTasks("");
 
         expect(resetTasksResult?.message).toBe("Missing parentId");
-        expect(firestoreService.nodes.updateNodeOptimistic).not.toHaveBeenCalled();
+        expect(firestoreService.nodes.updateNode).not.toHaveBeenCalled();
     });
 
     it("authenticated handlePromoteTodo correctly updates flatNodes", async () => {
