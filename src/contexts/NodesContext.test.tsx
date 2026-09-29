@@ -636,5 +636,35 @@ describe("NodesContext", () => {
 
             expect(result.current.flatNodes).toEqual([testNode, testNode2]);
         });
+
+        it("guest handleCreateNode uses the localStorage service", async () => {
+            const { result } = renderHook(() => useNodes(), { wrapper });
+
+            await waitFor(() => {
+                expect(result.current.nodesLoading).toBe(false);
+            });
+
+            await result.current.handleCreateNode("test", false);
+
+            await waitFor(() => {
+                expect(result.current.flatNodes.length).toBe(3);
+            });
+
+            expect(localStorageService.nodes.createNode).toHaveBeenCalled();
+            expect(firestoreService.nodes.createNode).not.toHaveBeenCalled();
+        });
+
+        it("guest handleVisbilityChange is gated from guests", async () => {
+            const { result } = renderHook(() => useNodes(), { wrapper });
+
+            await waitFor(() => {
+                expect(result.current.nodesLoading).toBe(false);
+            });
+
+            const visibilityResult = await result.current.handleVisibilityChange("node-1");
+
+            expect(visibilityResult?.message).toBe("Unavailable in guest mode");
+            expect(localStorageService.nodes.updateNode).not.toHaveBeenCalledWith("node-1", { isPublic: true });
+        });
     });
 });
