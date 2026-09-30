@@ -98,7 +98,6 @@ npm run dev
 
 - Collaborative lists.
 - Templates.
-
 - Guest Mode data to Firebase data migration on login.
 - Command Palette with/and keyboard shortcuts.
 - Export/Import data.
