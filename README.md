@@ -55,8 +55,15 @@ React - TypeScript - Vite - Firebase (Auth + Firestore) - Vitest - ESLint
 - Build-time changelog generated from git commit history.
 - CI:
     - typecheck.
-    - lint.
     - tests.
+
+## Automated testing with Vitest
+
+- Component tests for ProgressBar and PopOver.
+- Unit tests for localStorageService and firestoreService CRUD, reordering, task resets and recursive deletion.
+- Firestore emulation testing.
+- NodesContext tests covering authenticated and guest mode hydration and node operations including creation, editing, deletion, archiving/restoring, pinning, visibility, child toggling, task promotion/resetting, and validation/guard paths.
+- CI runs the complete test suite alongside TypeScript checks.
 
 <!-- hide:start -->
 ## How to run it locally
@@ -89,8 +96,13 @@ npm run dev
 
 ## Features
 
-- More node types.
+- Collaborative lists.
+- Templates.
+
 - Guest Mode data to Firebase data migration on login.
+- Command Palette with/and keyboard shortcuts.
+- Export/Import data.
+- Image and URL nodes.
 
 ## DevPanel
 
