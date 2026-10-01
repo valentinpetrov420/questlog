@@ -7,8 +7,6 @@ import CreateListForm from './CreateListForm';
 import { useAuth } from "../../contexts/AuthContext.js";
 import { useNodes } from "../../contexts/NodesContext.js";
 
-import { maxLength } from '../../constants/app.js';
-
 vi.mock("../../contexts/AuthContext.js", () => ({
     useAuth: vi.fn(),
 }));
