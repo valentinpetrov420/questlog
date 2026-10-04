@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-//import userEvent from "@testing-library/user-event";
+import userEvent from "@testing-library/user-event";
 
 import List from "./List.js";
 
@@ -309,50 +309,8 @@ describe("List", () => {
 
             expect(screen.queryByText("0%")).not.toBeInTheDocument();
         });
-    });
 
-    describe("non-owner", () => {
-        beforeEach(() => {
-            mockedUseAuth.mockReturnValue({
-                isGuest: () => false,
-                user: {
-                    uid: "user-2",
-                },
-            } as any);
-        });
-
-        it("renders the list title", () => {
-            render(
-                <MemoryRouter>
-                    <List
-                        isNodePage={true}
-                        id="list-1"
-                        key="list-1"
-                        text="test"
-                        pinned={false}
-                        listItems={[]}
-                        isArchived={false}
-                        isPublic={false}
-                        ownerId="user-1"
-                    />
-                </MemoryRouter>
-            );
-
-            expect(screen.getByText("test")).toBeInTheDocument();
-        });
-    });
-
-    describe("guest mode", () => {
-        beforeEach(() => {
-            mockedUseAuth.mockReturnValue({
-                isGuest: () => true,
-                user: {
-                    uid: "user-1",
-                },
-            } as any);
-        });
-
-        it("renders the list title", () => {
+        it("renders owner action menu", async () => {
             render(
                 <MemoryRouter>
                     <List
@@ -369,7 +327,157 @@ describe("List", () => {
                 </MemoryRouter>
             );
 
-            expect(screen.getByText("test")).toBeInTheDocument();
+            expect(screen.getByText("⋯")).toBeInTheDocument();
+        });
+
+        it("renders add item form", async () => {
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            expect(screen.getByText("Add new quest")).toBeInTheDocument();
+        });
+    });
+
+    describe("non-owner", () => {
+        beforeEach(() => {
+            mockedUseAuth.mockReturnValue({
+                isGuest: () => false,
+                user: {
+                    uid: "user-2",
+                },
+            } as any);
+        });
+
+        it("doesn't render owner menu if not owner", () => {
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            expect(screen.queryByText("⋯")).not.toBeInTheDocument();
+        });
+
+        it("doesn't render add new item button if not owner", () => {
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            expect(screen.queryByText("Add new item")).not.toBeInTheDocument();
+        });
+
+        it("doesn't render title edit span if not owner", async () => {
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            expect(screen.getByText("test").tagName).toBe("P");
+        });
+
+        it("doesn't render reset tasks button if not owner", () => {
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            expect(screen.queryByText("Reset")).not.toBeInTheDocument();
+        })
+    });
+
+    describe("guest mode", () => {
+        beforeEach(() => {
+            mockedUseAuth.mockReturnValue({
+                isGuest: () => true,
+                user: {
+                    uid: "user-1",
+                },
+            } as any);
+        });
+
+        it("doesn't render restricted actions", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const button = screen.getByText('⋯');
+
+            await user.click(button);
+
+            expect(screen.queryByText("Copy link")).not.toBeInTheDocument();
+            expect(screen.queryByText("Change to Public")).not.toBeInTheDocument();
+            expect(screen.queryByText("Change to Private")).not.toBeInTheDocument();
         });
     });
 });
