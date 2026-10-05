@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
+import { render, screen, cleanup, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import List from "./List.js";
@@ -349,6 +349,135 @@ describe("List", () => {
 
             expect(screen.getByText("Add new quest")).toBeInTheDocument();
         });
+
+        it("clicking title span opens input", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const title = screen.getByText("test");
+
+            await user.click(title);
+
+            expect(screen.getByDisplayValue("test")).toBeInTheDocument();
+        });
+        it("submitting title edit calls handleSubmitEdit", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const title = screen.getByText("test");
+
+            await user.click(title);
+
+            const input = screen.getByDisplayValue("test");
+
+            expect(input).toBeInTheDocument();
+
+            await user.type(input, "123"); 1
+            await user.keyboard("{Enter}");
+
+            expect(handleEditNodeText).toHaveBeenCalledWith("list-1", "test123");
+        });
+        it("pressing escape cancels edit mode", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const title = screen.getByText("test");
+
+            await user.click(title);
+
+            const input = screen.getByDisplayValue("test");
+
+            expect(input).toBeInTheDocument();
+
+            await user.type(input, "123");
+            await user.keyboard("{Escape}");
+
+            expect(input).not.toBeInTheDocument();
+            expect(handleEditNodeText).not.toHaveBeenCalled();
+        });
+        it("invalid input shows StatusMessage and doesn't exit edit mode", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const title = screen.getByText("test");
+
+            await user.click(title);
+
+            const input = screen.getByDisplayValue("test");
+
+            expect(input).toBeInTheDocument();
+
+            await user.clear(input);
+            await user.keyboard("{Enter}");
+
+            waitFor(() => {
+                expect(screen.getByText("Field cannot be empty.")).toBeInTheDocument();
+            });
+
+            const newInput = screen.getByDisplayValue("");
+            
+            expect(newInput).toBeInTheDocument();
+        });
     });
 
     describe("non-owner", () => {
@@ -471,7 +600,7 @@ describe("List", () => {
                 </MemoryRouter>
             );
 
-            const button = screen.getByText('⋯');
+            const button = screen.getByText("⋯");
 
             await user.click(button);
 
