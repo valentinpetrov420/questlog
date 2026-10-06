@@ -349,6 +349,65 @@ describe("List", () => {
 
             expect(screen.getByText("Add new quest")).toBeInTheDocument();
         });
+        it("submitting add item calls handleSubmit", async () => {
+            vi.mocked(handleCreateChildNode).mockResolvedValue({ error: null, data: {} });
+
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const input = screen.getByPlaceholderText("New quest task...");
+            const button = screen.getByText("Add new quest");
+
+            await user.type(input, "#1");
+            await user.click(button);
+            
+            expect(handleCreateChildNode).toHaveBeenCalledWith("#1", "list-1", "todo");
+        });
+        it("invalid add item input shows StatusMessage", async () => {
+            vi.mocked(handleCreateChildNode).mockResolvedValue({ error: 
+                {message: "Field cannot be empty."}, data: {}});
+            
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const button = screen.getByText("Add new quest");
+
+            await user.click(button);
+
+            waitFor(() => {
+                expect(screen.getByText("Field cannot be empty.")).toBeInTheDocument();
+            });
+        });
 
         it("clicking title span opens input", async () => {
             const user = userEvent.setup();
