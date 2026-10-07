@@ -375,13 +375,15 @@ describe("List", () => {
 
             await user.type(input, "#1");
             await user.click(button);
-            
+
             expect(handleCreateChildNode).toHaveBeenCalledWith("#1", "list-1", "todo");
         });
         it("invalid add item input shows StatusMessage", async () => {
-            vi.mocked(handleCreateChildNode).mockResolvedValue({ error: 
-                {message: "Field cannot be empty."}, data: {}});
-            
+            vi.mocked(handleCreateChildNode).mockResolvedValue({
+                error:
+                    { message: "Field cannot be empty." }, data: {}
+            });
+
             const user = userEvent.setup();
 
             render(
@@ -534,8 +536,204 @@ describe("List", () => {
             });
 
             const newInput = screen.getByDisplayValue("");
-            
+
             expect(newInput).toBeInTheDocument();
+        });
+
+        it("adding separator calls handleCreateChildNode with separator values", async () => {
+            vi.mocked(handleCreateChildNode).mockResolvedValue({ error: null, data: {} });
+
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const button = screen.getByText("+");
+            await user.click(button);
+            const addSeparatorButton = screen.getByText("Add Separator");
+            await user.click(addSeparatorButton);
+
+            expect(handleCreateChildNode).toHaveBeenCalledWith("separator", "list-1", "separator");
+        });
+        it("adding heading calls handleCreateChildNode with heading values and returns id", async () => {
+            vi.mocked(handleCreateChildNode).mockResolvedValue({ error: null, data: { id: "heading-id" } });
+
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const button = screen.getByText("+");
+            await user.click(button);
+            const addHeadingButton = screen.getByText("Add Heading");
+            await user.click(addHeadingButton);
+
+            expect(handleCreateChildNode).toHaveBeenCalledWith("New Heading", "list-1", "heading");
+        });
+
+        it("archive click calls handleArchiveNode", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const button = screen.getByText("⋯");
+            await user.click(button);
+            const archiveButton = screen.getByText("Archive");
+            await user.click(archiveButton);
+
+            expect(handleArchiveNode).toHaveBeenCalledWith("list-1");
+        });
+        it("restore click calls handleRestoreNode", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={true}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const button = screen.getByText("⋯");
+            await user.click(button);
+            const RestoreButton = screen.getByText("Restore");
+            await user.click(RestoreButton);
+
+            expect(handleRestoreNode).toHaveBeenCalledWith("list-1");
+        });
+        it("pin click calls handlePinNode", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const button = screen.getByText("⋯");
+            await user.click(button);
+            const pinButton = screen.getByText("Pin");
+            await user.click(pinButton);
+
+            expect(handlePin).toHaveBeenCalledWith("list-1");
+        });
+
+        it("change to public/private click calls handleVisibilityChange", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={true}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const button = screen.getByText("⋯");
+            await user.click(button);
+            const visibilityButton = screen.getByText("Change to Public");
+            await user.click(visibilityButton);
+
+            expect(handleVisibilityChange).toHaveBeenCalledWith("list-1");
+        });
+
+        it("copy link click adds current url to clipboard", async () => {
+            const user = userEvent.setup();
+
+            const writeText = vi.fn().mockResolvedValue(undefined);
+            Object.defineProperty(navigator, "clipboard", {
+                value: { writeText },
+                configurable: true,
+            });
+            
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={true}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={true}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const button = screen.getByText("⋯");
+            await user.click(button);
+            const copyLinkButton = screen.getByText("Copy link");
+            await user.click(copyLinkButton);
+
+            expect(writeText).toHaveBeenCalledWith(window.location.href);
         });
     });
 
