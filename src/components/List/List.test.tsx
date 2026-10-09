@@ -53,6 +53,7 @@ describe("List", () => {
     });
 
     describe("authenticated owner", () => {
+        //ownerId: user-1
         beforeEach(() => {
             mockedUseAuth.mockReturnValue({
                 isGuest: () => false,
@@ -799,9 +800,83 @@ describe("List", () => {
 
             expect(screen.getByText("Dashboard")).toBeInTheDocument();
         });
+
+        it("reset tasks button click resets all completed todos", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[
+                            {
+                                id: "item-1",
+                                text: "#1",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-2",
+                                text: "#2",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-3",
+                                text: "#3",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            }
+                        ]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            await user.click(screen.getByText("Reset"));
+
+            waitFor(() => {
+                screen.getAllByRole('checkbox').forEach((cb) => {
+                    expect(cb).not.toBeChecked();
+                });
+            });
+
+            expect(handleResetTasks).toHaveBeenCalledWith("list-1");
+        });
     });
 
     describe("non-owner", () => {
+        //ownerId: user-2
         beforeEach(() => {
             mockedUseAuth.mockReturnValue({
                 isGuest: () => false,
@@ -893,6 +968,8 @@ describe("List", () => {
     });
 
     describe("guest mode", () => {
+        //ownerId: user-1
+        //isGuest: () => true;
         beforeEach(() => {
             mockedUseAuth.mockReturnValue({
                 isGuest: () => true,
