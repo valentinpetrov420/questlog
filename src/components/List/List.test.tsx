@@ -3,10 +3,45 @@ import { render, screen, cleanup, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import List from "./List.js";
+import type { Node } from "../../types/Node.js";
 
 import { useNodes } from "../../contexts/NodesContext.js";
 import { useAuth } from "../../contexts/AuthContext.js";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
+
+import type { DragEndEvent } from "@dnd-kit/core";
+
+const { dragEndHandler, localReorder, firestoreReorder } = vi.hoisted(() => ({
+    dragEndHandler: { current: undefined as ((e: DragEndEvent) => void) | undefined },
+    localReorder: vi.fn(),
+    firestoreReorder: vi.fn(),
+}));
+
+vi.mock("../../api/services/firestoreService.js", () => ({
+    default: { nodes: { reorder: firestoreReorder } },
+}));
+
+vi.mock("../../api/services/localStorageService.js", () => ({
+    default: { nodes: { reorder: localReorder } },
+}));
+
+vi.mock("@dnd-kit/core", async () => {
+    const actual = await vi.importActual<typeof import("@dnd-kit/core")>("@dnd-kit/core");
+    return {
+        ...actual,
+        DndContext: ({ children, onDragEnd }: any) => {
+            dragEndHandler.current = onDragEnd;
+            return <>{children}</>;
+        },
+    };
+});
+
+function drag(activeId: string, overId: string | null) {
+    dragEndHandler.current!({
+        active: { id: activeId },
+        over: overId ? { id: overId } : null,
+    } as DragEndEvent);
+}
 
 vi.mock("../../contexts/NodesContext.js", () => ({
     useNodes: vi.fn(),
@@ -873,6 +908,76 @@ describe("List", () => {
 
             expect(handleResetTasks).toHaveBeenCalledWith("list-1");
         });
+
+        it("drag and drop persists the new order", async () => {
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[
+                            {
+                                id: "item-1",
+                                text: "#1",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-2",
+                                text: "#2",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-3",
+                                text: "#3",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            }
+                        ]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            drag("item-1", "item-3");
+
+            const firstCall = firestoreReorder.mock.calls[0];
+            const reorderedNodes = firstCall[0];
+            const savedOrder = reorderedNodes.map((node: Node) => node.id);
+
+            expect(savedOrder).toEqual(["item-2", "item-3", "item-1"]);
+        });
+
     });
 
     describe("non-owner", () => {
@@ -1005,6 +1110,75 @@ describe("List", () => {
             expect(screen.queryByText("Copy link")).not.toBeInTheDocument();
             expect(screen.queryByText("Change to Public")).not.toBeInTheDocument();
             expect(screen.queryByText("Change to Private")).not.toBeInTheDocument();
+        });
+
+        it("drag and drop persists the new order", async () => {
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[
+                            {
+                                id: "item-1",
+                                text: "#1",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-2",
+                                text: "#2",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-3",
+                                text: "#3",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            }
+                        ]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            drag("item-1", "item-3");
+
+            const firstCall = localReorder.mock.calls[0];
+            const reorderedNodes = firstCall[0];
+            const savedOrder = reorderedNodes.map((node: Node) => node.id);
+
+            expect(savedOrder).toEqual(["item-2", "item-3", "item-1"]);
         });
     });
 });
