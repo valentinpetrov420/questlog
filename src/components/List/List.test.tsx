@@ -942,7 +942,7 @@ describe("List", () => {
                                 isPublic: false,
                                 pinned: false,
                                 archived: false,
-                                order: 0,
+                                order: 1,
                                 createdAt: 0,
                                 updatedAt: 0,
                                 completed: true,
@@ -956,7 +956,7 @@ describe("List", () => {
                                 isPublic: false,
                                 pinned: false,
                                 archived: false,
-                                order: 0,
+                                order: 2,
                                 createdAt: 0,
                                 updatedAt: 0,
                                 completed: true,
@@ -977,7 +977,136 @@ describe("List", () => {
 
             expect(savedOrder).toEqual(["item-2", "item-3", "item-1"]);
         });
+        it("drag and drop doesn't call reorder service or change flatNodes if order hasn't changed", async () => {
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[
+                            {
+                                id: "item-1",
+                                text: "#1",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-2",
+                                text: "#2",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 1,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-3",
+                                text: "#3",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 2,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            }
+                        ]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
 
+            drag("item-1", "item-1");
+
+            expect(firestoreReorder).not.toHaveBeenCalled();
+            expect(setFlatNodes).not.toHaveBeenCalled();
+        });
+        it("drag and drop doesn't call reorder service or change flatNodes if dragged outside it's parent", async () => {
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[
+                            {
+                                id: "item-1",
+                                text: "#1",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-2",
+                                text: "#2",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 1,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-3",
+                                text: "#3",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 2,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            }
+                        ]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            drag("item-1", null);
+
+            expect(firestoreReorder).not.toHaveBeenCalled();
+            expect(setFlatNodes).not.toHaveBeenCalled();
+        });
     });
 
     describe("non-owner", () => {
@@ -1179,6 +1308,136 @@ describe("List", () => {
             const savedOrder = reorderedNodes.map((node: Node) => node.id);
 
             expect(savedOrder).toEqual(["item-2", "item-3", "item-1"]);
+        });
+        it("drag and drop doesn't call reorder service or change flatNodes if order hasn't changed", async () => {
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[
+                            {
+                                id: "item-1",
+                                text: "#1",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-2",
+                                text: "#2",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 1,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-3",
+                                text: "#3",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 2,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            }
+                        ]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            drag("item-1", "item-1");
+
+            expect(localReorder).not.toHaveBeenCalled();
+            expect(setFlatNodes).not.toHaveBeenCalled();
+        });
+        it("drag and drop doesn't call reorder service or change flatNodes if dragged outside it's parent", async () => {
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[
+                            {
+                                id: "item-1",
+                                text: "#1",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-2",
+                                text: "#2",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 1,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-3",
+                                text: "#3",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 2,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            }
+                        ]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            drag("item-1", null);
+
+            expect(localReorder).not.toHaveBeenCalled();
+            expect(setFlatNodes).not.toHaveBeenCalled();
         });
     });
 });
