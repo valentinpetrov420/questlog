@@ -114,9 +114,7 @@ describe('CreateListForm', () => {
             await user.click(submitButton);
 
             await waitFor(() => {
-                expect(errorStatus).toHaveTextContent(
-                    "Field cannot be empty."
-                );
+                expect(errorStatus).toHaveTextContent("Field cannot be empty.");
             });
 
             expect(input).toHaveValue(" ");

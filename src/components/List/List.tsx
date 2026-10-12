@@ -409,10 +409,10 @@ export default function List(props: ListProps) {
                     {!isGuest() && props.isNodePage && isPublic ? <button onClick={handleCopyLink}>Copy link</button> : ""}
                 </PopOver>
                 {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners}>⠿</span> : ""}
-                {isOwner && hasCompletedTodoItems 
-                ? <button className="item-create-options" 
-                disabled={resetPending || deletePending || addItemPending} onClick={handleResetClick}>Reset</button> 
-                : <div className="fake-actions-space"></div>}
+                {isOwner && hasCompletedTodoItems
+                    ? <button className="item-create-options"
+                        disabled={resetPending || deletePending || addItemPending} onClick={handleResetClick}>Reset</button>
+                    : <div className="fake-actions-space"></div>}
             </div> : ""}
             <StatusMessage text={titleStatus ? error : ""} />
             {isEditing ? <form className="edit-list-title" onSubmit={handleSubmitEdit}>
@@ -420,6 +420,7 @@ export default function List(props: ListProps) {
                     <span className="title-label">Title:</span>
                     <div className="input-form-wrapper">
                         <input
+                            aria-label="List title"
                             ref={titleInputRef}
                             disabled={titlePending}
                             value={draftTitle}

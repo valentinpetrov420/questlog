@@ -85,6 +85,8 @@ describe("List", () => {
             handleDeleteNode,
         } as any);
 
+        handleDeleteNode.mockReset();
+        handleDeleteNode.mockResolvedValue(undefined);
     });
 
     describe("authenticated owner", () => {
@@ -442,7 +444,7 @@ describe("List", () => {
 
             await user.click(button);
 
-            waitFor(() => {
+            await waitFor(() => {
                 expect(screen.getByText("Field cannot be empty.")).toBeInTheDocument();
             });
         });
@@ -539,6 +541,7 @@ describe("List", () => {
         });
         it("invalid input shows StatusMessage and doesn't exit edit mode", async () => {
             const user = userEvent.setup();
+            handleEditNodeText.mockResolvedValue({ message: "Field cannot be empty." });
 
             render(
                 <MemoryRouter>
@@ -560,18 +563,22 @@ describe("List", () => {
 
             await user.click(title);
 
-            const input = screen.getByDisplayValue("test");
+            const input = screen.getByRole("textbox", { name: "List title" });
 
             expect(input).toBeInTheDocument();
 
             await user.clear(input);
             await user.keyboard("{Enter}");
 
-            waitFor(() => {
-                expect(screen.getByText("Field cannot be empty.")).toBeInTheDocument();
+            expect(handleEditNodeText).toHaveBeenCalledWith("list-1", "");
+            console.log(await handleEditNodeText.mock.results[0].value);
+
+            await waitFor(async () => {
+                const titleStatus = screen.getAllByRole("paragraph")[0];
+                expect(titleStatus).toHaveTextContent("Field cannot be empty.");
             });
 
-            const newInput = screen.getByDisplayValue("");
+            const newInput = screen.getByRole("textbox", { name: "List title" });
 
             expect(newInput).toBeInTheDocument();
         });
@@ -794,9 +801,94 @@ describe("List", () => {
             await user.click(deleteButton);
 
             expect(handleDeleteNode).toHaveBeenCalledWith("list-1");
+        });
+        it("delete click pending state disables all options during request", async () => {
+            let resolveDelete!: (value: undefined) => void;
+            handleDeleteNode.mockReturnValueOnce(new Promise((resolve) => { resolveDelete = resolve; }));
 
-            waitFor(() => {
-                expect(screen.getByText("test")).not.toBeInTheDocument();
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[
+                            {
+                                id: "item-1",
+                                text: "#1",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-2",
+                                text: "#2",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            },
+                            {
+                                id: "item-3",
+                                text: "#3",
+                                parentId: "list-1",
+                                type: "todo",
+                                ownerId: "user-1",
+                                isPublic: false,
+                                pinned: false,
+                                archived: false,
+                                order: 0,
+                                createdAt: 0,
+                                updatedAt: 0,
+                                completed: true,
+                            }
+                        ]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const taskInput = screen.getByPlaceholderText("New quest task...");
+
+            const button = screen.getAllByText("⋯")[0];
+            await user.click(button);
+            const deleteButton = screen.getByText("Delete");
+            await user.click(deleteButton);
+
+            expect(taskInput).toBeDisabled();
+            expect(screen.getAllByRole('checkbox').forEach((cb) => {
+                expect(cb).toBeDisabled();
+            }));
+            expect(screen.getAllByText("⋯").forEach((action) => {
+                expect(action).toBeDisabled();
+            }));
+            expect(screen.getByRole("button", { name: "Add new quest" })).toBeDisabled();
+            expect(screen.getByRole("button", { name: "+" })).toBeDisabled();
+            expect(screen.getByRole("button", { name: "Reset" })).toBeDisabled();
+
+            resolveDelete(undefined);
+
+            await waitFor(() => {
+                expect(taskInput).toBeEnabled();
             });
         });
         it("delete click in NodePage redirects to '/'", async () => {
@@ -829,11 +921,9 @@ describe("List", () => {
             const deleteButton = screen.getByText("Delete");
             await user.click(deleteButton);
 
-            waitFor(() => {
-                expect(screen.getByText("test")).not.toBeInTheDocument();
-            });
-
-            expect(screen.getByText("Dashboard")).toBeInTheDocument();
+            expect(handleDeleteNode).toHaveBeenCalledWith("list-1");
+            expect(await screen.findByText("Dashboard")).toBeInTheDocument();
+            expect(screen.queryByText("test")).not.toBeInTheDocument();
         });
 
         it("reset tasks button click resets all completed todos", async () => {
