@@ -666,5 +666,29 @@ describe("NodesContext", () => {
             expect(visibilityResult?.message).toBe("Unavailable in guest mode");
             expect(localStorageService.nodes.updateNode).not.toHaveBeenCalledWith("node-1", { isPublic: true });
         });
+
+        it("guest handleResetTasks correctly updates flatNodes", async () => {
+            const { result } = renderHook(() => useNodes(), { wrapper });
+
+            await waitFor(() => {
+                expect(result.current.nodesLoading).toBe(false);
+            });
+
+            await result.current.handleToggleChildNode("node-2");
+
+            await waitFor(() => {
+                const node = result.current.flatNodes.find(node => node.id === "node-2");
+
+                expect(node?.completed).toBe(true);
+            });
+
+            await result.current.handleResetTasks("node-1");
+
+            await waitFor(() => {
+                const node = result.current.flatNodes.find(node => node.id === "node-2");
+
+                expect(node?.completed).toBe(false);
+            });
+        });
     });
 });

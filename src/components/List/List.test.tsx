@@ -990,12 +990,6 @@ describe("List", () => {
 
             await user.click(screen.getByText("Reset"));
 
-            waitFor(() => {
-                screen.getAllByRole('checkbox').forEach((cb) => {
-                    expect(cb).not.toBeChecked();
-                });
-            });
-
             expect(handleResetTasks).toHaveBeenCalledWith("list-1");
         });
 
