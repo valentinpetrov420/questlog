@@ -12,7 +12,8 @@ import {
     cleanup,
     //waitFor
 } from "@testing-library/react";
-//import userEvent from "@testing-library/user-event";
+
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 
 import Item from "./Item.js";
@@ -123,6 +124,55 @@ describe("Item", () => {
 
             expect(screen.getByRole("link", { name: "page" })).toHaveAttribute("href", "/node-1");
         });
+
+        it("todo text click opens input", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <Item
+                    id="node-1"
+                    text="test"
+                    completed={false}
+                    autoFocus={false}
+                    type="todo"
+                    isOwner={true}
+                    deletePending={false}
+                    resetPending={false}
+                    highlightedTodoId={null}
+                />
+            );
+
+            expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+
+            await user.click(screen.getByText("test"));
+
+            expect(screen.getByRole('textbox')).toBeInTheDocument();
+        });
+        it("heading text click opens input", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <Item
+                    id="node-1"
+                    text="test"
+                    completed={false}
+                    autoFocus={false}
+                    type="heading"
+                    isOwner={true}
+                    deletePending={false}
+                    resetPending={false}
+                    highlightedTodoId={null}
+                />
+            );
+
+            expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+
+            await user.click(screen.getByText("test"));
+
+            expect(screen.getByRole('textbox')).toBeInTheDocument();
+        });
+
+
     });
 
     describe("non-owner", () => {
@@ -147,6 +197,54 @@ describe("Item", () => {
             expect(screen.getByRole("checkbox")).toBeDisabled;
             expect(screen.getByText("test")).toBeInTheDocument();
             expect(screen.queryByText("⋯")).not.toBeInTheDocument();
-        })
+        });
+
+        it("todo text click doesn't open input", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <Item
+                    id="node-1"
+                    text="test"
+                    completed={false}
+                    autoFocus={false}
+                    type="todo"
+                    isOwner={false}
+                    deletePending={false}
+                    resetPending={false}
+                    highlightedTodoId={null}
+                />
+            );
+
+            expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+
+            await user.click(screen.getByText("test"));
+
+            expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+        });
+
+        it("heading text click doesn't open input", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <Item
+                    id="node-1"
+                    text="test"
+                    completed={false}
+                    autoFocus={false}
+                    type="heading"
+                    isOwner={false}
+                    deletePending={false}
+                    resetPending={false}
+                    highlightedTodoId={null}
+                />
+            );
+
+            expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+
+            await user.click(screen.getByText("test"));
+
+            expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+        });
     });
 });
