@@ -10,6 +10,7 @@ import {
     render,
     screen,
     cleanup,
+    waitFor,
     //waitFor
 } from "@testing-library/react";
 
@@ -124,6 +125,40 @@ describe("Item", () => {
 
             expect(screen.getByRole("link", { name: "page" })).toHaveAttribute("href", "/node-1");
         });
+        it("highlighted todos get correct styling", () => {
+            render(
+                <Item
+                    id="node-1"
+                    text="test"
+                    completed={false}
+                    autoFocus={false}
+                    type="todo"
+                    isOwner={true}
+                    deletePending={false}
+                    resetPending={false}
+                    highlightedTodoId="node-1"
+                />
+            );
+
+            expect(screen.getByText("test")).toHaveClass("highlighted");
+        });
+        it("completed todos get correct styling", () => {
+            render(
+                <Item
+                    id="node-1"
+                    text="test"
+                    completed={true}
+                    autoFocus={false}
+                    type="todo"
+                    isOwner={true}
+                    deletePending={false}
+                    resetPending={false}
+                    highlightedTodoId={null}
+                />
+            );
+
+            expect(screen.getByText("test")).toHaveClass("completed");
+        });
 
         it("todo text click opens input", async () => {
             const user = userEvent.setup();
@@ -172,7 +207,68 @@ describe("Item", () => {
             expect(screen.getByRole('textbox')).toBeInTheDocument();
         });
 
+        it("submit todo edit calls service", async () => {
+            const user = userEvent.setup();
 
+            render(
+                <Item
+                    id="node-1"
+                    text="test"
+                    completed={false}
+                    autoFocus={false}
+                    type="todo"
+                    isOwner={true}
+                    deletePending={false}
+                    resetPending={false}
+                    highlightedTodoId={null}
+                />
+            );
+
+            expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+
+            await user.click(screen.getByText("test"));
+
+            expect(screen.getByRole("textbox")).toBeInTheDocument();
+
+            await user.type(screen.getByRole("textbox"), "123"); 1
+            await user.keyboard("{Enter}");
+
+            expect(handleEditNodeText).toHaveBeenCalledWith("node-1", "test123");
+        });
+        it("invalid input todo edit shows StatusMessage", async () => {
+            const user = userEvent.setup();
+            handleEditNodeText.mockResolvedValue({ message: "Field cannot be empty." });
+
+            render(
+                <Item
+                    id="node-1"
+                    text="test"
+                    completed={false}
+                    autoFocus={false}
+                    type="todo"
+                    isOwner={true}
+                    deletePending={false}
+                    resetPending={false}
+                    highlightedTodoId={null}
+                />
+            );
+
+            expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+
+            await user.click(screen.getByText("test"));
+
+            expect(screen.getByRole("textbox")).toBeInTheDocument();
+
+            await user.clear(screen.getByRole("textbox"));
+            await user.keyboard("{Enter}");
+
+            await waitFor(() => {
+                expect(handleEditNodeText).toHaveBeenCalledWith("node-1", "");
+            });
+
+            expect(screen.getByText("Field cannot be empty.")).toBeInTheDocument();
+            expect(screen.getByRole("textbox")).toBeInTheDocument();
+        });
     });
 
     describe("non-owner", () => {
@@ -222,7 +318,6 @@ describe("Item", () => {
 
             expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
         });
-
         it("heading text click doesn't open input", async () => {
             const user = userEvent.setup();
 
