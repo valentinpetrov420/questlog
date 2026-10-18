@@ -181,7 +181,7 @@ describe("Item", () => {
 
             await user.click(screen.getByText("test"));
 
-            expect(screen.getByRole('textbox')).toBeInTheDocument();
+            expect(screen.getByRole("textbox")).toBeInTheDocument();
         });
         it("heading text click opens input", async () => {
             const user = userEvent.setup();
@@ -204,7 +204,7 @@ describe("Item", () => {
 
             await user.click(screen.getByText("test"));
 
-            expect(screen.getByRole('textbox')).toBeInTheDocument();
+            expect(screen.getByRole("textbox")).toBeInTheDocument();
         });
 
         it("submit todo edit calls service", async () => {
@@ -268,6 +268,34 @@ describe("Item", () => {
 
             expect(screen.getByText("Field cannot be empty.")).toBeInTheDocument();
             expect(screen.getByRole("textbox")).toBeInTheDocument();
+        });
+
+        it("escape key cancels editing mode", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <Item
+                    id="node-1"
+                    text="test"
+                    completed={false}
+                    autoFocus={false}
+                    type="todo"
+                    isOwner={true}
+                    deletePending={false}
+                    resetPending={false}
+                    highlightedTodoId={null}
+                />
+            );
+
+            expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+
+            await user.click(screen.getByText("test"));
+
+            expect(screen.getByRole("textbox")).toBeInTheDocument();
+
+            await user.keyboard("{Escape}");
+
+            expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
         });
     });
 
