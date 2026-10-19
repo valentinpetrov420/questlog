@@ -1,20 +1,18 @@
 # Questlog
 
-
 [![CI](https://github.com/valentinpetrov420/questlog/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/valentinpetrov420/questlog/actions/workflows/ci.yml)
 
-<!-- hide:start -->
-![Desktop dashboard view](desktop-dashboard.png)
-![Mobile sidebar view](mobile-sidebar.png)
-![Mobile dashboard view](mobile-dashboard.png)
-<!-- hide:end -->
-
-<!-- hide:start -->
-Demo: https://questlog-tan-seven.vercel.app/
-<!-- hide:end -->
 A productivity tool built on a flat node architecture, inspired by Notion. 
 Any node can be a page or a task, enabling recursive nesting and shareable public links.
 Built as a daily-iterated React project with Firebase as the backend.
+
+<!-- hide:start -->
+Demo: https://questlog-tan-seven.vercel.app/
+
+![Desktop dashboard view](docs/screenshots/desktop-dashboard.png)
+![Mobile sidebar view](docs/screenshots/mobile-sidebar.png)
+![Mobile dashboard view](docs/screenshots/mobile-dashboard.png)
+<!-- hide:end -->
 
 ## Stack
 
@@ -50,17 +48,22 @@ React - TypeScript - Vite - Firebase (Auth + Firestore) - Vitest - ESLint
     - Recently created.
     - Custom order.
     - Recently updated.
-    - Alphabetical
-    - Archived
+    - Alphabetical.
+    - Archived.
 - Route-guarded navigation with auth-aware redirects.
 - Dev-only network latency simulation.
-
-
 - Build-time changelog generated from git commit history.
 - CI:
     - typecheck.
-    - lint.
     - tests.
+
+## Automated testing with Vitest
+
+- Component tests for ProgressBar, PopOver, List and List Item.
+- Unit tests for localStorageService and firestoreService CRUD, reordering, task resets and recursive deletion.
+- Firestore emulation testing.
+- NodesContext tests covering authenticated and guest mode hydration and node operations including creation, editing, deletion, archiving/restoring, pinning, visibility, child toggling, task promotion/resetting, and validation/guard paths.
+- CI runs the complete test suite alongside TypeScript checks.
 
 <!-- hide:start -->
 ## How to run it locally
@@ -93,8 +96,12 @@ npm run dev
 
 ## Features
 
-- More node types.
+- Collaborative lists.
+- Templates.
 - Guest Mode data to Firebase data migration on login.
+- Command Palette with/and keyboard shortcuts.
+- Export/Import data.
+- Image and URL nodes.
 
 ## DevPanel
 

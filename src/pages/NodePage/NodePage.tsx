@@ -119,7 +119,8 @@ export default function NodePage() {
                 setFetchedItems(response.items ?? []);
             })
             .finally(() => {
-                setNodesLoading(false)
+                setNodesLoading(false);
+                setNodeLoading(false);
             }
             );
 
