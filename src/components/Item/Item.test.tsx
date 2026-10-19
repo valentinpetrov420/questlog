@@ -297,6 +297,128 @@ describe("Item", () => {
 
             expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
         });
+
+        it("delete click sets pending state and disables all input options", async () => {
+            let resolveDelete!: (value: undefined) => void;
+            handleDeleteNode.mockReturnValueOnce(new Promise((resolve) => { resolveDelete = resolve; }));
+
+            const user = userEvent.setup();
+
+            render(
+                <Item
+                    id="node-1"
+                    text="test"
+                    completed={false}
+                    autoFocus={false}
+                    type="todo"
+                    isOwner={true}
+                    deletePending={false}
+                    resetPending={false}
+                    highlightedTodoId={null}
+                />
+            );
+
+            await user.click(screen.getByRole("button", { name: "⋯" }));
+            await user.click(screen.getByRole("button", { name: "Delete" }));
+
+            expect(screen.getByRole("button", { name: "⋯" })).toBeDisabled();
+            expect(screen.getByRole("checkbox")).toBeDisabled();
+
+            resolveDelete(undefined);
+
+            await waitFor(() => {
+                expect(screen.getByText("⋯")).toBeEnabled();
+                expect(screen.getByRole("checkbox")).toBeEnabled();
+            });
+        });
+
+        it("page popover options don't show promote to page button", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <Item
+                        id="node-1"
+                        text="page"
+                        completed={false}
+                        autoFocus={false}
+                        type="page"
+                        isOwner={true}
+                        deletePending={false}
+                        resetPending={false}
+                        highlightedTodoId={null}
+                    />
+                </MemoryRouter>
+            );
+
+            await user.click(screen.getByRole("button", { name: "⋯" }));
+
+            expect(screen.queryByRole("button", { name: "Promote to Page" })).not.toBeInTheDocument();
+        });
+        it("page link navigates to the correct node id", () => {
+            render(
+                <MemoryRouter>
+                    <Item
+                        id="node-1"
+                        text="page"
+                        completed={false}
+                        autoFocus={false}
+                        type="page"
+                        isOwner={true}
+                        deletePending={false}
+                        resetPending={false}
+                        highlightedTodoId={null}
+                    />
+                </MemoryRouter>
+            );
+
+            expect(screen.getByRole("link", { name: "page" })).toHaveAttribute("href", "/node-1");
+        });
+
+        it("promote to page calls the correct context handler with the correct id", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <Item
+                    id="node-1"
+                    text="test"
+                    completed={false}
+                    autoFocus={false}
+                    type="todo"
+                    isOwner={true}
+                    deletePending={false}
+                    resetPending={false}
+                    highlightedTodoId={null}
+                />
+            );
+            
+            await user.click(screen.getByRole("button", {name: "⋯"}));
+            await user.click(screen.getByRole("button", {name: "Promote to Page"}));
+
+            expect(handlePromoteTodo).toHaveBeenCalledWith("node-1");
+        });
+        it("delete click calls the correct context handler with the correct id", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <Item
+                    id="node-1"
+                    text="test"
+                    completed={false}
+                    autoFocus={false}
+                    type="todo"
+                    isOwner={true}
+                    deletePending={false}
+                    resetPending={false}
+                    highlightedTodoId={null}
+                />
+            );
+            
+            await user.click(screen.getByRole("button", {name: "⋯"}));
+            await user.click(screen.getByRole("button", {name: "Delete"}));
+
+            expect(handleDeleteNode).toHaveBeenCalledWith("node-1");
+        });
     });
 
     describe("non-owner", () => {
@@ -318,7 +440,7 @@ describe("Item", () => {
             );
 
             expect(screen.queryByText("⠿")).not.toBeInTheDocument();
-            expect(screen.getByRole("checkbox")).toBeDisabled;
+            expect(screen.getByRole("checkbox")).toBeDisabled();
             expect(screen.getByText("test")).toBeInTheDocument();
             expect(screen.queryByText("⋯")).not.toBeInTheDocument();
         });

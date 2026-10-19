@@ -50,7 +50,7 @@ export default function Item(props: ItemProps) {
 
     const [error, setError] = useState("");
 
-    const disabled = pending || props.deletePending || props.resetPending;
+    const disabled = pending || props.deletePending || props.resetPending || !props.isOwner;
 
     const highlightedTodoId = props.highlightedTodoId;
 
