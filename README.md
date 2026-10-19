@@ -59,7 +59,7 @@ React - TypeScript - Vite - Firebase (Auth + Firestore) - Vitest - ESLint
 
 ## Automated testing with Vitest
 
-- Component tests for ProgressBar and PopOver.
+- Component tests for ProgressBar, PopOver, List and List Item.
 - Unit tests for localStorageService and firestoreService CRUD, reordering, task resets and recursive deletion.
 - Firestore emulation testing.
 - NodesContext tests covering authenticated and guest mode hydration and node operations including creation, editing, deletion, archiving/restoring, pinning, visibility, child toggling, task promotion/resetting, and validation/guard paths.
