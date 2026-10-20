@@ -129,25 +129,35 @@ export default function Item(props: ItemProps) {
         if (!props.isOwner) {
             return;
         }
+        if(disabled){
+            return;
+        }
         handleToggleChildNode(props.id);
     }
     async function handlePromoteToPageClick() {
         if (!props.isOwner) {
             return;
         }
+        if (disabled) {
+            return;
+        }
 
         setPending(true);
 
-        const error = await handlePromoteTodo(props.id);
+        try {
 
-        if (error) {
-            setError(error.message);
-            return;
+            const error = await handlePromoteTodo(props.id);
+
+            if (error) {
+                setError(error.message);
+                return;
+            }
+            setError("");
+        } finally {
+            setPending(false);
         }
-        setError("");
-        setPending(false);
     }
-    
+
     if (props.type === "heading") {
         return <li ref={setNodeRef} style={style} {...attributes}>
             <StatusMessage text={error} />
@@ -176,10 +186,10 @@ export default function Item(props: ItemProps) {
 
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                     <div className="item-popover-wrapper">
-                        <PopOver 
-                        type="actions"
-                        align="right"
-                        disabled={disabled}>
+                        <PopOver
+                            type="actions"
+                            align="right"
+                            disabled={disabled}>
                             <button onClick={handleDeleteClick}>Delete</button>
                         </PopOver>
                     </div>
@@ -197,10 +207,10 @@ export default function Item(props: ItemProps) {
                 <Link className="todo-item-text" to={`/${props.id}`}>{props.text}</Link>
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                     <div className="item-popover-wrapper">
-                        <PopOver 
-                        type="actions"
-                        align="right"
-                        disabled={disabled}>
+                        <PopOver
+                            type="actions"
+                            align="right"
+                            disabled={disabled}>
                             <button onClick={handleDeleteClick}>Delete</button>
                         </PopOver>
                     </div>
@@ -217,10 +227,10 @@ export default function Item(props: ItemProps) {
                 <hr className="separator-hr" />
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                     <div className="item-popover-wrapper">
-                        <PopOver 
-                        type="actions"
-                        align="right"
-                        disabled={disabled}>
+                        <PopOver
+                            type="actions"
+                            align="right"
+                            disabled={disabled}>
                             <button onClick={handleDeleteClick}>Delete</button>
                         </PopOver>
                     </div>
@@ -268,10 +278,10 @@ export default function Item(props: ItemProps) {
 
             {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                 <div className="item-popover-wrapper">
-                    <PopOver 
-                    type="actions"
-                    align="right"
-                    disabled={disabled}>
+                    <PopOver
+                        type="actions"
+                        align="right"
+                        disabled={disabled}>
                         <button onClick={handleDeleteClick}>Delete</button>
                         <button onClick={handlePromoteToPageClick}>Promote to Page</button>
                     </PopOver>
