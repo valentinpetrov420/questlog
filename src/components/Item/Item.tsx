@@ -241,6 +241,7 @@ export default function Item(props: ItemProps) {
         </li>
     }
 
+    //props.type === "todo" 
     return <li ref={setNodeRef} style={style} {...attributes}>
         <StatusMessage text={error} />
         <div className={isEditingTodo ? "edit-form-wrapper" : "item-wrapper"}>
