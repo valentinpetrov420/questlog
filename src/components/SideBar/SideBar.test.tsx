@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
+import { render, screen, cleanup, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
 
 import SideBar from "./SideBar";
 
@@ -85,6 +86,59 @@ describe("SideBar", () => {
             expect(screen.getByText("Test User")).toBeInTheDocument();
             expect(screen.getByRole("button", { name: "Logout" })).toBeInTheDocument();
         });
+
+        it("escape key clears the search input", async () => {
+            const user = userEvent.setup();
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            await user.type(screen.getByPlaceholderText("Search lists..."), "123");
+            expect(screen.getByPlaceholderText("Search lists...")).toHaveValue("123");
+
+            await waitFor(() => {
+                expect(screen.getByRole("button", { name: "✕" })).toBeInTheDocument();
+            })
+
+            await user.keyboard("{Escape}");
+
+            expect(screen.queryByRole("button", { name: "✕" })).not.toBeInTheDocument();
+            expect(screen.getByPlaceholderText("Search lists...")).toHaveValue("");
+        });
+        it("clicking X clears the search input", async () => {
+            const user = userEvent.setup();
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            await user.type(screen.getByPlaceholderText("Search lists..."), "123");
+            expect(screen.getByPlaceholderText("Search lists...")).toHaveValue("123");
+
+            await waitFor(() => {
+                expect(screen.getByRole("button", { name: "✕" })).toBeInTheDocument();
+            })
+
+            await user.click(screen.getByRole("button", { name: "✕" }));
+
+            expect(screen.queryByRole("button", { name: "✕" })).not.toBeInTheDocument();
+            expect(screen.getByPlaceholderText("Search lists...")).toHaveValue("");
+        });
     });
 
     describe("unauthenticated behavior", () => {
@@ -123,20 +177,20 @@ describe("SideBar", () => {
         });
 
         it("renders the lists section but not the user info", () => {
-        render(
-            <MemoryRouter>
-                <SideBar
-                    user={{ uid: "guest-1", displayName: "Guest", photoURL: "" } as any}
-                    logoutUser={logoutUser}
-                    loginWithGoogle={loginWithGoogle}
-                    setMenuOpen={setMenuOpen}
-                    menuOpen={true}
-                />
-            </MemoryRouter>
-        );
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "guest-1", displayName: "Guest", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
 
-        expect(screen.getByPlaceholderText("Search lists...")).toBeInTheDocument();
-        expect(screen.queryByRole("button", { name: "Logout" })).not.toBeInTheDocument();
-    });
+            expect(screen.getByPlaceholderText("Search lists...")).toBeInTheDocument();
+            expect(screen.queryByRole("button", { name: "Logout" })).not.toBeInTheDocument();
+        });
     });
 });
