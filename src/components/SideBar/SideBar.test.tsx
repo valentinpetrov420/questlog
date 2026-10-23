@@ -25,8 +25,17 @@ const mockedUseNodes = vi.mocked(useNodes);
 const mockedUseAuth = vi.mocked(useAuth);
 const mockedUseTheme = vi.mocked(useTheme);
 
+const { navigate } = vi.hoisted(() => ({ navigate: vi.fn() }))
+
+vi.mock('react-router-dom', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('react-router-dom')>()),
+    useNavigate: () => navigate,
+}))
+
+
 afterEach(() => {
     cleanup();
+    navigate.mockClear();
 });
 
 describe("SideBar", () => {
@@ -138,6 +147,61 @@ describe("SideBar", () => {
 
             expect(screen.queryByRole("button", { name: "✕" })).not.toBeInTheDocument();
             expect(screen.getByPlaceholderText("Search lists...")).toHaveValue("");
+        });
+
+        it("new page click redirects to calls context and redirects to NodePage", async () => {
+            const user = userEvent.setup();
+            vi.mocked(handleCreateNode).mockResolvedValue({ id: "list-1" });
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            await user.click(screen.getByText("+ New Page"));
+
+            expect(handleCreateNode).toHaveBeenCalledWith("New Page", false);
+
+            await waitFor(() =>
+                expect(navigate).toHaveBeenCalledTimes(1)
+            );
+
+            expect(navigate.mock.calls[0][0]).toBe("/list-1");
+            expect(navigate.mock.calls[0][1]).toEqual({ state: { newParentId: "list-1" } });
+        });
+        it("new page displays StatusMessage on failed creation", async () => {
+            const user = userEvent.setup();
+            vi.mocked(handleCreateNode).mockResolvedValue({ error: { message: "Something went wrong." } });
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            await user.click(screen.getByText("+ New Page"));
+
+            expect(handleCreateNode).toHaveBeenCalledWith("New Page", false);
+
+            await waitFor(() =>
+                expect(navigate).toHaveBeenCalledTimes(0)
+            );
+
+            const newPageStatus = screen.getAllByRole("paragraph")[0];
+            expect(newPageStatus).toHaveTextContent("Something went wrong.");
         });
     });
 
