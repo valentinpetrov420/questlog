@@ -25,13 +25,25 @@ const mockedUseNodes = vi.mocked(useNodes);
 const mockedUseAuth = vi.mocked(useAuth);
 const mockedUseTheme = vi.mocked(useTheme);
 
+const flatNodes = [
+    { id: "1", parentId: null, order: 0, type: "page" as const, isPublic: false, text: "Charlie", ownerId: "1", pinned: false, createdAt: 300, updatedAt: 300, archived: false, completed: false },
+    { id: "2", parentId: null, order: 1, type: "page" as const, isPublic: false, text: "Alpha", ownerId: "1", pinned: false, createdAt: 100, updatedAt: 500, archived: false, completed: false },
+    { id: "3", parentId: null, order: 2, type: "page" as const, isPublic: false, text: "Echo", ownerId: "1", pinned: false, createdAt: 500, updatedAt: 200, archived: false, completed: false },
+    { id: "4", parentId: null, order: 3, type: "page" as const, isPublic: false, text: "Bravo", ownerId: "1", pinned: false, createdAt: 200, updatedAt: 400, archived: false, completed: false },
+    { id: "5", parentId: null, order: 4, type: "page" as const, isPublic: false, text: "Delta", ownerId: "1", pinned: false, createdAt: 400, updatedAt: 100, archived: false, completed: false },
+    { id: "6", parentId: null, order: 5, type: "page" as const, isPublic: false, text: "Foxtrot", ownerId: "1", pinned: false, createdAt: 600, updatedAt: 600, archived: false, completed: false },
+    { id: "7", parentId: null, order: 6, type: "page" as const, isPublic: false, text: "Golf", ownerId: "1", pinned: false, createdAt: 700, updatedAt: 300, archived: false, completed: false },
+    { id: "8", parentId: null, order: 7, type: "page" as const, isPublic: false, text: "Hotel", ownerId: "1", pinned: false, createdAt: 800, updatedAt: 700, archived: false, completed: false },
+    { id: "9", parentId: null, order: 8, type: "page" as const, isPublic: false, text: "Archived Alpha", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: true, completed: false },
+    { id: "10", parentId: null, order: 9, type: "page" as const, isPublic: false, text: "Archived Bravo", ownerId: "1", pinned: false, createdAt: 2, updatedAt: 2, archived: true, completed: false },
+];
+
 const { navigate } = vi.hoisted(() => ({ navigate: vi.fn() }))
 
 vi.mock('react-router-dom', async (importOriginal) => ({
     ...(await importOriginal<typeof import('react-router-dom')>()),
     useNavigate: () => navigate,
-}))
-
+}));
 
 afterEach(() => {
     cleanup();
@@ -202,6 +214,165 @@ describe("SideBar", () => {
 
             const newPageStatus = screen.getAllByRole("paragraph")[0];
             expect(newPageStatus).toHaveTextContent("Something went wrong.");
+        });
+
+        it("sorts by newest correctly and doesn't render archived", async () => {
+            const user = userEvent.setup();
+
+            mockedUseNodes.mockReturnValue({
+                flatNodes,
+                handleCreateNode,
+                handleArchiveNode,
+                handleRestoreNode,
+                handleVisibilityChange,
+                handleDeleteNode,
+            } as any);
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            await user.selectOptions(screen.getByRole("combobox"), "Newest");
+
+            const renderedOrder = screen.getAllByRole("listitem").map(item =>
+                item.querySelector("a")?.textContent?.trim()
+            );
+
+            expect(renderedOrder).toEqual([
+                "Hotel",
+                "Golf",
+                "Foxtrot",
+                "Echo",
+                "Delta",
+                "Charlie",
+                "Bravo",
+                "Alpha",
+            ]);
+        });
+        it("sorts by alphabetical order correctly", async () => {
+            const user = userEvent.setup();
+
+            mockedUseNodes.mockReturnValue({
+                flatNodes,
+                handleCreateNode,
+                handleArchiveNode,
+                handleRestoreNode,
+                handleVisibilityChange,
+                handleDeleteNode,
+            } as any);
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            await user.selectOptions(screen.getByRole("combobox"), "Alphabetical");
+
+            const renderedOrder = screen.getAllByRole("listitem").map(item =>
+                item.querySelector("a")?.textContent?.trim()
+            );
+
+            expect(renderedOrder).toEqual([
+                "Alpha",
+                "Bravo",
+                "Charlie",
+                "Delta",
+                "Echo",
+                "Foxtrot",
+                "Golf",
+                "Hotel",
+            ]);
+        });
+        it("sorts by last updated correctly", async () => {
+            const user = userEvent.setup();
+
+            mockedUseNodes.mockReturnValue({
+                flatNodes,
+                handleCreateNode,
+                handleArchiveNode,
+                handleRestoreNode,
+                handleVisibilityChange,
+                handleDeleteNode,
+            } as any);
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            await user.selectOptions(screen.getByRole("combobox"), "Last updated");
+
+            const renderedOrder = screen.getAllByRole("listitem").map(item =>
+                item.querySelector("a")?.textContent?.trim()
+            );
+
+            expect(renderedOrder).toEqual([
+                "Hotel",
+                "Foxtrot",
+                "Alpha",
+                "Bravo",
+                "Charlie",
+                "Golf",
+                "Echo",
+                "Delta",
+            ]);
+        });
+        it("sorting archived only shows only archived nodes", async () => {
+            const user = userEvent.setup();
+
+            mockedUseNodes.mockReturnValue({
+                flatNodes,
+                handleCreateNode,
+                handleArchiveNode,
+                handleRestoreNode,
+                handleVisibilityChange,
+                handleDeleteNode,
+            } as any);
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            await user.selectOptions(screen.getByRole("combobox"), "Archived only");
+
+            const renderedOrder = screen.getAllByRole("listitem").map(item =>
+                item.querySelector("a")?.textContent?.trim()
+            );
+
+            expect(renderedOrder).toEqual([
+                "Archived Alpha",
+                "Archived Bravo",
+            ]);
         });
     });
 

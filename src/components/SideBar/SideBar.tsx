@@ -79,8 +79,13 @@ export default function SideBar(props: SideBarProps) {
     const sortedLists = isArchivedView
         ? visibleLists
         : [...visibleLists].sort((a, b) => {
-            if (sortMode === 'createdAt') return b.createdAt - a.createdAt;
-            if (sortMode === 'updatedAt') return b.updatedAt - a.updatedAt;
+            if (sortMode === "createdAt") {
+                return b.createdAt - a.createdAt;
+            }
+            if (sortMode === "updatedAt") {
+                return b.updatedAt - a.updatedAt;
+            }
+
             return a.text.localeCompare(b.text);
         });
 
@@ -99,7 +104,7 @@ export default function SideBar(props: SideBarProps) {
 
     function handleGoHome() {
         if (!props.user) {
-            navigate('/login')
+            navigate("/login");
         }
 
         navigate("/");
@@ -159,7 +164,7 @@ export default function SideBar(props: SideBarProps) {
             }
 
             if (nodeId === id) {
-                navigate('/');
+                navigate("/");
             }
 
         } finally {
