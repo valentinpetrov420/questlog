@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup, waitFor } from "@testing-library/react";
+import { render, screen, cleanup, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
@@ -36,6 +36,68 @@ const flatNodes = [
     { id: "8", parentId: null, order: 7, type: "page" as const, isPublic: false, text: "Hotel", ownerId: "1", pinned: false, createdAt: 800, updatedAt: 700, archived: false, completed: false },
     { id: "9", parentId: null, order: 8, type: "page" as const, isPublic: false, text: "Archived Alpha", ownerId: "1", pinned: false, createdAt: 1, updatedAt: 1, archived: true, completed: false },
     { id: "10", parentId: null, order: 9, type: "page" as const, isPublic: false, text: "Archived Bravo", ownerId: "1", pinned: false, createdAt: 2, updatedAt: 2, archived: true, completed: false },
+];
+const popoverFlatNodes = [
+    {
+        id: "1",
+        parentId: null,
+        order: 0,
+        type: "page" as const,
+
+        isPublic: false,
+
+        text: "Private Page",
+        ownerId: "1",
+        pinned: false,
+        createdAt: 1,
+        updatedAt: 1,
+
+        archived: false,
+
+        completed: false,
+    },
+    {
+        id: "2",
+        parentId: null,
+        order: 1,
+        type: "page" as const,
+        isPublic: true,
+        text: "Public Page",
+        ownerId: "1",
+        pinned: false,
+        createdAt: 2,
+        updatedAt: 2,
+        archived: false,
+        completed: false,
+    },
+    {
+        id: "3",
+        parentId: null,
+        order: 2,
+        type: "page" as const,
+        isPublic: false,
+        text: "Archived Private Page",
+        ownerId: "1",
+        pinned: false,
+        createdAt: 3,
+        updatedAt: 3,
+        archived: true,
+        completed: false,
+    },
+    {
+        id: "4",
+        parentId: null,
+        order: 3,
+        type: "page" as const,
+        isPublic: true,
+        text: "Archived Public Page",
+        ownerId: "1",
+        pinned: false,
+        createdAt: 4,
+        updatedAt: 4,
+        archived: true,
+        completed: false,
+    },
 ];
 
 const { navigate } = vi.hoisted(() => ({ navigate: vi.fn() }))
@@ -373,6 +435,187 @@ describe("SideBar", () => {
                 "Archived Alpha",
                 "Archived Bravo",
             ]);
+        });
+
+        it("popover renders correct actions for unarchived private pages", async () => {
+            const user = userEvent.setup();
+
+            mockedUseNodes.mockReturnValue({
+                flatNodes: popoverFlatNodes,
+                handleCreateNode,
+                handleArchiveNode,
+                handleRestoreNode,
+                handleVisibilityChange,
+                handleDeleteNode,
+            } as any);
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            const link = screen.getByRole("link", { name: "Private Page" });
+            const listItem = link.closest("li");
+
+            expect(listItem).not.toBeNull();
+
+            const popover = link.nextElementSibling;
+            expect(popover?.tagName).toBe("DIV");
+
+            const button = within(popover as HTMLElement).getByRole("button");
+
+            await user.click(button);
+
+            expect(screen.getByText("Archive")).toBeInTheDocument();
+            expect(screen.getByText("Change to Public")).toBeInTheDocument();
+            expect(screen.getByText("Delete")).toBeInTheDocument();
+
+            expect(screen.queryByText("Restore")).not.toBeInTheDocument();
+            expect(screen.queryByText("Change to Private")).not.toBeInTheDocument();
+            expect(screen.queryByText("Copy link")).not.toBeInTheDocument();
+        });
+        it("popover renders correct actions for unarchived public pages", async () => {
+            const user = userEvent.setup();
+
+            mockedUseNodes.mockReturnValue({
+                flatNodes: popoverFlatNodes,
+                handleCreateNode,
+                handleArchiveNode,
+                handleRestoreNode,
+                handleVisibilityChange,
+                handleDeleteNode,
+            } as any);
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            const link = screen.getByRole("link", { name: "Public Page" });
+            const listItem = link.closest("li");
+
+            expect(listItem).not.toBeNull();
+
+            const popover = link.nextElementSibling;
+            expect(popover?.tagName).toBe("DIV");
+
+            const button = within(popover as HTMLElement).getByRole("button");
+
+            await user.click(button);
+
+            expect(screen.getByText("Archive")).toBeInTheDocument();
+            expect(screen.getByText("Change to Private")).toBeInTheDocument();
+            expect(screen.getByText("Delete")).toBeInTheDocument();
+            expect(screen.getByText("Copy link")).toBeInTheDocument();
+
+            expect(screen.queryByText("Change to Public")).not.toBeInTheDocument();
+        });
+
+        it("popover rendres correct actions for archived private pages", async () => {
+            const user = userEvent.setup();
+
+            mockedUseNodes.mockReturnValue({
+                flatNodes: popoverFlatNodes,
+                handleCreateNode,
+                handleArchiveNode,
+                handleRestoreNode,
+                handleVisibilityChange,
+                handleDeleteNode,
+            } as any);
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            await user.selectOptions(screen.getByRole("combobox"), "Archived only");
+
+            const link = screen.getByRole("link", { name: "Archived Private Page" });
+            const listItem = link.closest("li");
+
+            expect(listItem).not.toBeNull();
+
+            const popover = link.nextElementSibling;
+            expect(popover?.tagName).toBe("DIV");
+
+            const button = within(popover as HTMLElement).getByRole("button");
+
+            await user.click(button);
+
+            expect(screen.getByText("Restore")).toBeInTheDocument();
+            expect(screen.getByText("Change to Public")).toBeInTheDocument();
+            expect(screen.getByText("Delete")).toBeInTheDocument();
+
+            expect(screen.queryByText("Archive")).not.toBeInTheDocument();
+            expect(screen.queryByText("Change to Private")).not.toBeInTheDocument();
+            expect(screen.queryByText("Copy link")).not.toBeInTheDocument();
+        });
+        it("popover rendres correct actions for archived public pages", async () => {
+            const user = userEvent.setup();
+
+            mockedUseNodes.mockReturnValue({
+                flatNodes: popoverFlatNodes,
+                handleCreateNode,
+                handleArchiveNode,
+                handleRestoreNode,
+                handleVisibilityChange,
+                handleDeleteNode,
+            } as any);
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            await user.selectOptions(screen.getByRole("combobox"), "Archived only");
+
+            const link = screen.getByRole("link", { name: "Archived Public Page" });
+            const listItem = link.closest("li");
+
+            expect(listItem).not.toBeNull();
+
+            const popover = link.nextElementSibling;
+            expect(popover?.tagName).toBe("DIV");
+
+            const button = within(popover as HTMLElement).getByRole("button");
+
+            await user.click(button);
+
+            expect(screen.getByText("Restore")).toBeInTheDocument();
+            expect(screen.getByText("Change to Private")).toBeInTheDocument();
+            expect(screen.getByText("Delete")).toBeInTheDocument();
+            expect(screen.queryByText("Copy link")).toBeInTheDocument();
+
+            expect(screen.queryByText("Archive")).not.toBeInTheDocument();
+            expect(screen.queryByText("Change to Public")).not.toBeInTheDocument();
         });
     });
 
