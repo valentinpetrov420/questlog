@@ -617,6 +617,263 @@ describe("SideBar", () => {
             expect(screen.queryByText("Archive")).not.toBeInTheDocument();
             expect(screen.queryByText("Change to Public")).not.toBeInTheDocument();
         });
+
+        it("delete click calls context handler with the correct id", async () => {
+            const user = userEvent.setup();
+
+            mockedUseNodes.mockReturnValue({
+                flatNodes: popoverFlatNodes,
+                handleCreateNode,
+                handleArchiveNode,
+                handleRestoreNode,
+                handleVisibilityChange,
+                handleDeleteNode,
+            } as any);
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            const link = screen.getByRole("link", { name: "Private Page" });
+            const listItem = link.closest("li");
+
+            expect(listItem).not.toBeNull();
+
+            const popover = link.nextElementSibling;
+            expect(popover?.tagName).toBe("DIV");
+
+            const button = within(popover as HTMLElement).getByRole("button");
+
+            await user.click(button);
+
+            await user.click(screen.getByText("Delete"));
+
+            await waitFor(() => {
+                expect(handleDeleteNode).toHaveBeenCalledWith("1");
+            });
+        });
+        it("archive click calls context handler with the correct id", async () => {
+            const user = userEvent.setup();
+
+            mockedUseNodes.mockReturnValue({
+                flatNodes: popoverFlatNodes,
+                handleCreateNode,
+                handleArchiveNode,
+                handleRestoreNode,
+                handleVisibilityChange,
+                handleDeleteNode,
+            } as any);
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            const link = screen.getByRole("link", { name: "Private Page" });
+            const listItem = link.closest("li");
+
+            expect(listItem).not.toBeNull();
+
+            const popover = link.nextElementSibling;
+            expect(popover?.tagName).toBe("DIV");
+
+            const button = within(popover as HTMLElement).getByRole("button");
+
+            await user.click(button);
+
+            await user.click(screen.getByText("Archive"));
+
+            await waitFor(() => {
+                expect(handleArchiveNode).toHaveBeenCalledWith("1");
+            });
+        });
+        it("restore click calls context handler with the correct id", async () => {
+            const user = userEvent.setup();
+
+            mockedUseNodes.mockReturnValue({
+                flatNodes: popoverFlatNodes,
+                handleCreateNode,
+                handleArchiveNode,
+                handleRestoreNode,
+                handleVisibilityChange,
+                handleDeleteNode,
+            } as any);
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            await user.selectOptions(screen.getByRole("combobox"), "Archived only")
+
+            const link = screen.getByRole("link", { name: "Archived Private Page" });
+            const listItem = link.closest("li");
+
+            expect(listItem).not.toBeNull();
+
+            const popover = link.nextElementSibling;
+            expect(popover?.tagName).toBe("DIV");
+
+            const button = within(popover as HTMLElement).getByRole("button");
+
+            await user.click(button);
+
+            await user.click(screen.getByText("Restore"));
+
+            await waitFor(() => {
+                expect(handleRestoreNode).toHaveBeenCalledWith("3");
+            });
+        });
+        it("change to public click calls context handler with the correct id", async () => {
+            const user = userEvent.setup();
+
+            mockedUseNodes.mockReturnValue({
+                flatNodes: popoverFlatNodes,
+                handleCreateNode,
+                handleArchiveNode,
+                handleRestoreNode,
+                handleVisibilityChange,
+                handleDeleteNode,
+            } as any);
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            const link = screen.getByRole("link", { name: "Private Page" });
+            const listItem = link.closest("li");
+
+            expect(listItem).not.toBeNull();
+
+            const popover = link.nextElementSibling;
+            expect(popover?.tagName).toBe("DIV");
+
+            const button = within(popover as HTMLElement).getByRole("button");
+
+            await user.click(button);
+
+            await user.click(screen.getByText("Change to Public"));
+
+            await waitFor(() => {
+                expect(handleVisibilityChange).toHaveBeenCalledWith("1");
+            });
+        });
+        it("change to private click calls context handler with the correct id", async () => {
+            const user = userEvent.setup();
+
+            mockedUseNodes.mockReturnValue({
+                flatNodes: popoverFlatNodes,
+                handleCreateNode,
+                handleArchiveNode,
+                handleRestoreNode,
+                handleVisibilityChange,
+                handleDeleteNode,
+            } as any);
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            const link = screen.getByRole("link", { name: "Public Page" });
+            const listItem = link.closest("li");
+
+            expect(listItem).not.toBeNull();
+
+            const popover = link.nextElementSibling;
+            expect(popover?.tagName).toBe("DIV");
+
+            const button = within(popover as HTMLElement).getByRole("button");
+
+            await user.click(button);
+
+            await user.click(screen.getByText("Change to Private"));
+
+            await waitFor(() => {
+                expect(handleVisibilityChange).toHaveBeenCalledWith("2");
+            });
+        });
+        it("copy link click copies correct id endpoint link to clipboard", async () => {
+            const user = userEvent.setup();
+
+            const writeText = vi
+                .spyOn(navigator.clipboard, 'writeText')
+                .mockResolvedValue(undefined);
+
+            mockedUseNodes.mockReturnValue({
+                flatNodes: popoverFlatNodes,
+                handleCreateNode,
+                handleArchiveNode,
+                handleRestoreNode,
+                handleVisibilityChange,
+                handleDeleteNode,
+            } as any);
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            const link = screen.getByRole("link", { name: "Public Page" });
+            const listItem = link.closest("li");
+
+            expect(listItem).not.toBeNull();
+
+            const popover = link.nextElementSibling;
+            expect(popover?.tagName).toBe("DIV");
+
+            const button = within(popover as HTMLElement).getByRole("button");
+
+            await user.click(button);
+
+            await user.click(screen.getByText("Copy link"));
+
+            expect(writeText).toHaveBeenCalledWith(`${window.location.origin}/2`,)
+        });
     });
 
     describe("unauthenticated behavior", () => {
