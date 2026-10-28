@@ -1,4 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, 
+    //waitFor 
+} from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
@@ -7,7 +9,7 @@ import NodePage from "./NodePage";
 import { useAuth } from "../../contexts/AuthContext.js";
 import { useNodes } from "../../contexts/NodesContext.js";
 
-//import firestoreService from "../../api/services/firestoreService.js";
+import firestoreService from "../../api/services/firestoreService.js";
 
 vi.mock("firebase/firestore", () => ({
     doc: vi.fn(),
@@ -75,9 +77,17 @@ describe("NodePage", () => {
         } as any);
     });
 
-    it("renders without crashing", () => {
+    it("renders node from state", () => {
         renderPage();
 
         expect(screen.getByTestId("list")).toHaveTextContent("parent node");
+    });
+
+    it("renders 404 if node is not in state and firestoreService getNode returns null", async () => {
+        vi.mocked(firestoreService.nodes.getNode).mockResolvedValue(null as any);
+
+        renderPage("/node-2");
+
+        expect(await screen.findByText("404")).toBeInTheDocument();
     });
 });
