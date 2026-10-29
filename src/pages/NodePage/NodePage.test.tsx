@@ -1,8 +1,8 @@
-import { render, screen, 
-    //waitFor 
-} from "@testing-library/react";
+import { render, screen, act, cleanup
+    //waitFor
+ } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 import NodePage from "./NodePage";
 
@@ -39,6 +39,10 @@ vi.mock("../../components/List/List.js", () => ({
     default: (props: { text: string }) => <div data-testid="list">{props.text}</div>,
 }));
 
+vi.mock("../SkeletonPage/SkeletonPage.js", () => ({
+    default: () => <div data-testid="skeleton" />,
+}));
+
 const parentNode = {
     id: "node-1",
     text: "parent node",
@@ -60,6 +64,10 @@ function renderPage(path = "/node-1") {
         </MemoryRouter>
     );
 }
+
+afterEach(() => {
+    cleanup();
+});
 
 describe("NodePage", () => {
     beforeEach(() => {
@@ -89,5 +97,33 @@ describe("NodePage", () => {
         renderPage("/node-2");
 
         expect(await screen.findByText("404")).toBeInTheDocument();
+    });
+
+    it("renders skeleton loading page during inflight request", async () => {
+        let resolveNode!: (value: unknown) => void;
+        const pending = new Promise((resolve) => {
+            resolveNode = resolve;
+        });
+
+        vi.mocked(useNodes).mockReturnValue({
+            flatNodes: [],
+            nodesLoading: false,
+            setNodesLoading: vi.fn(),
+        } as any);
+        vi.mocked(firestoreService.nodes.getNode).mockReturnValue(pending as any);
+
+        renderPage("/node-1");
+
+        expect(screen.getByTestId("skeleton")).toBeInTheDocument();
+        expect(screen.queryByTestId("list")).not.toBeInTheDocument();
+
+        resolveNode(parentNode);
+
+        await act(async () => {
+            resolveNode(parentNode);
+        });
+
+        expect(await screen.findByTestId("list")).toHaveTextContent("parent node");
+        expect(screen.queryByTestId("skeleton")).not.toBeInTheDocument();
     });
 });
