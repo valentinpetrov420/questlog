@@ -1,6 +1,7 @@
-import { render, screen, act, cleanup
+import {
+    render, screen, act, cleanup
     //waitFor
- } from "@testing-library/react";
+} from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
@@ -125,5 +126,21 @@ describe("NodePage", () => {
 
         expect(await screen.findByTestId("list")).toHaveTextContent("parent node");
         expect(screen.queryByTestId("skeleton")).not.toBeInTheDocument();
+    });
+
+    it("renders firestore list if id isn't in state", async () => {
+        const storedNode = { ...parentNode, text: "stored node" }
+
+        vi.mocked(useNodes).mockReturnValue({
+            flatNodes: [],
+            nodesLoading: false,
+            setNodesLoading: vi.fn(),
+        } as any);
+        vi.mocked(firestoreService.nodes.getNode).mockResolvedValue(storedNode as any);
+
+        renderPage("/node-1");
+
+        expect(await screen.findByTestId("list")).toHaveTextContent("stored node");
+        expect(firestoreService.nodes.getNode).toHaveBeenCalledWith("node-1");
     });
 });
