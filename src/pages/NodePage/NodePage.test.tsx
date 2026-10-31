@@ -143,4 +143,34 @@ describe("NodePage", () => {
         expect(await screen.findByTestId("list")).toHaveTextContent("stored node");
         expect(firestoreService.nodes.getNode).toHaveBeenCalledWith("node-1");
     });
+
+    it("renders breadcrumb from dashboard through to child page", async () => {
+        const child = { ...parentNode, id: "child-1", text: "child node", parentId: "node-1", type: "page" };
+
+        vi.mocked(useNodes).mockReturnValue({
+            flatNodes: [parentNode, child],
+            nodesLoading: false,
+            setNodesLoading: vi.fn(),
+        } as any);
+
+        renderPage("/child-1");
+
+        expect(screen.getByRole("link", { name: "Dashboard" })).toHaveAttribute("href", "/");
+        expect(screen.getByRole("link", { name: "parent node" })).toHaveAttribute("href", `/${child.parentId}`);
+        expect(screen.queryByRole("link", { name: "child node" })).not.toBeInTheDocument();
+        expect(screen.getByText("child node", { selector: ".crumb-current" })).toBeInTheDocument();
+    });
+    it("does not render breadcrumbs when the node is fetched instead of in state", async () => {
+        vi.mocked(useNodes).mockReturnValue({
+            flatNodes: [],
+            nodesLoading: false,
+            setNodesLoading: vi.fn(),
+        } as any);
+        vi.mocked(firestoreService.nodes.getNode).mockResolvedValue(parentNode as any);
+
+        renderPage("/node-1");
+
+        expect(await screen.findByTestId("list")).toBeInTheDocument();
+        expect(screen.queryByRole("link", { name: "Dashboard" })).not.toBeInTheDocument();
+    });
 });
