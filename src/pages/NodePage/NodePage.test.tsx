@@ -11,6 +11,7 @@ import { useAuth } from "../../contexts/AuthContext.js";
 import { useNodes } from "../../contexts/NodesContext.js";
 
 import firestoreService from "../../api/services/firestoreService.js";
+import { onSnapshot } from "firebase/firestore";
 
 vi.mock("firebase/firestore", () => ({
     doc: vi.fn(),
@@ -91,7 +92,6 @@ describe("NodePage", () => {
 
         expect(screen.getByTestId("list")).toHaveTextContent("parent node");
     });
-
     it("renders 404 if node is not in state and firestoreService getNode returns null", async () => {
         vi.mocked(firestoreService.nodes.getNode).mockResolvedValue(null as any);
 
@@ -99,7 +99,6 @@ describe("NodePage", () => {
 
         expect(await screen.findByText("404")).toBeInTheDocument();
     });
-
     it("renders skeleton loading page during inflight request", async () => {
         let resolveNode!: (value: unknown) => void;
         const pending = new Promise((resolve) => {
@@ -127,7 +126,6 @@ describe("NodePage", () => {
         expect(await screen.findByTestId("list")).toHaveTextContent("parent node");
         expect(screen.queryByTestId("skeleton")).not.toBeInTheDocument();
     });
-
     it("renders firestore list if id isn't in state", async () => {
         const storedNode = { ...parentNode, text: "stored node" }
 
@@ -172,5 +170,17 @@ describe("NodePage", () => {
 
         expect(await screen.findByTestId("list")).toBeInTheDocument();
         expect(screen.queryByRole("link", { name: "Dashboard" })).not.toBeInTheDocument();
+    });
+
+    it("guest mode doesn't run onSnapshot", async () => {
+        vi.mocked(useAuth).mockReturnValue({
+            user: { uid: "guest" },
+            isGuest: () => true,
+        } as any);
+
+        renderPage("/node-1");
+
+        expect(screen.getByTestId("list")).toBeInTheDocument();
+        expect(onSnapshot).not.toHaveBeenCalled();
     });
 });
