@@ -30,14 +30,16 @@
     "@testing-library/user-event": "^14.6.6",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "@typescript/native": "npm:typescript@^7.0.2",
     "@vitejs/plugin-react": "^6.0.1",
-    "eslint": "^10.2.1",
+    "eslint": "^10.14.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "firebase-tools": "^15.29.0",
     "globals": "^17.5.0",
     "jsdom": "^30.0.1",
-    "typescript": "^7.0.2",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "typescript-eslint": "^8.72.1",
     "vite": "^8.0.10",
     "vitest": "^4.1.10"
   }
