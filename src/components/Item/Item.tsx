@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import StatusMessage from "../StatusMessage/StatusMessage.js";
 import PopOver from "../PopOver/PopOver.js";
@@ -43,8 +43,8 @@ export default function Item(props: ItemProps) {
         handlePromoteTodo,
     } = useNodes();
 
-    const [isEditingTodo, setEditingTodo] = useState(false);
-    const [draftTitleTodo, setDraftTitleTodo] = useState("");
+    const [isEditingTodo, setEditingTodo] = useState(props.autoFocus);
+    const [draftTitleTodo, setDraftTitleTodo] = useState(props.autoFocus ? props.text : "");
 
     const [pending, setPending] = useState(false);
 
@@ -55,14 +55,6 @@ export default function Item(props: ItemProps) {
     const highlightedTodoId = props.highlightedTodoId;
 
     const inputRef = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        if (props.autoFocus) {
-            setEditingTodo(true);
-            setDraftTitleTodo(props.text);
-        }
-    }, [props.autoFocus, props.text]);
-
 
     function cancelEdit() {
         setEditingTodo(false);
@@ -129,7 +121,7 @@ export default function Item(props: ItemProps) {
         if (!props.isOwner) {
             return;
         }
-        if(disabled){
+        if (disabled) {
             return;
         }
         handleToggleChildNode(props.id);

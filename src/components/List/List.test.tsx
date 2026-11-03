@@ -501,7 +501,7 @@ describe("List", () => {
 
             expect(input).toBeInTheDocument();
 
-            await user.type(input, "123"); 1
+            await user.type(input, "123"); 
             await user.keyboard("{Enter}");
 
             expect(handleEditNodeText).toHaveBeenCalledWith("list-1", "test123");

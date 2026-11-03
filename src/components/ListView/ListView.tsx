@@ -16,10 +16,13 @@ import {
     useSensors,
 } from "@dnd-kit/core";
 
+
 import { SortableContext } from '@dnd-kit/sortable';
 import { arrayMove } from '@dnd-kit/sortable';
 import { rectSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
+
+
 
 type ListViewProps = {
     role: "sorted" | "pinned",
@@ -28,6 +31,14 @@ type ListViewProps = {
 }
 
 export default function ListView(props: ListViewProps) {
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        })
+    );
+
     const {
         setFlatNodes,
 
@@ -87,14 +98,6 @@ export default function ListView(props: ListViewProps) {
                 sortedLists = props.lists.filter(list => list.archived);
                 break;
         }
-
-        const sensors = useSensors(
-            useSensor(PointerSensor, {
-                activationConstraint: {
-                    distance: 8,
-                },
-            })
-        );
 
         function handleDragEnd(event: DragEndEvent) {
             const oldIndex = sortedLists.findIndex(list => list.id === event.active.id);

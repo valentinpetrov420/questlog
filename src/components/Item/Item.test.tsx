@@ -230,7 +230,7 @@ describe("Item", () => {
 
             expect(screen.getByRole("textbox")).toBeInTheDocument();
 
-            await user.type(screen.getByRole("textbox"), "123"); 1
+            await user.type(screen.getByRole("textbox"), "123");
             await user.keyboard("{Enter}");
 
             expect(handleEditNodeText).toHaveBeenCalledWith("node-1", "test123");

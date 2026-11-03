@@ -71,8 +71,9 @@ export default function List(props: ListProps) {
 
     const [value, setValue] = useState("");
 
-    const [draftTitle, setDraftTitle] = useState("");
-    const [isEditing, setEditing] = useState(false);
+    const [draftTitle, setDraftTitle] = useState(props.id === props.newParentId ? props.text : "");
+
+    const [isEditing, setEditing] = useState(props.id === props.newParentId);
 
     const [deletePending, setDeletePending] = useState(false);
 
@@ -91,23 +92,16 @@ export default function List(props: ListProps) {
 
     const [error, setError] = useState("");
 
-    const [shouldFocusTitle, setShouldFocusTitle] = useState(props.id === props.newParentId);
+    const shouldFocusTitle = useRef(props.id === props.newParentId);
     const titleInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (shouldFocusTitle) {
-            setDraftTitle(props.text);
-            setEditing(true);
-        }
-    }, [shouldFocusTitle, props.text]);
-
-    useEffect(() => {
-        if (isEditing && shouldFocusTitle) {
+        if (isEditing && shouldFocusTitle.current) {
             titleInputRef.current?.focus();
             titleInputRef.current?.select();
-            setShouldFocusTitle(false);
+            shouldFocusTitle.current = false;
         }
-    }, [isEditing, shouldFocusTitle]);
+    }, [isEditing]);
 
     const [newNodeId, setNewNodeId] = useState<string | null>(null);
 
