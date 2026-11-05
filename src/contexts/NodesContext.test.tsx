@@ -404,7 +404,11 @@ describe("NodesContext", () => {
 
             const testNode = result.current.flatNodes.find(node => node.id === "node-1");
 
-            await result.current.handlePin(testNode?.id!);
+            if (!testNode) {
+                throw new Error("Test node was not found");
+            }
+
+            await result.current.handlePin(testNode.id);
 
             await waitFor(() => {
                 const pinnedNode = result.current.flatNodes.find(node => node.id === "node-1");
@@ -412,7 +416,7 @@ describe("NodesContext", () => {
                 expect(pinnedNode?.pinned).toBe(true);
             });
 
-            await result.current.handlePin(testNode?.id!);
+            await result.current.handlePin(testNode.id);
 
             await waitFor(() => {
                 const pinnedNode = result.current.flatNodes.find(node => node.id === "node-1");
@@ -442,7 +446,11 @@ describe("NodesContext", () => {
 
             const testNode = result.current.flatNodes.find(node => node.id === "node-1");
 
-            await result.current.handleVisibilityChange(testNode?.id!);
+            if (!testNode) {
+                throw new Error("Test node was not found");
+            }
+
+            await result.current.handleVisibilityChange(testNode.id);
 
             await waitFor(() => {
                 const publicNode = result.current.flatNodes.find(node => node.id === "node-1");
@@ -450,7 +458,7 @@ describe("NodesContext", () => {
                 expect(publicNode?.isPublic).toBe(true);
             });
 
-            await result.current.handleVisibilityChange(testNode?.id!);
+            await result.current.handleVisibilityChange(testNode.id);
 
             await waitFor(() => {
                 const privateNode = result.current.flatNodes.find(node => node.id === "node-1");
@@ -482,7 +490,11 @@ describe("NodesContext", () => {
 
             const testNode = result.current.flatNodes.find(node => node.id === "node-1");
 
-            await result.current.handleDeleteNode(testNode?.id!);
+            if (!testNode) {
+                throw new Error("Test node was not found");
+            }
+
+            await result.current.handleDeleteNode(testNode.id);
 
             await waitFor(() => {
                 expect(result.current.flatNodes.length).toBe(1);
@@ -499,7 +511,11 @@ describe("NodesContext", () => {
 
             const testNode = result.current.flatNodes.find(node => node.id === "node-1");
 
-            await result.current.handleDeleteNode(testNode?.id!);
+            if (!testNode) {
+                throw new Error("Test node was not found");
+            }
+
+            await result.current.handleDeleteNode(testNode.id);
 
             await waitFor(() => {
                 expect(result.current.flatNodes.length).toBe(2);
