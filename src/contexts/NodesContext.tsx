@@ -58,8 +58,6 @@ type NodesProviderProps = {
 export const NodesContext = createContext<NodesContextValue | null>(null);
 
 export function NodesProvider({ children }: NodesProviderProps) {
-    const [nodesLoading, setNodesLoading] = useState(true);
-
     const [flatNodes, setFlatNodes] = useState<Node[]>([]);
     const nodes = useMemo(() => {
         return nestNodes(flatNodes);
@@ -79,23 +77,32 @@ export function NodesProvider({ children }: NodesProviderProps) {
         localStorage.setItem("sortmode", sortMode);
     }, [sortMode]);
 
-    useEffect(() => {
-        if (!authReady) {
-            return;
-        }
-        if (!user) {
-            setFlatNodes([]);
-            setNodesLoading(false);
-            return;
-        }
+    const [loadedUserId, setLoadedUserId] = useState<string | null>(null);
 
-        nodeService.nodes.getNodes(user.uid).then((nodes: Node[]) => {
-            setFlatNodes(nodes);
-        })
-            .finally(() => {
-                setNodesLoading(false);
+    const [nodesLoading, setNodesLoading] = useState(!authReady || (!!user && loadedUserId !== user.uid));
+    const isNodesLoading = !authReady || (!!user && nodesLoading);
+
+    useEffect(() => {
+        if (!authReady || !user) return;
+
+        let cancelled = false;
+
+        nodeService.nodes.getNodes(user.uid)
+            .then((nodes: Node[]) => {
+                if (!cancelled) {
+                    setFlatNodes(nodes);
+                    setLoadedUserId(user.uid);
+                    setNodesLoading(false);
+                }
+            })
+            .catch(error => {
+                console.error("Failed to fetch nodes:", error);
             });
-    }, [user, authReady]);
+
+        return () => {
+            cancelled = true;
+        };
+    }, [user, authReady, nodeService]);
 
     async function handleCreateNode(text: string, visibility: boolean) {
         if (!user) {
@@ -341,7 +348,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
     async function handleVisibilityChange(nodeId: string) {
         console.log("new visibility on node: " + nodeId);
 
-        if(user?.uid === "guest"){
+        if (user?.uid === "guest") {
             await nodeService.nodes.updateNode(nodeId, { isPublic: false });
 
             return {
@@ -410,7 +417,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
             const updatedState = flatNodes.filter(node => node.id !== nodeId);
             //todo: leaves behind orphaned ghost nodes that don't display but are in state
             // might break export/imports and other side actions that involve bulk operations
-            
+
             setFlatNodes(updatedState);
 
             return undefined;
@@ -527,7 +534,8 @@ export function NodesProvider({ children }: NodesProviderProps) {
         <NodesContext.Provider
             value={{
                 nodes, flatNodes, setFlatNodes,
-                nodesLoading, setNodesLoading,
+
+                nodesLoading: isNodesLoading, setNodesLoading,
 
                 sortMode, setSortMode,
 
