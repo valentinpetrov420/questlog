@@ -22,23 +22,20 @@ import SkeletonPage from "../SkeletonPage/SkeletonPage.js";
 import List from "../../components/List/List.js";
 
 export default function NodePage() {
-    const [node, setNode] = useState<Node | null>(null);
-    const { nodeId } = useParams();
+    const [fetchedNode, setFetchedNode] = useState<Node | null>(null);
+    const [fetchedItems, setFetchedItems] = useState<Node[] | null>(null);
+    const [settledNodeId, setSettledNodeId] = useState<string | null>(null);
 
+    const { nodeId } = useParams();
     const navigate = useNavigate();
 
     const { isGuest } = useAuth();
-
     const nodeService = isGuest()
         ? localStorageService
         : firestoreService
 
     useEffect(() => {
-        if (!nodeId) {
-            return;
-        }
-
-        if (isGuest()) {
+        if (!nodeId || isGuest()) {
             return;
         }
 
@@ -50,24 +47,23 @@ export default function NodePage() {
                 return;
             }
 
-            // the Node data structure in firebase doesnt store an id explicitly in the object, but firebase stores it as snapshot.id
-            // however an id is needed for the UI to reference specific component elements (i.e. autofocus+select title edit on New Page, which needs newParentId)
-            // thats why the setNode below looks weird
-            setNode({
+            setFetchedNode({
                 id: snapshot.id,
                 ...(snapshot.data() as Omit<Node, "id">),
             });
         });
 
         return unsubscribe;
-    }, [nodeId, navigate]);
+    }, [nodeId, isGuest, navigate]);
 
     const {
-        flatNodes,
-        nodesLoading, setNodesLoading,
+        flatNodes, nodesLoading
     } = useNodes();
 
     const nodeFromState = flatNodes.find(n => n.id === nodeId);
+
+    const node = nodeFromState ?? (fetchedNode?.id === nodeId ? fetchedNode : null);
+    const nodeLoading = !nodeFromState && settledNodeId !== nodeId;
 
     const location = useLocation();
     const newParentId = location.state?.newParentId ?? false;
@@ -90,41 +86,39 @@ export default function NodePage() {
         return crumbs;
     }, [nodeFromState, flatNodes]);
 
-    const [fetchedItems, setFetchedItems] = useState<Node[] | null>(null);
-    const [nodeLoading, setNodeLoading] = useState(true);
-
     useEffect(() => {
-        if (!nodeId) {
+        if (!nodeId || nodeFromState) {
             return;
         }
 
-        if (nodeFromState) {
-            setNode(nodeFromState);
-            setFetchedItems(null);
-            setNodeLoading(false);
-            return;
-        }
-
-        setNodesLoading(true);
-        setNodeLoading(true);
-
+        let cancelled = false;
 
         nodeService.nodes.getNode(nodeId)
-            .then((response) => {
-                if (!response) {
-                    setNode(null);
+            .then(response => {
+                if (cancelled) {
                     return;
                 }
-                setNode(response);
-                setFetchedItems(response.items ?? []);
+
+                setFetchedNode(response ?? null);
+                setFetchedItems(response?.items ?? []);
+            })
+            .catch(error => {
+                console.log("Failed to fetch node: ", error);
+                if (!cancelled) {
+                    setFetchedNode(null);
+                    setFetchedItems([]);
+                }
             })
             .finally(() => {
-                setNodesLoading(false);
-                setNodeLoading(false);
-            }
-            );
+                if (!cancelled) {
+                    setSettledNodeId(nodeId);
+                }
+            });
 
-    }, [nodeId, flatNodes]);
+        return () => {
+            cancelled = true;
+        };
+    }, [nodeId, nodeFromState, nodeService]);
 
     const items = useMemo(() => {
         if (nodeFromState) {
