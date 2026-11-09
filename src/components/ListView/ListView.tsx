@@ -25,7 +25,7 @@ import { restrictToParentElement } from '@dnd-kit/modifiers';
 
 
 type ListViewProps = {
-    role: "sorted" | "pinned",
+    variant: "sorted" | "pinned",
     lists: Node[],
     sortMode?: string,
 }
@@ -50,7 +50,7 @@ export default function ListView(props: ListViewProps) {
         ? localStorageService
         : firestoreService
 
-    if (props.role === "pinned") {
+    if (props.variant === "pinned") {
         const pinnedLists = props.lists.filter(list => list.pinned && !list.archived);
 
         const allPinnedTodos = pinnedLists.flatMap(list => list.items ?? [])

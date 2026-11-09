@@ -18,7 +18,7 @@ export default function Dashboard() {
 
     return <div id="dashboard-container">
         <ListView
-            role="pinned"
+            variant="pinned"
             lists={nodes}
         />
         <CreateListForm/>
@@ -34,7 +34,7 @@ export default function Dashboard() {
             <option value="archived">Archived only</option>
         </select>
         <ListView
-            role="sorted" 
+            variant="sorted" 
             sortMode={sortMode}
             lists={nodes}
         />
