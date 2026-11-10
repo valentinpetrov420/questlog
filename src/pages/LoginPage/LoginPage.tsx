@@ -26,7 +26,7 @@ export default function LoginPage() {
         <GoogleSignInButton />
         <div className='login-guest'>
             <p>or</p>
-            <span className='continue-as-guest' onClick={handleContinueAsGuest}>Continue as Guest</span>
+            <button className='continue-as-guest' onClick={handleContinueAsGuest}>Continue as Guest</button>
         </div>
     </div>
 }

@@ -23,7 +23,14 @@
         display: flex;
         gap: 0.5rem;
 
-        span {
+        p {
+            align-self: center;
+        }
+
+        button {
+            background: none;
+            border: none;
+
             font-weight: bold;
             font-size: 1.2rem;
             color: var(--text);
