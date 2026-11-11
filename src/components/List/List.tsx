@@ -173,11 +173,14 @@ export default function List(props: ListProps) {
             setAddItemPending(false);
         }
     }
-    function handleEditTitle() {
+    function handleEditTitle(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault();
+
         if (deletePending) {
             return;
         }
 
+        shouldFocusTitle.current = true;
         setDraftTitle(props.text);
         setEditing(true);
     }
@@ -432,7 +435,12 @@ export default function List(props: ListProps) {
                     </div>
                 </h2>
             </form>
-                : <h2 className="list-title">Title: {isOwner ? <span onClick={handleEditTitle}>{props.text}<a>✎</a></span> : <p>{props.text}</p>} </h2>}
+                : <h2 className="list-title">Title: {isOwner ?
+                    <button className="title-button" onClick={handleEditTitle}>
+                        {props.text}
+                        <span aria-hidden="true">✎</span>
+                    </button>
+                    : <p>{props.text}</p>} </h2>}
             <DndContext sensors={sensors}
                 onDragEnd={handleDragEnd}>
                 <SortableContext
