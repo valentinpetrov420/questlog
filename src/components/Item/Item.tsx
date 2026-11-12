@@ -173,7 +173,7 @@ export default function Item(props: ItemProps) {
                 </form>
                     :
 
-                    <h3 onClick={handleEditTodo}>{props.text}</h3>
+                    <button className="heading-item" onClick={handleEditTodo}>{props.text}</button>
                 }
 
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
@@ -262,11 +262,11 @@ export default function Item(props: ItemProps) {
             </form>
                 :
 
-                <span className={`todo-item-text ${highlightedTodoId === props.id ? "highlighted" : ""}
+                <button className={`todo-item-text ${highlightedTodoId === props.id ? "highlighted" : ""}
                 ${props.completed ? "completed" : ""}`}
                     onClick={handleEditTodo}>
                     {props.text}
-                </span>
+                </button>
             }
 
             {!isEditingTodo && props.isOwner ? <div className="todo-actions">

@@ -1,3 +1,32 @@
+button.todo-item-text,
+button.heading-item {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-align: left;
+    text-transform: none;
+    cursor: pointer;
+}
+
+button.todo-item-text:focus-visible,
+button.heading-item:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+.item-wrapper.heading .heading-item {
+    flex: 1;
+    margin-left: 1rem;
+    font-size: large;
+    line-height: 2;
+    font-weight: bold;
+}
+
 .item-wrapper {
 	margin: 1rem;
 	display: flex;
