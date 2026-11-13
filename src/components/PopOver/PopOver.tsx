@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useId } from "react";
 import './PopOver.css';
 
 type PopoverProps = {
@@ -8,9 +8,11 @@ type PopoverProps = {
     children: React.ReactNode;
 }
 
-export default function PopOver({type, align, disabled, children }: PopoverProps) {
+export default function PopOver({ type, align, disabled, children }: PopoverProps) {
     const [menuOpen, setMenuOpen] = useState(false);
     const popoverRef = useRef<HTMLDivElement>(null);
+    const triggerRef = useRef<HTMLButtonElement>(null); // new: handle to the trigger button
+    const menuId = useId(); // new: unique id per PopOver instance
 
     useEffect(() => {
         if (!menuOpen) return;
@@ -22,25 +24,47 @@ export default function PopOver({type, align, disabled, children }: PopoverProps
         }
 
         document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+
+        function handleKeyDown(event: KeyboardEvent) {
+            if (event.key === "Escape") {
+                setMenuOpen(false);
+                triggerRef.current?.focus();
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
     }, [menuOpen]);
 
     let symbol = "";
-    if (type === "create"){
+    if (type === "create") {
         symbol = "+";
-    } else if (type === "actions"){
+    } else if (type === "actions") {
         symbol = "⋯";
     }
 
     return (
         <div className="popover-wrapper" ref={popoverRef}>
-            <button className="item-create-options" 
-            type="button"
-            disabled={disabled} 
-            onClick={() => setMenuOpen(!menuOpen)}>{symbol}</button>
+            <button className="item-create-options"
+                ref={triggerRef}
+
+                aria-expanded={menuOpen} // new
+                aria-controls={menuOpen ? menuId : undefined} // new
+                aria-label={type === "create" ? "Add item" : "Item actions"} // new
+
+                type="button"
+                disabled={disabled}
+                onClick={() => setMenuOpen(!menuOpen)}>{symbol}
+            </button>
             {menuOpen && (
-                <div className= {`item-popover ${align}`} 
-                onClick={() => setMenuOpen(false)}>
+                <div className={`item-popover ${align}`}
+                    id={menuId}
+                    role="presentation"
+                    onClick={() => setMenuOpen(false)}>
                     {children}
                 </div>
             )}
