@@ -171,7 +171,6 @@ export default function Item(props: ItemProps) {
                         }}></input>
                 </form>
                     :
-
                     <button className="heading-item" onClick={handleEditTodo}>{props.text}</button>
                 }
 

@@ -87,7 +87,7 @@ describe("Item", () => {
                     highlightedTodoId={null}
                 />
             );
-            expect(screen.getByRole("heading", { level: 3 })).toBeInTheDocument();
+            expect(screen.getByRole("button", { name: "heading" })).toBeInTheDocument();
         });
         it("renders separators correctly", () => {
             render(
@@ -318,10 +318,10 @@ describe("Item", () => {
                 />
             );
 
-            await user.click(screen.getByRole("button", { name: "⋯" }));
+            await user.click(screen.getByRole("button", { name: "Item actions" }));
             await user.click(screen.getByRole("button", { name: "Delete" }));
 
-            expect(screen.getByRole("button", { name: "⋯" })).toBeDisabled();
+            expect(screen.getByRole("button", { name: "Item actions" })).toBeDisabled();
             expect(screen.getByRole("checkbox")).toBeDisabled();
 
             resolveDelete(undefined);
@@ -351,7 +351,7 @@ describe("Item", () => {
                 </MemoryRouter>
             );
 
-            await user.click(screen.getByRole("button", { name: "⋯" }));
+            await user.click(screen.getByRole("button", { name: "Item actions" }));
 
             expect(screen.queryByRole("button", { name: "Promote to Page" })).not.toBeInTheDocument();
         });
@@ -392,7 +392,7 @@ describe("Item", () => {
                 />
             );
             
-            await user.click(screen.getByRole("button", {name: "⋯"}));
+            await user.click(screen.getByRole("button", {name: "Item actions"}));
             await user.click(screen.getByRole("button", {name: "Promote to Page"}));
 
             expect(handlePromoteTodo).toHaveBeenCalledWith("node-1");
@@ -414,7 +414,7 @@ describe("Item", () => {
                 />
             );
             
-            await user.click(screen.getByRole("button", {name: "⋯"}));
+            await user.click(screen.getByRole("button", {name: "Item actions"}));
             await user.click(screen.getByRole("button", {name: "Delete"}));
 
             expect(handleDeleteNode).toHaveBeenCalledWith("node-1");

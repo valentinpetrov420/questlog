@@ -882,7 +882,7 @@ describe("List", () => {
                 expect(action).toBeDisabled();
             }));
             expect(screen.getByRole("button", { name: "Add new quest" })).toBeDisabled();
-            expect(screen.getByRole("button", { name: "+" })).toBeDisabled();
+            expect(screen.getByRole("button", { name: "Add item" })).toBeDisabled();
             expect(screen.getByRole("button", { name: "Reset" })).toBeDisabled();
 
             resolveDelete(undefined);
