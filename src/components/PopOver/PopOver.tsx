@@ -11,8 +11,8 @@ type PopoverProps = {
 export default function PopOver({ type, align, disabled, children }: PopoverProps) {
     const [menuOpen, setMenuOpen] = useState(false);
     const popoverRef = useRef<HTMLDivElement>(null);
-    const triggerRef = useRef<HTMLButtonElement>(null); // new: handle to the trigger button
-    const menuId = useId(); // new: unique id per PopOver instance
+    const triggerRef = useRef<HTMLButtonElement>(null);
+    const menuId = useId();
 
     useEffect(() => {
         if (!menuOpen) return;
@@ -52,9 +52,9 @@ export default function PopOver({ type, align, disabled, children }: PopoverProp
             <button className="item-create-options"
                 ref={triggerRef}
 
-                aria-expanded={menuOpen} // new
-                aria-controls={menuOpen ? menuId : undefined} // new
-                aria-label={type === "create" ? "Add item" : "Item actions"} // new
+                aria-expanded={menuOpen}
+                aria-controls={menuOpen ? menuId : undefined}
+                aria-label={type === "create" ? "Add item" : "Item actions"}
 
                 type="button"
                 disabled={disabled}

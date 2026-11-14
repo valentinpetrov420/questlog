@@ -14,7 +14,7 @@ type ItemProps = {
     text: string;
     completed: boolean;
 
-    autoFocus: boolean;
+    newNodeId: string | null;
 
     type: "todo" | "page" | "separator" | "heading";
     isOwner: boolean;
@@ -43,8 +43,8 @@ export default function Item(props: ItemProps) {
         handlePromoteTodo,
     } = useNodes();
 
-    const [isEditingTodo, setEditingTodo] = useState(props.autoFocus);
-    const [draftTitleTodo, setDraftTitleTodo] = useState(props.autoFocus ? props.text : "");
+    const [isEditingTodo, setEditingTodo] = useState(props.newNodeId !== null);
+    const [draftTitleTodo, setDraftTitleTodo] = useState(props.newNodeId ? props.text : "");
 
     const [pending, setPending] = useState(false);
 
@@ -157,7 +157,6 @@ export default function Item(props: ItemProps) {
                 {props.isOwner ? <span className="drag-button" {...listeners}>⠿</span> : ""}
                 {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
                     <input className="edit-item-input heading"
-                        autoFocus
                         ref={inputRef}
                         disabled={disabled}
                         value={draftTitleTodo}
@@ -247,7 +246,6 @@ export default function Item(props: ItemProps) {
             />
             {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
                 <input className="edit-item-input"
-                    autoFocus
                     disabled={disabled}
                     value={draftTitleTodo}
                     onChange={(event) => setDraftTitleTodo(event.target.value)}

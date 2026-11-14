@@ -455,7 +455,7 @@ export default function List(props: ListProps) {
                                 resetPending={resetPending}
                                 deletePending={deletePending}
 
-                                autoFocus={item.id === newNodeId}
+                                newNodeId={newNodeId}
 
                                 type={item.type}
                                 key={item.id}
