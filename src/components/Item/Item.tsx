@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import StatusMessage from "../StatusMessage/StatusMessage.js";
 import PopOver from "../PopOver/PopOver.js";
@@ -43,8 +43,10 @@ export default function Item(props: ItemProps) {
         handlePromoteTodo,
     } = useNodes();
 
-    const [isEditingTodo, setEditingTodo] = useState(props.newNodeId !== null);
-    const [draftTitleTodo, setDraftTitleTodo] = useState(props.newNodeId ? props.text : "");
+
+    const isNew = props.newNodeId === props.id;
+    const [isEditingTodo, setEditingTodo] = useState(isNew);
+    const [draftTitleTodo, setDraftTitleTodo] = useState(isNew ? props.text : "");
 
     const [pending, setPending] = useState(false);
 
@@ -55,6 +57,11 @@ export default function Item(props: ItemProps) {
     const highlightedTodoId = props.highlightedTodoId;
 
     const inputRef = useRef<HTMLInputElement>(null);
+    useEffect(() => {
+        if (isEditingTodo) {
+            inputRef.current?.focus();
+        }
+    }, [isEditingTodo]);
 
     function cancelEdit() {
         setEditingTodo(false);
@@ -245,6 +252,7 @@ export default function Item(props: ItemProps) {
             />
             {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
                 <input className="edit-item-input"
+                    ref={inputRef}
                     disabled={disabled}
                     value={draftTitleTodo}
                     onChange={(event) => setDraftTitleTodo(event.target.value)}
