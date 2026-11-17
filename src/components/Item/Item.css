@@ -1,30 +1,30 @@
 button.todo-item-text,
 button.heading-item {
-    appearance: none;
-    background: none;
-    border: none;
-    padding: 0;
-    margin: 0;
-    font: inherit;
-    color: inherit;
-    letter-spacing: inherit;
-    text-align: left;
-    text-transform: none;
-    cursor: pointer;
+	appearance: none;
+	background: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	color: inherit;
+	letter-spacing: inherit;
+	text-align: left;
+	text-transform: none;
+	cursor: pointer;
 }
 
 button.todo-item-text:focus-visible,
 button.heading-item:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 2px;
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
 }
 
 .item-wrapper.heading .heading-item {
-    flex: 1;
-    margin-left: 1rem;
-    font-size: large;
-    line-height: 2;
-    font-weight: bold;
+	flex: 1;
+	margin-left: 1rem;
+	font-size: large;
+	line-height: 2;
+	font-weight: bold;
 }
 
 .item-wrapper {
@@ -34,6 +34,25 @@ button.heading-item:focus-visible {
 	margin-top: 0;
 	margin-bottom: 0;
 	padding-bottom: 1rem;
+
+	.drag-button {
+		appearance: none;
+		background: none;
+		border: none;
+		padding: 0;
+		margin: 0;
+		font: inherit;
+		line-height: inherit;
+		color: inherit;
+
+		cursor: grab;
+		touch-action: none;
+	}
+
+	.drag-button:focus-visible {
+		outline: 2px solid currentColor;
+		outline-offset: 2px;
+	}
 
 	.todo-item-text {
 		margin: 1rem;
@@ -132,8 +151,8 @@ button.heading-item:focus-visible {
 	}
 }
 
-@media (max-width: 600px){
-	.item-wrapper{
+@media (max-width: 600px) {
+	.item-wrapper {
 		margin-left: 0.3rem;
 	}
 }

@@ -158,10 +158,16 @@ export default function Item(props: ItemProps) {
     }
 
     if (props.type === "heading") {
-        return <li ref={setNodeRef} style={style} {...attributes}>
+        return <li ref={setNodeRef} style={style}>
             <StatusMessage text={error} />
             <div className={isEditingTodo ? "edit-form-wrapper" : "item-wrapper heading"}>
-                {props.isOwner ? <span className="drag-button" {...listeners}>⠿</span> : ""}
+                {props.isOwner ?  <button 
+            type="button" 
+            className="drag-button" 
+            aria-label="Reorder item" 
+            {...listeners} 
+            {...attributes} 
+            >⠿</button> : ""}
                 {isEditingTodo ? <form className="edit-todo-form" onSubmit={handleSubmitEditTodo}>
                     <input className="edit-item-input heading"
                         ref={inputRef}
@@ -198,9 +204,15 @@ export default function Item(props: ItemProps) {
     }
 
     if (props.type === "page") {
-        return <li ref={setNodeRef} style={style} {...attributes}>
+        return <li ref={setNodeRef} style={style}>
             <div className="item-wrapper page">
-                {props.isOwner && <span className="drag-button" {...listeners}>⠿</span>}
+                {props.isOwner &&  <button 
+            type="button" 
+            className="drag-button" 
+            aria-label="Reorder item" 
+            {...listeners} 
+            {...attributes} 
+            >⠿</button>}
                 <Link className="todo-item-text" to={`/${props.id}`}>{props.text}</Link>
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                     <div className="item-popover-wrapper">
@@ -218,9 +230,15 @@ export default function Item(props: ItemProps) {
     }
 
     if (props.type === "separator") {
-        return <li ref={setNodeRef} style={style} {...attributes}>
+        return <li ref={setNodeRef} style={style}>
             <div className="item-wrapper separator">
-                {props.isOwner && <span className="drag-button" {...listeners}>⠿</span>}
+                {props.isOwner &&  <button 
+            type="button" 
+            className="drag-button" 
+            aria-label="Reorder item" 
+            {...listeners} 
+            {...attributes} 
+            >⠿</button>}
                 <hr className="separator-hr" />
                 {!isEditingTodo && props.isOwner ? <div className="todo-actions">
                     <div className="item-popover-wrapper">
@@ -239,10 +257,16 @@ export default function Item(props: ItemProps) {
     }
 
     //props.type === "todo" 
-    return <li ref={setNodeRef} style={style} {...attributes}>
+    return <li ref={setNodeRef} style={style} >
         <StatusMessage text={error} />
         <div className={isEditingTodo ? "edit-form-wrapper" : "item-wrapper"}>
-            {props.isOwner ? <span className="drag-button" {...listeners}>⠿</span> : ""}
+            {props.isOwner ? <button 
+            type="button" 
+            className="drag-button" 
+            aria-label="Reorder item" 
+            {...listeners} 
+            {...attributes} 
+            >⠿</button> : ""}
             <input
                 className="item-checkbox"
                 type="checkbox"

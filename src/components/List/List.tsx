@@ -16,11 +16,12 @@ import progressBarCalc from "../../util/progressBarCalc/progressBarCalc.js";
 import {
     DndContext, DragEndEvent,
     PointerSensor,
+    KeyboardSensor,
     useSensor,
     useSensors,
 } from "@dnd-kit/core";
 
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { arrayMove } from '@dnd-kit/sortable';
 
 import { useSortable } from '@dnd-kit/sortable';
@@ -349,6 +350,9 @@ export default function List(props: ListProps) {
             activationConstraint: {
                 distance: 8,
             },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates
         })
     );
 

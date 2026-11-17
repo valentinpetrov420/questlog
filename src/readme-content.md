@@ -16,7 +16,7 @@ Demo: https://questlog-tan-seven.vercel.app/
 
 ## Stack
 
-React - TypeScript - Vite - Firebase (Auth + Firestore) - Vitest - ESLint
+React - TypeScript - Vite - React Router - Firebase (Auth + Firestore) - Vitest - ESLint (jsx-a11y)
 
 ## Features
 
@@ -26,7 +26,7 @@ React - TypeScript - Vite - Firebase (Auth + Firestore) - Vitest - ESLint
 - Flat node collection with parentId relationships, hydrated client-side.
 - Search and filtering.
 - Sidebar navigation.
-- Network error handling for list creation, edits and deletion.
+- Network error handling for node creation, edits, deletion, task reset and page promotion.
 - Shareable public node URLs, visibility toggle per node.
 - Multiple node types beyond todo (heading, separator, others in the future).
 - README.md imported into About Page
@@ -37,7 +37,9 @@ React - TypeScript - Vite - Firebase (Auth + Firestore) - Vitest - ESLint
 - Responsive layout for desktop and mobile devices.
 - Drag-and-drop reordering for lists and list items.
 - Progress bar for quick task progress scanning.
-- Unit Tests for utility functions.
+- Reset all completed tasks in a list with one click.
+- Automated test suite with Vitest (see below).
+- Accessibility: eslint jsx-a11y rules, vitest-axe setup, keyboard-navigable buttons and PopOver menus with Escape-to-close, focus return and aria labels.
 - Skeleton loading states replacing plain text loading.
 - Reusable input validation system:
     - Empty input validation.
@@ -55,12 +57,13 @@ React - TypeScript - Vite - Firebase (Auth + Firestore) - Vitest - ESLint
 - Build-time changelog generated from git commit history.
 - CI:
     - typecheck.
-    - tests.
-    - eslint.
+    - tests (including Firestore emulator).
+    - eslint (including jsx-a11y).
 
 ## Automated testing with Vitest
 
-- Component tests for ProgressBar, PopOver, List, List Item, and /:id Page.
+- Component tests for ProgressBar, PopOver, CreateListForm, List, List Item, SideBar and /:id Page (covering permissions per auth mode, drag-and-drop reorder, breadcrumbs, skeleton and 404 states).
+- Accessibility linting with eslint-plugin-jsx-a11y and vitest-axe setup.
 - Unit tests for localStorageService and firestoreService CRUD, reordering, task resets and recursive deletion.
 - Firestore emulation testing.
 - NodesContext tests covering authenticated and guest mode hydration and node operations including creation, editing, deletion, archiving/restoring, pinning, visibility, child toggling, task promotion/resetting, and validation/guard paths.
@@ -93,7 +96,6 @@ npm run dev
 
 - Firestore offline persistence to reduce refresh traffic.
 - Parent node updatedAt propagation when children are mutated.
-- Expand tests to more than just utility functions.
 
 ## Features
 
