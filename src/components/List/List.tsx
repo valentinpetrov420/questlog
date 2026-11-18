@@ -395,7 +395,7 @@ export default function List(props: ListProps) {
     }
 
     return (
-        <div className="list-component" ref={setNodeRef} style={style} {...attributes}>
+        <div className="list-component" ref={setNodeRef} style={style}>
             {progress !== null ? <ProgressBar percent={progress}></ProgressBar> : ""}
             {isOwner ? <div className="list-actions">
                 <PopOver
@@ -409,7 +409,7 @@ export default function List(props: ListProps) {
                     {isOwner ? <button onClick={handleDeleteClick}>Delete</button> : ""}
                     {!isGuest() && props.isNodePage && isPublic ? <button onClick={handleCopyLink}>Copy link</button> : ""}
                 </PopOver>
-                {!props.isNodePage && !props.pinned ? <span className="drag-button" {...listeners}>⠿</span> : ""}
+                {!props.isNodePage && !props.pinned ? <button className="drag-button" {...listeners}  {...attributes}>⠿</button> : ""}
                 {isOwner && hasCompletedTodoItems
                     ? <button className="item-create-options"
                         disabled={resetPending || deletePending || addItemPending} onClick={handleResetClick}>Reset</button>

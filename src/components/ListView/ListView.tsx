@@ -12,6 +12,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import {
     DndContext, DragEndEvent,
     PointerSensor,
+    KeyboardSensor,
     useSensor,
     useSensors,
 } from "@dnd-kit/core";
@@ -19,9 +20,8 @@ import {
 
 import { SortableContext } from '@dnd-kit/sortable';
 import { arrayMove } from '@dnd-kit/sortable';
-import { rectSortingStrategy } from '@dnd-kit/sortable';
+import { rectSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
-
 
 
 type ListViewProps = {
@@ -36,6 +36,9 @@ export default function ListView(props: ListViewProps) {
             activationConstraint: {
                 distance: 8,
             },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates
         })
     );
 

@@ -4,9 +4,9 @@
 }
 
 .page-container {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
 }
 
 .lists-container {
@@ -23,13 +23,24 @@
 	margin-left: 1rem;
 }
 
-
 .drag-button {
-	cursor: grab;
+	appearance: none;
+	background: none;
+	border: none;
+	padding: 0;
 	margin-top: 0.2rem;
+	font: inherit;
+	line-height: inherit;
+	color: inherit;
+
+	cursor: grab;
+	
 	touch-action: none;
-	-webkit-user-select: none;
-	user-select: none
+}
+
+.drag-button:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
 }
 
 @media (max-width: 600px) {
