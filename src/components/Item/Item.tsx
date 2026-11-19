@@ -9,6 +9,8 @@ import { useNodes } from "../../contexts/NodesContext.js";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+import { normalizeUrl } from "../../util/normalizeUrl/normalizeUrl.js";
+
 type ItemProps = {
     id: string;
     text: string;
@@ -37,6 +39,7 @@ export default function Item(props: ItemProps) {
 
     const {
         handleEditNodeText,
+        handleEditNodeUrl,
 
         handleDeleteNode,
 
@@ -45,10 +48,12 @@ export default function Item(props: ItemProps) {
         handlePromoteTodo,
     } = useNodes();
 
-
     const isNew = props.newNodeId === props.id;
     const [isEditingTodo, setEditingTodo] = useState(isNew);
     const [draftTitleTodo, setDraftTitleTodo] = useState(isNew ? props.text : "");
+
+    const [editingField, setEditingField] = useState<"text" | "url" | null>(null);
+    const [draft, setDraft] = useState("");
 
     const [pending, setPending] = useState(false);
 
@@ -60,10 +65,10 @@ export default function Item(props: ItemProps) {
 
     const inputRef = useRef<HTMLInputElement>(null);
     useEffect(() => {
-        if (isEditingTodo) {
+        if (isEditingTodo || editingField) {
             inputRef.current?.focus();
         }
-    }, [isEditingTodo]);
+    }, [isEditingTodo, editingField]);
 
     function cancelEdit() {
         setEditingTodo(false);
@@ -103,10 +108,41 @@ export default function Item(props: ItemProps) {
         setDraftTitleTodo(props.text);
     }
     function handleEditLinkText() {
-        console.log("Edit link text: " + props.id);
+        setDraft(props.text);
+        setEditingField("text");
     }
     function handleEditLinkUrl() {
-        console.log("Edit link url: " + props.url);
+        setDraft(props.url ?? "");
+        setEditingField("url");
+    }
+    function cancelLinkEdit() {
+        setEditingField(null);
+        setDraft("");
+    }
+    async function handleSubmitLinkEdit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        if (editingField === "text") {
+            const error = await handleEditNodeText(props.id, draft);
+            if (error) {
+                setError(error.message);
+                return;
+            }
+        } else if (editingField === "url") {
+            const normalized = normalizeUrl(draft);
+            if (!normalized) {
+                setError("Enter a valid http or https URL");
+                return;
+            }
+            const error = await handleEditNodeUrl(props.id, draft);
+            if (error) {
+                setError(error.message);
+                return;
+            }
+        }
+
+        setError("");
+        cancelLinkEdit();
     }
     async function handleDeleteClick() {
         if (disabled) {
@@ -265,30 +301,57 @@ export default function Item(props: ItemProps) {
     }
 
     if (props.type === "link") {
+        const safeUrl = props.url ? normalizeUrl(props.url) : null;
+        const isEditingLink = editingField !== null;
+
         return <li ref={setNodeRef} style={style}>
-            <div className="item-wrapper page">
-                {props.isOwner && <button
+            <StatusMessage text={error} />
+            <div className={isEditingLink ? "edit-form-wrapper" : "item-wrapper page"}>
+                {props.isOwner ? <button
                     type="button"
                     className="drag-button"
                     aria-label="Reorder item"
                     {...listeners}
                     {...attributes}
-                >⠿</button>}
-                {!isEditingTodo && props.isOwner ? <div className="todo-actions">
-                    <div className="item-popover-wrapper">
-                        <PopOver
-                            type="actions"
-                            align="right"
-                            disabled={disabled}>
-                            <button onClick={handleDeleteClick}>Delete</button>
-                            <button onClick={handleEditLinkText}>Edit Link Text</button>
-                            <button onClick={handleEditLinkUrl}>Edit Link Url</button>
-                        </PopOver>
-                    </div>
-                </div> :
-                    <a className="todo-item-text" href={props.url} target="_blank" rel="noopener noreferrer">
+                >⠿</button> : ""}
+
+                {isEditingLink ? (
+                    <form className="edit-todo-form" onSubmit={handleSubmitLinkEdit}>
+                        <input className="edit-item-input"
+                            ref={inputRef}
+                            disabled={disabled}
+                            value={draft}
+                            onChange={(event) => setDraft(event.target.value)}
+                            onBlur={() => {
+                                cancelEdit();
+                            }}
+                            onKeyDown={(event) => {
+                                if (event.key === "Escape") {
+                                    cancelLinkEdit();
+                                }
+                            }}></input>
+                    </form>
+                ) : safeUrl ? (
+                    <a className="todo-item-text" href={safeUrl} target="_blank" rel="noopener noreferrer">
                         {props.text}
-                    </a>}
+                    </a>
+                ) : (
+                    <span className="todo-item-text">{props.text}</span>
+                )}
+
+                {!isEditingLink && props.isOwner ? (
+                    <div className="todo-actions">
+                        <div className="item-popover-wrapper">
+                            <PopOver type="actions" align="right" disabled={disabled}>
+                                <button onClick={handleEditLinkText}>Edit Link Text</button>
+                                <button onClick={handleEditLinkUrl}>Edit Link Url</button>
+                                <button onClick={handleDeleteClick}>Delete</button>
+                            </PopOver>
+                        </div>
+                    </div>
+                ) : (
+                    <div></div>
+                )}
             </div>
         </li>
     }

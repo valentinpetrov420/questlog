@@ -41,6 +41,7 @@ type NodesContextValue = {
     handleArchiveNode: (nodeId: string) => Promise<ActionError | undefined>;
     handleRestoreNode: (nodeId: string) => Promise<ActionError | undefined>;
     handleEditNodeText: (nodeId: string, newText: string) => Promise<ActionError | undefined>;
+    handleEditNodeUrl: (nodeId: string, newText: string) => Promise<ActionError | undefined>;
     handlePin: (nodeId: string) => Promise<ActionError | undefined>;
     handleVisibilityChange: (nodeId: string) => Promise<ActionError | undefined>;
     handleDeleteNode: (nodeId: string) => Promise<ActionError | undefined>;
@@ -314,6 +315,42 @@ export function NodesProvider({ children }: NodesProviderProps) {
         }
 
     }
+    async function handleEditNodeUrl(nodeId: string, newUrl: string){
+        console.log("received: " + newUrl);
+
+        if (!nodeId) {
+            return {
+                success: false,
+                message: "Missing nodeId"
+            };
+        }
+
+        const result = validateText(newUrl);
+
+        if (!result.valid) {
+            return {
+                success: false,
+                message: result.error
+            };
+        }
+
+        try {
+            await nodeService.nodes.updateNode(nodeId, { url: result.value })
+
+            setFlatNodes(prev =>
+                prev.map(node =>
+                    node.id === nodeId
+                        ? { ...node, url: result.value, updatedAt: Date.now() }
+                        : node
+                )
+            );
+
+            return undefined;
+        } catch (error) {
+            return formatError(error, "Failed to edit url", "editNodeUrl");
+        }
+
+    }
     async function handlePin(nodeId: string) {
         console.log("pinned: " + nodeId);
 
@@ -546,6 +583,7 @@ export function NodesProvider({ children }: NodesProviderProps) {
                 handleArchiveNode,
                 handleRestoreNode,
                 handleEditNodeText,
+                handleEditNodeUrl,
                 handlePin,
                 handleVisibilityChange,
 

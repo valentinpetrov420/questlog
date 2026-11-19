@@ -1,4 +1,4 @@
-type NodeType = "page" | "todo" | "separator" | "heading";
+type NodeType = "page" | "todo" | "separator" | "heading" | "link";
 
 export type Node = {
     id: string;

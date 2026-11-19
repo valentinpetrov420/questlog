@@ -303,6 +303,35 @@ export default function List(props: ListProps) {
             setAddItemPending(false);
         }
     }
+    async function handleCreateLinkClick(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault();
+
+        if (deletePending) {
+            return;
+        }
+
+        setAddItemPending(true);
+
+        try {
+            const result = await handleCreateChildNode("New Link", props.id, "link");
+
+            if (result.error) {
+                setError(result.error.message);
+                setAddTodoStatus(true);
+                return;
+            }
+
+            if (result.id) {
+                setNewNodeId(result.id);
+            }
+
+            setError("");
+            setAddTodoStatus(false);
+            setValue("");
+        } finally {
+            setAddItemPending(false);
+        }
+    }
     async function handleVisibility() {
         console.log(props.isPublic);
         if (deletePending) {
@@ -465,6 +494,7 @@ export default function List(props: ListProps) {
                                 key={item.id}
                                 id={item.id}
                                 text={item.text}
+                                url={item.url}
                                 completed={item.completed}
                                 highlightedTodoId={props.highlightedTodoId ?? null}
                             />
@@ -480,6 +510,7 @@ export default function List(props: ListProps) {
                         disabled={disabled}>
                         {isOwner ? <button disabled={disabled} onClick={handleCreateSeparatorClick}>Add Separator</button> : ""}
                         {isOwner ? <button disabled={disabled} onClick={handleCreateHeadingClick}>Add Heading</button> : ""}
+                        {isOwner ? <button disabled={disabled} onClick={handleCreateLinkClick}>Add Link</button> : ""}
                     </PopOver>
                     <div className="input-form-wrapper">
                         <StatusMessage text={addTodoStatus ? error : ""} />
