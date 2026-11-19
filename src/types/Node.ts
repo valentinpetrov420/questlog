@@ -10,6 +10,7 @@ export type Node = {
     pinned: boolean;
     archived: boolean;
     completed: boolean;
+    url?: string;
     order: number;
     createdAt: number;
     updatedAt: number;
