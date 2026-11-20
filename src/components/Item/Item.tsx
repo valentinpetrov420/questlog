@@ -323,7 +323,7 @@ export default function Item(props: ItemProps) {
                             value={draft}
                             onChange={(event) => setDraft(event.target.value)}
                             onBlur={() => {
-                                cancelEdit();
+                                cancelLinkEdit();
                             }}
                             onKeyDown={(event) => {
                                 if (event.key === "Escape") {
