@@ -35,12 +35,14 @@ describe("Item", () => {
     const handleDeleteNode = vi.fn();
     const handleToggleChildNode = vi.fn();
     const handlePromoteTodo = vi.fn();
+    const handleEditNodeUrl = vi.fn();
 
     beforeEach(() => {
         vi.clearAllMocks();
 
         mockedUseNodes.mockReturnValue({
             handleEditNodeText,
+            handleEditNodeUrl,
             handleDeleteNode,
             handleToggleChildNode,
             handlePromoteTodo,
@@ -49,6 +51,7 @@ describe("Item", () => {
         handleEditNodeText.mockResolvedValue(undefined);
         handleDeleteNode.mockResolvedValue(undefined);
         handlePromoteTodo.mockResolvedValue(undefined);
+        handleEditNodeUrl.mockResolvedValue(undefined);
     });
 
     describe("owner", () => {
@@ -124,6 +127,47 @@ describe("Item", () => {
             );
 
             expect(screen.getByRole("link", { name: "page" })).toHaveAttribute("href", "/node-1");
+        });
+        it("renders link without an url as span", () => {
+            render(
+                <MemoryRouter>
+                    <Item
+                        id="node-1"
+                        text="link"
+                        url={undefined}
+                        completed={false}
+                        newNodeId={null}
+                        type="link"
+                        isOwner={true}
+                        deletePending={false}
+                        resetPending={false}
+                        highlightedTodoId={null}
+                    />
+                </MemoryRouter>
+            );
+
+            expect(screen.queryByRole("link", { name: "link" })).not.toBeInTheDocument();
+            expect(screen.getByText("link")).toBeInTheDocument();
+        });
+        it("renders link with a link as link", () => {
+            render(
+                <MemoryRouter>
+                    <Item
+                        id="node-1"
+                        text="link"
+                        url="example.com"
+                        completed={false}
+                        newNodeId={null}
+                        type="link"
+                        isOwner={true}
+                        deletePending={false}
+                        resetPending={false}
+                        highlightedTodoId={null}
+                    />
+                </MemoryRouter>
+            );
+
+            expect(screen.getByRole("link", { name: "link" })).toHaveAttribute("href", "https://example.com/");
         });
         it("highlighted todos get correct styling", () => {
             render(
@@ -297,6 +341,33 @@ describe("Item", () => {
 
             expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
         });
+        it("blur cancels editing mode", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <Item
+                    id="node-1"
+                    text="test"
+                    completed={false}
+                    newNodeId={null}
+                    type="todo"
+                    isOwner={true}
+                    deletePending={false}
+                    resetPending={false}
+                    highlightedTodoId={null}
+                />
+            );
+
+            expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+
+            await user.click(screen.getByText("test"));
+
+            expect(screen.getByRole("textbox")).toBeInTheDocument();
+
+            await user.tab();
+
+            expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+        });
 
         it("delete click sets pending state and disables all input options", async () => {
             let resolveDelete!: (value: undefined) => void;
@@ -418,6 +489,160 @@ describe("Item", () => {
             await user.click(screen.getByRole("button", {name: "Delete"}));
 
             expect(handleDeleteNode).toHaveBeenCalledWith("node-1");
+        });
+
+        it("link edit url calls the correct context handler with the normalized value", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <Item
+                        id="node-1"
+                        text="link"
+                        url="example.com/"
+                        completed={false}
+                        newNodeId={null}
+                        type="link"
+                        isOwner={true}
+                        deletePending={false}
+                        resetPending={false}
+                        highlightedTodoId={null}
+                    />
+                </MemoryRouter>
+            );
+            
+            await user.click(screen.getByRole("button", {name: "Item actions"}));
+            await user.click(screen.getByRole("button", {name: "Edit Link Url"}));
+
+            expect(screen.getByRole("textbox")).toBeInTheDocument();
+
+            await user.type(screen.getByRole("textbox"), "page");
+            await user.keyboard("{Enter}");
+
+            expect(handleEditNodeUrl).toHaveBeenCalledWith("node-1", "https://example.com/page");
+        });
+        it("submitting link url without changing it doesn't call context handler", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <Item
+                        id="node-1"
+                        text="link"
+                        url="example.com/"
+                        completed={false}
+                        newNodeId={null}
+                        type="link"
+                        isOwner={true}
+                        deletePending={false}
+                        resetPending={false}
+                        highlightedTodoId={null}
+                    />
+                </MemoryRouter>
+            );
+            
+            await user.click(screen.getByRole("button", {name: "Item actions"}));
+            await user.click(screen.getByRole("button", {name: "Edit Link Url"}));
+
+            expect(screen.getByRole("textbox")).toBeInTheDocument();
+
+            await user.keyboard("{Enter}");
+
+            await waitFor(() => { 
+                expect(handleEditNodeUrl).not.toHaveBeenCalled();
+            });
+        });
+        it("submitting invalid url shows StatusMessage and doesn't call context handler", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <Item
+                        id="node-1"
+                        text="link"
+                        url="example.com/"
+                        completed={false}
+                        newNodeId={null}
+                        type="link"
+                        isOwner={true}
+                        deletePending={false}
+                        resetPending={false}
+                        highlightedTodoId={null}
+                    />
+                </MemoryRouter>
+            );
+            
+            await user.click(screen.getByRole("button", {name: "Item actions"}));
+            await user.click(screen.getByRole("button", {name: "Edit Link Url"}));
+
+            expect(screen.getByRole("textbox")).toBeInTheDocument();
+
+            await user.clear(screen.getByRole("textbox"));
+            await user.keyboard("{Enter}");
+
+            await waitFor(() => { 
+                expect(handleEditNodeUrl).not.toHaveBeenCalled();
+            });
+
+            expect(screen.getByText("Enter a valid http or https URL")).toBeInTheDocument();
+        });
+        it("escape exits link editing mode", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <Item
+                        id="node-1"
+                        text="link"
+                        url="example.com/"
+                        completed={false}
+                        newNodeId={null}
+                        type="link"
+                        isOwner={true}
+                        deletePending={false}
+                        resetPending={false}
+                        highlightedTodoId={null}
+                    />
+                </MemoryRouter>
+            );
+            
+            await user.click(screen.getByRole("button", {name: "Item actions"}));
+            await user.click(screen.getByRole("button", {name: "Edit Link Url"}));
+
+            expect(screen.getByRole("textbox")).toBeInTheDocument();
+
+            await user.keyboard("{Escape}");
+
+            expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+        });
+        it("blur exits link editing mode", async () => {
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <Item
+                        id="node-1"
+                        text="link"
+                        url="example.com/"
+                        completed={false}
+                        newNodeId={null}
+                        type="link"
+                        isOwner={true}
+                        deletePending={false}
+                        resetPending={false}
+                        highlightedTodoId={null}
+                    />
+                </MemoryRouter>
+            );
+            
+            await user.click(screen.getByRole("button", {name: "Item actions"}));
+            await user.click(screen.getByRole("button", {name: "Edit Link Url"}));
+
+            expect(screen.getByRole("textbox")).toBeInTheDocument();
+
+            await user.tab();
+
+            expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
         });
     });
 

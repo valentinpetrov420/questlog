@@ -53,7 +53,7 @@ export default function Item(props: ItemProps) {
     const [draftTitleTodo, setDraftTitleTodo] = useState(isNew ? props.text : "");
 
     const [editingField, setEditingField] = useState<"text" | "url" | null>(null);
-    const [draft, setDraft] = useState("");
+    const [linkDraft, setLinkDraft] = useState("");
 
     const [pending, setPending] = useState(false);
 
@@ -108,33 +108,45 @@ export default function Item(props: ItemProps) {
         setDraftTitleTodo(props.text);
     }
     function handleEditLinkText() {
-        setDraft(props.text);
+        setLinkDraft(props.text);
         setEditingField("text");
     }
     function handleEditLinkUrl() {
-        setDraft(props.url ?? "");
+        setLinkDraft(props.url ?? "");
         setEditingField("url");
     }
     function cancelLinkEdit() {
         setEditingField(null);
-        setDraft("");
+        setLinkDraft("");
     }
     async function handleSubmitLinkEdit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
+        if (!props.isOwner) {
+            return;
+        }
+        if (disabled) {
+            return;
+        }
 
+        if (linkDraft === props.url) {
+            setError("");
+            cancelLinkEdit();
+
+            return;
+        }
         if (editingField === "text") {
-            const error = await handleEditNodeText(props.id, draft);
+            const error = await handleEditNodeText(props.id, linkDraft);
             if (error) {
                 setError(error.message);
                 return;
             }
         } else if (editingField === "url") {
-            const normalized = normalizeUrl(draft);
+            const normalized = normalizeUrl(linkDraft);
             if (!normalized) {
                 setError("Enter a valid http or https URL");
                 return;
             }
-            const error = await handleEditNodeUrl(props.id, draft);
+            const error = await handleEditNodeUrl(props.id, normalized);
             if (error) {
                 setError(error.message);
                 return;
@@ -320,8 +332,8 @@ export default function Item(props: ItemProps) {
                         <input className="edit-item-input"
                             ref={inputRef}
                             disabled={disabled}
-                            value={draft}
-                            onChange={(event) => setDraft(event.target.value)}
+                            value={linkDraft}
+                            onChange={(event) => setLinkDraft(event.target.value)}
                             onBlur={() => {
                                 cancelLinkEdit();
                             }}
