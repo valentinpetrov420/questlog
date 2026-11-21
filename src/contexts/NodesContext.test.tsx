@@ -395,6 +395,33 @@ describe("NodesContext", () => {
             expect(editResult?.message).toBe("Missing nodeId");
         });
 
+        it("authenticated handleEditNodeUrl correctly updates flatNodes", async () => {
+            const { result } = renderHook(() => useNodes(), { wrapper });
+
+            await waitFor(() => {
+                expect(result.current.nodesLoading).toBe(false);
+            });
+
+            await result.current.handleEditNodeUrl("node-1", "https://example.com/");
+
+            await waitFor(() => {
+                const renamedNode = result.current.flatNodes.find(node => node.id === "node-1");
+
+                expect(renamedNode?.url).toBe("https://example.com/");
+            });
+        });
+        it("authenticated handleEditNodeUrl returns error when id is invalid", async () => {
+            const { result } = renderHook(() => useNodes(), { wrapper });
+
+            await waitFor(() => {
+                expect(result.current.nodesLoading).toBe(false);
+            });
+
+            const editResult = await result.current.handleEditNodeUrl("", "https://example.com/");
+
+            expect(editResult?.message).toBe("Missing nodeId");
+        });
+
         it("authenticated handlePin correctly updates flatNodes", async () => {
             const { result } = renderHook(() => useNodes(), { wrapper });
 
@@ -424,7 +451,7 @@ describe("NodesContext", () => {
                 expect(pinnedNode?.pinned).toBe(false);
             });
         });
-        it("authenticated handlePin returns error message object if id is missng and doesn't send a service call", async () => {
+        it("authenticated handlePin returns error message object if id is missing and doesn't send a service call", async () => {
             const { result } = renderHook(() => useNodes(), { wrapper });
 
             await waitFor(() => {
@@ -466,7 +493,7 @@ describe("NodesContext", () => {
                 expect(privateNode?.isPublic).toBe(false);
             });
         });
-        it("authenticated handleChangeVisibility returns error message object if id is missng and doesn't send a service call", async () => {
+        it("authenticated handleChangeVisibility returns error message object if id is missing and doesn't send a service call", async () => {
             const { result } = renderHook(() => useNodes(), { wrapper });
 
             await waitFor(() => {
