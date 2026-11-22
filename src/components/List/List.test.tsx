@@ -639,6 +639,34 @@ describe("List", () => {
 
             expect(handleCreateChildNode).toHaveBeenCalledWith("New Heading", "list-1", "heading");
         });
+        it("adding link calls handleCreateChildNode with link values", async () => {
+            vi.mocked(handleCreateChildNode).mockResolvedValue({ error: null, data: { id: "heading-id" } });
+
+            const user = userEvent.setup();
+
+            render(
+                <MemoryRouter>
+                    <List
+                        isNodePage={false}
+                        id="list-1"
+                        key="list-1"
+                        text="test"
+                        pinned={false}
+                        listItems={[]}
+                        isArchived={false}
+                        isPublic={false}
+                        ownerId="user-1"
+                    />
+                </MemoryRouter>
+            );
+
+            const button = screen.getByText("+");
+            await user.click(button);
+            const addHeadingButton = screen.getByText("Add Link");
+            await user.click(addHeadingButton);
+
+            expect(handleCreateChildNode).toHaveBeenCalledWith("New Link", "list-1", "link");
+        });
 
         it("archive click calls handleArchiveNode", async () => {
             const user = userEvent.setup();
