@@ -30,6 +30,15 @@ export default function SideBar(props: SideBarProps) {
     const [patchnotes, setPatchnotes] = useState<PatchNote[]>([]);
     const [patchnotesOpen, setPatchnotesOpen] = useState(false);
 
+    const [prevMenuOpen, setPrevMenuOpen] = useState(props.menuOpen);
+
+    if (prevMenuOpen !== props.menuOpen) {
+        setPrevMenuOpen(props.menuOpen);
+        if (!props.menuOpen) {
+            setPatchnotesOpen(false);
+        }
+    }
+
     const { toggleDarkMode } = useTheme();
 
     const [searchValue, setSearchValue] = useState("");

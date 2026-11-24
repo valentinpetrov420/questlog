@@ -104,7 +104,7 @@ npm run dev
 - Guest Mode data to Firebase data migration on login.
 - Command Palette with/and keyboard shortcuts.
 - Export/Import data.
-- Image and URL nodes.
+- Image nodes.
 
 ## DevPanel
 
