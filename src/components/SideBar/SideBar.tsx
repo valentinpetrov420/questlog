@@ -1,5 +1,5 @@
 import { useNavigate, Link, useParams } from "react-router-dom";
-import { useState, useEffect, useRef, SetStateAction } from "react";
+import { useState, useEffect, useRef, SetStateAction, useCallback } from "react";
 
 
 import './SideBar.css';
@@ -139,7 +139,11 @@ export default function SideBar(props: SideBarProps) {
         inputRef.current?.blur();
     }
 
-    async function handleNewPage() {
+    const { setMenuOpen } = props;
+    const handleNewPage = useCallback(async () => {
+        if (newPagePending) {
+            return;
+        }
         setNewPagePending(true);
 
         try {
@@ -157,11 +161,11 @@ export default function SideBar(props: SideBarProps) {
             navigate(`/${result.id}`, {
                 state: { newParentId: result.id }
             });
-            props.setMenuOpen(prev => !prev);
+            setMenuOpen(false);
         } finally {
             setNewPagePending(false);
         }
-    }
+    }, [handleCreateNode, navigate, setMenuOpen, newPagePending]);
 
     async function handleDeleteClick(id: string) {
         setDeletePendingIds(prev => new Set(prev).add(id));
@@ -219,6 +223,25 @@ export default function SideBar(props: SideBarProps) {
         await props.logoutUser();
         navigate("/login");
     }
+
+    useEffect(() => {
+        //if it logs more than once or if it spams logs on searchbox input, 
+        //handleCreateNode in context needs to be a useCallback too
+        console.log('listener attached');
+        
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.repeat) {
+                return;
+            }
+            if (e.altKey && e.code === 'KeyN') {
+                e.preventDefault();
+                handleNewPage();
+            }
+        };
+
+        window.addEventListener('keydown', onKeyDown);
+        return () => window.removeEventListener('keydown', onKeyDown);
+    }, [handleNewPage]);
 
 
     return <div className={`sidebar-wrapper ${props.menuOpen ? "open" : ""}`}>
