@@ -11,6 +11,7 @@ import PopOver from "../PopOver/PopOver";
 import GoogleSignInButton from "../GoogleSignInButton/GoogleSignInButton";
 import StatusMessage from "../StatusMessage/StatusMessage";
 import { useAuth, type AppUser } from "../../contexts/AuthContext";
+import { keyCooldown } from "../../constants/app";
 
 type SideBarProps = {
     user: AppUser | null;
@@ -140,7 +141,14 @@ export default function SideBar(props: SideBarProps) {
     }
 
     const { setMenuOpen } = props;
+    const lastNewPageAt = useRef(0);
     const handleNewPage = useCallback(async () => {
+        const now = Date.now();
+        if (now - lastNewPageAt.current < keyCooldown) {
+            return;
+        }
+        lastNewPageAt.current = now;
+        
         if (newPagePending) {
             return;
         }
@@ -228,7 +236,7 @@ export default function SideBar(props: SideBarProps) {
         //if it logs more than once or if it spams logs on searchbox input, 
         //handleCreateNode in context needs to be a useCallback too
         console.log('listener attached');
-        
+
         const onKeyDown = (e: KeyboardEvent) => {
             if (e.repeat) {
                 return;
