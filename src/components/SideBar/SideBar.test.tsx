@@ -277,6 +277,33 @@ describe("SideBar", () => {
             const newPageStatus = screen.getAllByRole("paragraph")[0];
             expect(newPageStatus).toHaveTextContent("Something went wrong.");
         });
+        it("new page keybind combination redirects to calls context and redirects to NodePage", async () => {
+            const user = userEvent.setup();
+            vi.mocked(handleCreateNode).mockResolvedValue({ id: "list-1" });
+
+            render(
+                <MemoryRouter>
+                    <SideBar
+                        user={{ uid: "user-1", displayName: "Test User", photoURL: "" } as any}
+                        logoutUser={logoutUser}
+                        loginWithGoogle={loginWithGoogle}
+                        setMenuOpen={setMenuOpen}
+                        menuOpen={true}
+                    />
+                </MemoryRouter>
+            );
+
+            await user.keyboard('{Alt>}n{/Alt}');
+
+            expect(handleCreateNode).toHaveBeenCalledWith("New Page", false);
+
+            await waitFor(() =>
+                expect(navigate).toHaveBeenCalledTimes(1)
+            );
+
+            expect(navigate.mock.calls[0][0]).toBe("/list-1");
+            expect(navigate.mock.calls[0][1]).toEqual({ state: { newParentId: "list-1" } });
+        });
 
         it("sorts by newest correctly and doesn't render archived", async () => {
             const user = userEvent.setup();
